@@ -10,3 +10,4 @@ ReadRSS bot brings RSS feeds to your Discord server.  Receive notifications from
 + /test <feed_link># send a notice of the latest post from a registered feed page to be checked to check
 + /test_all <feed_link> # send the entire post from a registered feed page to check
 + /clear # withdraw all messages
+

@@ -1,0 +1,7 @@
+discord
+bs4
+feedparser
+sql3
+os
+sys
+
