@@ -8,7 +8,7 @@ This is a Discord bot built with Python, ReadRSS bot brings RSS feeds to your Di
 4. Create a `.env` file and add your Discord bot token: `DISCORD_TOKEN=your_token_here`
 5. Run the bot: `python main.py`
 
-### Basic commands
+## Basic commands
 + /insert <channel_name> <link_feed> # register 1 feed in a channel based on links and name channel
 + /delete <channel_name> <link_feed> # cancel registration 1 feed in 1 channel based on link feed and name channel
 + /delelte <channel_name> # cancel registration of all feeds in a channel based on the name of the channel

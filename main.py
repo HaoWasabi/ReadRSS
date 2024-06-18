@@ -46,4 +46,5 @@ def test_feed_emty():
 
 if __name__ == "__main__":
     clear()
+    # test_feed_emty()
     # readRSS()

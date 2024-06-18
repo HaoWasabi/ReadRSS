@@ -15,17 +15,6 @@ class Database:
         self.connection = sqlite3.connect(db_path)
         self.cursor = self.connection.cursor()
         
-    def create_table(self, table_name, columns):
-        try:
-            # Xây dựng câu truy vấn SQL từ từ điển columns
-            columns_with_types = ', '.join([f"{col} {dtype}" for col, dtype in columns.items()])
-            query = f"CREATE TABLE {table_name} ({columns_with_types})"
-            self.cursor.execute(query)
-            self.connection.commit()
-            print(f"Bảng '{table_name}' đã được tạo thành công.")
-        except sqlite3.Error as e:
-            print(f"Lỗi khi tạo bảng: {e}")
-            
     def drop_table(self, table_name):
         try:
             self.cursor.execute(f'''
