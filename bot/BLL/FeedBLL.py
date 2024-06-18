@@ -2,40 +2,76 @@ from bot.DAL.FeedDAL import FeedDAL
 
 class FeedBLL:
     def __init__(self):
-        self.FeedDAL = FeedDAL()
+        self.__FeedDAL = FeedDAL()
 
     def insertFeed(self, feed_dto):
-        return self.FeedDAL.insertFeed(feed_dto)
+        try:
+            return self.__FeedDAL.insertFeed(feed_dto)
+        except Exception as e:
+            print(f"Error inserting Feed: {e}")
     
     def deleteFeedByLink_feed(self, feed_link):
-        return self.FeedDAL.deleteFeedByLink_feed(feed_link)
+        try:
+            return self.__FeedDAL.deleteFeedByLink_feed(feed_link)
+        except Exception as e:
+            print(f"Error deleting Feed: {e}")
 
     def deleteFeedByLinkAtom_feed(self, linkAtom_feed):
-        return self.FeedDAL.deleteFeedByLinkAtom_feed(linkAtom_feed)
+        try:
+            return self.__FeedDAL.deleteFeedByLinkAtom_feed(linkAtom_feed)
+        except Exception as e:
+            print(f"Error deleting Feed: {e}")
 
     def deleteFeedByTitle_feed(self, title_feed):
-        return self.FeedDAL.deleteFeedByTitle_feed(title_feed)
+        try:
+            return self.__FeedDAL.deleteFeedByTitle_feed(title_feed)
+        except Exception as e:
+            print(f"Error deleting Feed: {e}")
     
     def deleteAllFeed(self):
-        return self.FeedDAL.deleteAllFeed()
+        try:
+            return self.__FeedDAL.deleteAllFeed()
+        except Exception as e:
+            print(f"Error deleting Feed: {e}")
 
     def updateFeedByLink_feed(self, feed_link, feed_dto):
-        return self.FeedDAL.updateFeedByLink_feed(feed_link, feed_dto)
+        try:
+            return self.__FeedDAL.updateFeedByLink_feed(feed_link, feed_dto)
+        except Exception as e:
+            print(f"Error updating Feed: {e}")
     
     def updateFeedByLinkAtom_feed(self, linkAtom_feed, feed_dto):
-        return self.FeedDAL.updateFeedByLinkAtom_feed(linkAtom_feed, feed_dto)
-
+        try:
+            return self.__FeedDAL.updateFeedByLinkAtom_feed(linkAtom_feed, feed_dto)
+        except Exception as e:
+            print(f"Error updating Feed: {e}")
+            
     def updateFeedByTitle_feed(self, title_feed, feed_dto):
-        return self.FeedDAL.updateFeedByTitle_feed(title_feed, feed_dto)
-    
+        try:
+            return self.__FeedDAL.updateFeedByTitle_feed(title_feed, feed_dto)
+        except Exception as e:
+            print(f"Error updating Feed: {e}")
+            
     def getFeedByLink_feed(self, feed_link):
-        return self.FeedDAL.getFeedByLink_feed(feed_link)
-
+        try:
+            return self.__FeedDAL.getFeedByLink_feed(feed_link)
+        except Exception as e:
+            print(f"Error fetching Feed: {e}")
+            
     def getFeedByLinkAtom_feed(self, linkAtom_feed):
-        return self.FeedDAL.getFeedByLinkAtom_feed(linkAtom_feed)
-    
+        try:
+            return self.__FeedDAL.getFeedByLinkAtom_feed(linkAtom_feed)
+        except Exception as e:
+            print(f"Error fetching Feed: {e}")
+            
     def getFeedByTitle_feed(self, title_feed):
-        return self.FeedDAL.getFeedByTitle_feed(title_feed)
-    
+        try:
+            return self.__FeedDAL.getFeedByTitle_feed(title_feed)
+        except Exception as e:
+            print(f"Error fetching Feed: {e}")
+            
     def getAllFeed(self):
-        return self.FeedDAL.getAllFeed()
+        try:
+            return self.__FeedDAL.getAllFeed()
+        except Exception as e:
+            print(f"Error fetching Feed: {e}")

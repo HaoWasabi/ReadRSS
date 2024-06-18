@@ -36,7 +36,7 @@ class Database:
         except sqlite3.Error as e:
             print(f"Error dropping table: {e}")
             
-    def delete_all(self, table_name):
+    def delete_table(self, table_name):
         try:
             query = f"DELETE FROM {table_name}"
             self.cursor.execute(query)
@@ -45,5 +45,20 @@ class Database:
         except sqlite3.Error as e:
             print(f"Error deleting all data: {e}")
             
+    def clear(self):
+        try: 
+            query = "SELECT name FROM sqlite_master WHERE type='table';"
+            self.cursor.execute(query)
+            tables = self.cursor.fetchall()
+
+            # Xóa dữ liệu từ tất cả các bảng
+            for table in tables:
+                self.cursor.execute(f"DELETE FROM {table[0]};")
+                print(f"Deleted all data from table {table[0]}")
+            self.connection.commit()
+            print("All data has been deleted.")
+        except sqlite3.Error as e:
+            print(f"An error occurred: {e}")            
+
     def close_connection(self):
         self.connection.close()
