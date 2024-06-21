@@ -3,11 +3,6 @@ import os
 import sqlite3
 from bot.DTO.FeedDTO import FeedDTO
 
-# Thêm đường dẫn gốc của dự án vào sys.path
-project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-if project_root not in sys.path:
-    sys.path.append(project_root)
-    
 class FeedDAL:
     def __init__(self):
         # Sử dụng đường dẫn tuyệt đối đến tệp cơ sở dữ liệu

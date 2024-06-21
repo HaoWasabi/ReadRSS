@@ -1,5 +1,4 @@
 class FeedEmtyDTO:
-    
     def __init__(self, feed_dto, emty_dto):
         self.__feed_dto = feed_dto
         self.__emty_dto = emty_dto
@@ -19,5 +18,4 @@ class FeedEmtyDTO:
     def getEmty(self):
         return self.__emty_dto
     
-print(FeedEmtyDTO("a", "a"))
     
