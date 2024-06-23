@@ -112,7 +112,7 @@ class ServerChannelDAL:
             print(f"Error getting data by id_server and id_channel from 'tbl_server_channel': {e}")
             return None
     
-    def getAllServerChannel(self) -> Optional[List[ServerChannelDTO]]:
+    def getAllServerChannel(self) -> List[ServerChannelDTO]:
         try:
             self.__cursor.execute('''
             SELECT s.id_server, s.name_server,
@@ -125,10 +125,10 @@ class ServerChannelDAL:
             if rows:
                 return [ServerChannelDTO(ServerDTO(row[0], row[1]), ChannelDTO(row[2], row[3])) for row in rows]
             else:
-                return None
+                return []
         except sqlite3.Error as e:
             print(f"Error getting all data from 'tbl_server_channel': {e}")
-            return None
+            return []
             
     def __del__(self):
         self.__connection.close()

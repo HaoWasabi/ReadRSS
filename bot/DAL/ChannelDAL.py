@@ -2,6 +2,7 @@ import sys
 import os
 import sqlite3
 from bot.DTO.ChannelDTO import ChannelDTO
+from typing import Optional, List
 
 class ChannelDAL:
     def __init__(self):
@@ -24,9 +25,9 @@ class ChannelDAL:
             self.__connection.commit()
             print(f"Table 'tbl_channel' created successfully.")
         except sqlite3.Error as e:
-            print(f"Error creating table: {e}")
+            print(f"Error creating table 'tbl_channel': {e}")
             
-    def insertChannel(self, channel_dto):
+    def insertChannel(self, channel_dto: ChannelDTO) -> bool: 
         try:
             with self.__connection:
                 self.__cursor.execute('''
@@ -34,33 +35,39 @@ class ChannelDAL:
                     VALUES (?, ?)
                     ''', (channel_dto.getId_channel(), channel_dto.getName_channel()))
                 self.__connection.commit()
-                print(f"Data inserted successfully.")
+                print(f"Data inserted into 'tbl_channel' successfully.")
+                return True
         except sqlite3.Error as e:
-            print(f"Error inserting data: {e}")
+            print(f"Error inserting data into 'tbl_channel': {e}")
+            return False
 
-    def deleteChannelById_channel(self, id_channel):
+    def deleteChannelById_channel(self, id_channel: str) -> bool:
         try:
             with self.__connection:
                 self.__cursor.execute('''
                 DELETE FROM tbl_channel WHERE id_channel = ?
                 ''', (id_channel,))
                 self.__connection.commit()
-                print(f"Data deleted successfully.")
+                print(f"Data deleted from 'tbl_channel' successfully.")
+                return True
         except sqlite3.Error as e:
-            print(f"Error deleting data: {e}")
+            print(f"Error deleting data from 'tbl_channel': {e}")
+            return False
             
-    def deleteAllChannel(self):
+    def deleteAllChannel(self) -> bool:
         try:
             with self.__connection:
                 self.__connection.execute('''
                 DELETE FROM tbl_channel
                 ''')
                 self.__connection.commit()
-                print(f"Data deleted successfully.")
+                print(f"Data deleted from 'tbl_channel' successfully.")
+                return True
         except sqlite3.Error as e:
-            print(f"Error deleting data: {e}")
+            print(f"Error deleting from data 'tbl_channel': {e}")
+            return False
 
-    def updateChannelById_channel(self,id_channel, channel_dto):
+    def updateChannelById_channel(self,id_channel: str, channel_dto: ChannelDTO) -> bool:
         try:
             with self.__connection:
                 self.__cursor.execute('''
@@ -69,11 +76,13 @@ class ChannelDAL:
                 WHERE id_channel = ?
                 ''', (channel_dto.getId_channel(), channel_dto.getName_channel(), id_channel))
                 self.__connection.commit()
-                print(f"Data updated successfully.")
+                print(f"Data updated in 'tbl_channel' successfully.")
+                return True
         except sqlite3.Error as e:
-            print(f"Error updating data: {e}")
+            print(f"Error updating data in 'tbl_channel': {e}")
+            return False
             
-    def getChannelById_channel(self, id_channel):
+    def getChannelById_channel(self, id_channel: str) -> Optional[ChannelDTO]:
         try:
             self.__cursor.execute('''
             SELECT * FROM tbl_channel WHERE id_channel = ?
@@ -81,13 +90,14 @@ class ChannelDAL:
             row = self.__cursor.fetchone()
             if row:
                 return ChannelDTO(row[0], row[1])
-            return None
+            else:
+                return None
         except sqlite3.Error as e:
-            print(f"Error fetching data by link_channel: {e}")
+            print(f"Error fetching data from 'tbl_channel' by link_channel: {e}")
             return None
 
         
-    def getAllEmty(self):
+    def getAllChannel(self) -> List[ChannelDTO]:
         try:
             self.__cursor.execute('''
             SELECT * FROM tbl_channel
@@ -95,9 +105,10 @@ class ChannelDAL:
             rows = self.__cursor.fetchall()
             if rows:
                 return [ChannelDTO(row[0], row[1]) for row in rows]
-            return []
+            else:
+                return []
         except sqlite3.Error as e:
-            print(f"Error fetching all data: {e}")
+            print(f"Error fetching all data from 'tbl_channel': {e}")
             return []
 
 

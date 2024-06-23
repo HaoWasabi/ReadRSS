@@ -1,13 +1,17 @@
 from bot.DTO.FeedDTO import FeedDTO
 from bot.DTO.EmtyDTO import EmtyDTO
 from bot.DTO.ChannelDTO import ChannelDTO
+from bot.DTO.ServerDTO import ServerDTO
 from bot.DTO.FeedEmtyDTO import FeedEmtyDTO
 from bot.DTO.ChannelEmtyDTO import ChannelEmtyDTO
+from bot.DTO.ServerChannelDTO import ServerChannelDTO
 from bot.BLL.FeedBLL import FeedBLL
 from bot.BLL.EmtyBLL import EmtyBLL
+from bot.BLL.ServerBLL import ServerBLL
 from bot.BLL.ChannelBLL import ChannelBLL
 from bot.BLL.FeedEmtyBLL import FeedEmtyBLL
 from bot.BLL.ChannelEmtyBLL import ChannelEmtyBLL
+from bot.BLL.ServerChannelBLL import ServerChannelBLL
 from bot.utils.Database import Database
 from bot.utils.ReadRSS import ReadRSS
 from bot.GUI.Embed import Embed
@@ -35,9 +39,8 @@ def test_feed_emty():
     feedEmtyBLL.insertFeedEmty(FeedEmtyDTO(feedDTO, emtyDTO))
     
     try:
-        for i in feedEmtyBLL.getFeedEmtyByLink_feedAndLink_emty("a", "a"):
-            print(i)
-    
+        print(feedEmtyBLL.getFeedEmtyByLink_feedAndLink_emty("a", "a"))
+           
         emtyDTO.setPubDate_emty("m")
         print(emtyDTO)
         emtyBLL.updateEmtyByLink_emty("a", emtyDTO)
@@ -65,20 +68,16 @@ def test_channel_emty():
     channelEmtyBLL.insertChannelEmty(ChannelEmtyDTO(channelDTO, emtyDTO))
     
     try:
-        results = channelEmtyBLL.getChannelEmtyById_channelAndId_emty("a", "a")
-        if results:
-            for i in results:
-                print(i)
-        else:
-            print("No data found for getChannelEmtyById_channel.")
+        print(channelEmtyBLL.getChannelEmtyById_channelAndLink_emty("a", "a"))
     
         emtyDTO.setPubDate_emty("m")
         print(emtyDTO)
-        emtyBLL.updateEmtyById_channelAndLink_emty("a", "a", emtyDTO)
+        emtyBLL.updateEmtyByLink_emty("a", emtyDTO)
     
         channelEmtyDTO = ChannelEmtyDTO(channelDTO, emtyDTO)
         channelEmtyBLL.updateChannelEmtyById_channelAndLink_emty("a", "a", channelEmtyDTO)
     
+        print("____")
         results = channelEmtyBLL.getAllChannelEmty()
         if results:
             for i in results: 
@@ -88,6 +87,39 @@ def test_channel_emty():
     except Exception as e:
         print(f"Một lỗi đã xảy ra: {e}")
 
+def test_server_channel():
+    serverChannelBLL = ServerChannelBLL()
+    serverBLL = ServerBLL()
+    channelBLL = ChannelBLL()
+    
+    serverDTO = ServerDTO("a", "a")
+    serverBLL.insertServer(serverDTO)
+    
+    channelDTO = ChannelDTO("a", "a")
+    channelBLL.insertChannel(channelDTO)
+    
+    serverChannelBLL.insertServerChannel(ServerChannelDTO(serverDTO, channelDTO))
+    
+    try:
+        print(serverChannelBLL.getServerChannelById_serverAndId_channel("a", "a"))
+
+        channelDTO.setName_channel("b")
+        print(channelDTO)
+        channelBLL.updateChannelById_channel("a", channelDTO)
+        
+        serverChannelDTO = ServerChannelDTO(serverDTO, channelDTO)
+        serverChannelBLL.updateServerChannelById_serverAndId_channel("a", "a", serverChannelDTO)
+        
+        print("____")
+        results = serverChannelBLL.getAllServerChannel()
+        if results:
+            for i in results:
+                print(i)
+        else:
+            print("No data found for getAllServerChannel.")
+    except Exception as e:
+        print(f"Một lỗi không xảy ra: {e}")
+        
 def run():
     TOKEN = os.getenv('DISCORD_TOKEN')
     if TOKEN:
@@ -96,10 +128,15 @@ def run():
         print("TOKEN không được tìm thấy trong file .env.")
     
 if __name__ == "__main__":
-    # clear()
+    clear()
     
     # __RSS_TESTING__
     # readRSS()
+    
+    # __DAL_TESTING__
+    # test_channel_emty()
+    # test_server_channel()
+    # test_feed_emty()
     
     # __EMBED_TESTING__
     # test_feed_emty()
@@ -107,4 +144,4 @@ if __name__ == "__main__":
     # print(embed)
     
     # __BOT_RUNNING__
-    run()
+    # run()

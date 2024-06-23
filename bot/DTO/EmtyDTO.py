@@ -38,4 +38,3 @@ class EmtyDTO:
     
     def getPubDate_emty(self):
         return self.__pubDate_emty
-    

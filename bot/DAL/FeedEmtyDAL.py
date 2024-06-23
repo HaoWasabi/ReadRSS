@@ -4,6 +4,7 @@ import sqlite3
 from bot.DTO.FeedEmtyDTO import FeedEmtyDTO
 from bot.DTO.FeedDTO import FeedDTO
 from bot.DTO.EmtyDTO import EmtyDTO
+from typing import List, Optional
     
 class FeedEmtyDAL:
     def __init__(self):
@@ -28,20 +29,9 @@ class FeedEmtyDAL:
             self.__connection.commit()
             print(f"Table 'tbl_feed_emty' created successfully.")
         except sqlite3.Error as e:
-            print(f"Error creating table: {e}")
+            print(f"Error creating table 'tbl_feed_emty': {e}")
 
-    def drop_table(self):
-        try:
-            table_name = "tbl_feed_emty"
-            self.__cursor.execute(f'''
-            DROP TABLE IF EXISTS {table_name}
-            ''')
-            self.__connection.commit()
-            print(f"Table '{table_name}' dropped successfully.")
-        except sqlite3.Error as e:
-            print(f"Error dropping table: {e}")
-
-    def insertFeedEmty(self, feed_emty_dto):
+    def insertFeedEmty(self, feed_emty_dto: FeedEmtyDTO) -> bool:
         try:
             with self.__connection:
                 self.__cursor.execute('''
@@ -49,31 +39,37 @@ class FeedEmtyDAL:
                     VALUES (?, ?)
                 ''', (feed_emty_dto.getFeed().getLink_feed(), feed_emty_dto.getEmty().getLink_emty()))
                 self.__connection.commit()
-                print(f"Data inserted successfully.")
+                print(f"Data inserted into 'tbl_feed_emty' successfully.")
+                return True
         except sqlite3.Error as e:
-            print(f"Error inserting data: {e}")
-
-    def deleteFeedEmtyByLink_feedAndLink_emty(self, link_feed, link_emty):
+            print(f"Error inserting into 'tbl_feed_emty' data: {e}")
+            return False
+        
+    def deleteFeedEmtyByLink_feedAndLink_emty(self, link_feed: str, link_emty: str) -> bool:
         try:
             with self.__connection:
                 self.__cursor.execute('''
                 DELETE FROM tbl_feed_emty WHERE link_feed = ? AND link_emty = ?
                 ''', (link_feed, link_emty))
                 self.__connection.commit()
-                print(f"Data deleted successfully.")
+                print(f"Data deleted from 'tbl_feed_emty' successfully.")
+                return True
         except sqlite3.Error as e:
-            print(f"Error deleting data: {e}")
+            print(f"Error deleting data from 'tbl_feed_emty': {e}")
+            return False
 
-    def deleteAllFeedEmty(self):
+    def deleteAllFeedEmty(self) -> bool:
         try:
             with self.__connection:
                 self.__cursor.execute('''DELETE FROM tbl_feed_emty''')
                 self.__connection.commit()
-            print(f"All data deleted successfully.")
+            print(f"All data deleted from 'tbl_feed_emty' successfully.")
+            return True
         except sqlite3.Error as e:
-            print(f"Error deleting all data: {e}")
-            
-    def updateFeedEmtyByLink_feedAndLink_emty(self, link_feed, link_emty, feed_emty_dto):
+            print(f"Error deleting all data from 'tbl_feed_emty': {e}")
+            return False
+        
+    def updateFeedEmtyByLink_feedAndLink_emty(self, link_feed: str, link_emty: str, feed_emty_dto: FeedEmtyDTO) -> bool:
         try:
             with self.__connection:
                 self.__cursor.execute('''
@@ -81,11 +77,13 @@ class FeedEmtyDAL:
                 WHERE link_emty = ? AND link_feed = ?
                 ''', (feed_emty_dto.getEmty().getLink_emty(), feed_emty_dto.getFeed().getLink_feed(), link_feed, link_emty))
                 self.__connection.commit()
-                print(f"Data updated successfully.")
+                print(f"Data updated in 'tbl_feed_emty' successfully.")
+                return True
         except sqlite3.Error as e:
-            print(f"Error updating data by link_emty: {e}")
-
-    def getFeedEmtyByLink_feedAndLink_emty(self, link_feed, link_emty):
+            print(f"Error updating data in 'tbl_feed_emty' by link_emty: {e}")
+            return False
+        
+    def getFeedEmtyByLink_feedAndLink_emty(self, link_feed: str, link_emty: str) -> Optional[FeedEmtyDTO]:
         try:
             with self.__connection:
                 self.__cursor.execute('''
@@ -97,13 +95,16 @@ class FeedEmtyDAL:
                 WHERE fe.link_feed = ? AND fe.link_emty = ?
                 ''', (link_feed, link_emty))
                 row = self.__cursor.fetchone()
-                return FeedEmtyDTO(FeedDTO(row[0], row[1], row[2], row[3], row[4], row[5]), 
+                if row: 
+                    return FeedEmtyDTO(FeedDTO(row[0], row[1], row[2], row[3], row[4], row[5]), 
                                    EmtyDTO(row[6], row[7], row[8], row[9], row[10]))
+                else: 
+                    return None
         except sqlite3.Error as e:
-            print(f"Error fetching data by link_feed: {e}")
+            print(f"Error fetching data from 'tbl_feed_emty' by link_feed: {e}")
             return None
 
-    def getAllFeedEmty(self):
+    def getAllFeedEmty(self) -> List[FeedEmtyDTO]:
         try:
             with self.__connection:
                 self.__cursor.execute('''
@@ -114,10 +115,12 @@ class FeedEmtyDAL:
                 JOIN tbl_emty e ON fe.link_emty = e.link_emty
                 ''')
                 rows = self.__cursor.fetchall()
-                return [FeedEmtyDTO(FeedDTO(row[0], row[1], row[2], row[3], row[4], row[5]), 
+                if rows:
+                    return [FeedEmtyDTO(FeedDTO(row[0], row[1], row[2], row[3], row[4], row[5]), 
                                     EmtyDTO(row[6], row[7], row[8], row[9], row[10])) for row in rows]
+                return []
         except sqlite3.Error as e:
-            print(f"Error fetching all data: {e}")
+            print(f"Error fetching all data from 'tbl_feed_emty': {e}")
             return []
 
     def __del__(self):

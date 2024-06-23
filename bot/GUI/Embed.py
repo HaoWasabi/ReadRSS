@@ -1,4 +1,4 @@
-import discord
+import nextcord
 from bot.BLL.FeedEmtyBLL import FeedEmtyBLL
 from bot.DTO.FeedEmtyDTO import FeedEmtyDTO
 from bot.DTO.FeedDTO import FeedDTO
@@ -33,7 +33,7 @@ class Embed:
         }
 
     def getEmbed(self):
-        embed = discord.Embed(
+        embed = nextcord.Embed(
             title=self.__title,
             description=self.__description,
             color=int(self.__color[self.__colorText], 16)

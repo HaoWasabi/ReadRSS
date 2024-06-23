@@ -40,7 +40,7 @@ class ServerDAL:
             print(f"Error inserting data into 'tbl_server': {e}")
             return False
             
-    def updateServerById(self, id_server: str, server_dto: ServerDTO) -> bool:
+    def updateServerById_server(self, id_server: str, server_dto: ServerDTO) -> bool:
         try:
             with self.__connection:
                 self.__cursor.execute('''
@@ -55,7 +55,7 @@ class ServerDAL:
             print(f"Error updating data by id_server in 'tbl_server': {e}")
             return False
             
-    def deleteServerById(self, id_server: str) -> bool:
+    def deleteServerById_server(self, id_server: str) -> bool:
         try:
             with self.__connection:
                 self.__cursor.execute('''
@@ -82,7 +82,7 @@ class ServerDAL:
             print(f"Error deleting all data from 'tbl_server': {e}")
             return False
             
-    def getServerById(self, id_server: str) -> Optional[ServerDTO]:
+    def getServerById_server(self, id_server: str) -> Optional[ServerDTO]:
         try:
             self.__cursor.execute('''
             SELECT * FROM tbl_server
@@ -97,7 +97,7 @@ class ServerDAL:
             print(f"Error fetching data by id_server from 'tbl_server': {e}")
             return None
         
-    def getAllServer(self) -> Optional[List[ServerDTO]]:
+    def getAllServer(self) -> List[ServerDTO]:
         try:
             self.__cursor.execute('''
             SELECT * FROM tbl_server
@@ -106,10 +106,10 @@ class ServerDAL:
             if rows:
                 return [ServerDTO(row[0], row[1]) for row in rows]
             else:
-                return None
+                return []
         except sqlite3.Error as e:
             print(f"Error fetching all data from 'tbl_server': {e}")
-            return None
+            return []
             
     def __del__(self):
         self.__connection.close()
