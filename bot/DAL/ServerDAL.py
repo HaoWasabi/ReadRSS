@@ -26,7 +26,7 @@ class ServerDAL:
         except sqlite3.Error as e:
             print(f"Error creating table 'tbl_server': {e}")
             
-    def insert_server(self, server_dto: ServerDTO) -> bool:
+    def insertServer(self, server_dto: ServerDTO) -> bool:
         try:
             with self.__connection:
                 self.__cursor.execute('''
@@ -40,7 +40,7 @@ class ServerDAL:
             print(f"Error inserting data into 'tbl_server': {e}")
             return False
             
-    def update_server_by_id(self, id_server: str, server_dto: ServerDTO) -> bool:
+    def updateServerById(self, id_server: str, server_dto: ServerDTO) -> bool:
         try:
             with self.__connection:
                 self.__cursor.execute('''
@@ -55,7 +55,7 @@ class ServerDAL:
             print(f"Error updating data by id_server in 'tbl_server': {e}")
             return False
             
-    def delete_server_by_id(self, id_server: str) -> bool:
+    def deleteServerById(self, id_server: str) -> bool:
         try:
             with self.__connection:
                 self.__cursor.execute('''
@@ -69,7 +69,7 @@ class ServerDAL:
             print(f"Error deleting data by id_server from 'tbl_server': {e}")
             return False
             
-    def delete_all_server(self) -> bool:
+    def deleteAllServer(self) -> bool:
         try:
             with self.__connection:
                 self.__connection.execute('''
@@ -82,7 +82,7 @@ class ServerDAL:
             print(f"Error deleting all data from 'tbl_server': {e}")
             return False
             
-    def get_server_by_id(self, id_server: str) -> Optional[ServerDTO]:
+    def getServerById(self, id_server: str) -> Optional[ServerDTO]:
         try:
             self.__cursor.execute('''
             SELECT * FROM tbl_server
@@ -97,7 +97,7 @@ class ServerDAL:
             print(f"Error fetching data by id_server from 'tbl_server': {e}")
             return None
         
-    def get_all_server(self) -> Optional[List[ServerDTO]]:
+    def getAllServer(self) -> Optional[List[ServerDTO]]:
         try:
             self.__cursor.execute('''
             SELECT * FROM tbl_server

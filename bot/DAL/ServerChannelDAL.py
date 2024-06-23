@@ -31,7 +31,7 @@ class ServerChannelDAL:
         except sqlite3.Error as e:
             print(f"Error creating table 'tbl_server_channel': {e}")
             
-    def insert_server_channel(self, server_channel_dto: ServerChannelDTO) -> bool:
+    def insertServerChannel(self, server_channel_dto: ServerChannelDTO) -> bool:
         try:
             with self.__connection:
                 self.__cursor.execute('''
@@ -45,7 +45,7 @@ class ServerChannelDAL:
             print(f"Error inserting data into 'tbl_server_channel': {e}")
             return False
             
-    def delete_server_channel_by_id_server_and_id_channel(
+    def deleteServerChannelById_serverAndId_channel(
         self, id_server: str, id_channel: str
     ) -> bool:
         try:
@@ -61,7 +61,7 @@ class ServerChannelDAL:
             print(f"Error deleting data by id_server and id_channel from 'tbl_server_channel': {e}")
             return False
             
-    def delete_all_server_channel(self) -> bool:
+    def deleteAllServerChannel(self) -> bool:
         try:
             with self.__connection:
                 self.__cursor.execute('''
@@ -74,7 +74,7 @@ class ServerChannelDAL:
             print(f"Error deleting all data from 'tbl_server_channel': {e}")
             return False
             
-    def update_server_channel_by_id_server_and_id_channel(
+    def updateServerChannelById_serverAndId_channel(
         self, id_server: str, id_channel: str, server_channel_dto: ServerChannelDTO
     ) -> bool:
         try:
@@ -91,7 +91,7 @@ class ServerChannelDAL:
             print(f"Error updating data by id_server and id_channel in 'tbl_server_channel': {e}")
             return False
     
-    def get_server_channel_by_id_server_and_id_channel(
+    def getServerChannelById_serverAndId_channel(
         self, id_server: str, id_channel: str
     ) -> Optional[ServerChannelDTO]:
         try:
@@ -112,7 +112,7 @@ class ServerChannelDAL:
             print(f"Error getting data by id_server and id_channel from 'tbl_server_channel': {e}")
             return None
     
-    def get_all_server_channel(self) -> Optional[List[ServerChannelDTO]]:
+    def getAllServerChannel(self) -> Optional[List[ServerChannelDTO]]:
         try:
             self.__cursor.execute('''
             SELECT s.id_server, s.name_server,

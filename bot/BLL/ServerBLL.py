@@ -6,39 +6,39 @@ class ServerBLL:
     def __init__(self):
         self.__serverDAL = ServerDAL()
         
-    def insert_server(self, server_dto):
+    def insertServer(self, server_dto):
         try:
-            return self.__serverDAL.insert_server(server_dto)
+            return self.__serverDAL.insertServer(server_dto)
         except Exception as e:
             print(f"Error inserting server: {e}")
             
-    def update_server_by_id(self, id_server, server_dto):
+    def updateServerById(self, id_server, server_dto):
         try:
-            return self.__serverDAL.update_server_by_id(id_server, server_dto)
+            return self.__serverDAL.updateServerById(id_server, server_dto)
         except Exception as e:
             print(f"Error updating server: {e}")
             
-    def delete_all_server(self):
+    def deleteAllServer(self):
         try:
-            return self.__serverDAL.delete_all_server()
+            return self.__serverDAL.deleteAllServer()
         except Exception as e:
             print(f"Error deleting server: {e}")
             
-    def delete_server_by_id(self, id_server):
+    def deleteServerById(self, id_server):
         try:
-            return self.__serverDAL.delete_server_by_id(id_server)
+            return self.__serverDAL.deleteServerById(id_server)
         except Exception as e:
             print(f"Error deleting server: {e}")
             
-    def get_server_by_id(self, id_server):
+    def getServerById(self, id_server):
         try:
-            return self.__serverDAL.get_server_by_id(id_server)
+            return self.__serverDAL.getServerById(id_server)
         except Exception as e:
             print(f"Error fetching server: {e}")
             
-    def get_all_server(self):
+    def getAllServer(self):
         try:
-            return self.__serverDAL.get_all_server()
+            return self.__serverDAL.getAllServer()
         except Exception as e:
             print(f"Error fetching server: {e}")
             
