@@ -8,9 +8,11 @@ from bot.BLL.EmtyBLL import EmtyBLL
 from bot.BLL.ChannelBLL import ChannelBLL
 from bot.BLL.FeedEmtyBLL import FeedEmtyBLL
 from bot.BLL.ChannelEmtyBLL import ChannelEmtyBLL
-from bot.GUI.embed.Embed import Embed
 from bot.utils.Database import Database
 from bot.utils.ReadRSS import ReadRSS
+from bot.GUI.Embed import Embed
+from bot.GUI.Bot import bot
+import os
 
 def clear():
     db = Database()
@@ -86,10 +88,23 @@ def test_channel_emty():
     except Exception as e:
         print(f"Một lỗi đã xảy ra: {e}")
 
-if __name__ == "__main__":
-    clear()
+def run():
+    TOKEN = os.getenv('DISCORD_TOKEN')
+    if TOKEN:
+        bot.run(TOKEN)
+    else:
+        print("TOKEN không được tìm thấy trong file .env.")
     
-    # __TESTING__
+if __name__ == "__main__":
+    # clear()
+    
+    # __RSS_TESTING__
+    # readRSS()
+    
+    # __EMBED_TESTING__
     # test_feed_emty()
-    # embed = Embed("a", "a")
+    # embed = Embed("a", "a", "RED")
     # print(embed)
+    
+    # __BOT_RUNNING__
+    run()

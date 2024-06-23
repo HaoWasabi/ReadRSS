@@ -1,4 +1,6 @@
 discord
+discord-py-slash-command
+tracemalloc
 bs4
 feedparser
 sql3
