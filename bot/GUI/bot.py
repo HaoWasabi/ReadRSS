@@ -3,6 +3,7 @@ from nextcord.ext import commands
 from nextcord import Interaction
 from bot.utils.ReadRSS import ReadRSS
 from bot.utils.Database import Database
+from bot.GUI.Embed import Embed
 import os
 import tracemalloc
 import logging
@@ -61,6 +62,21 @@ async def servers(ctx):
     guild_names = [guild.name for guild in guilds]
     await ctx.send(f'The bot is in the following servers: {", ".join(guild_names)}')
 
+@bot.command()
+async def send_feed(ctx, channel: nextcord.TextChannel):
+    embed = Embed("https://www.facebook.com/TuoitrekhoaCongngheThongtinSGU", 
+                  "https://www.facebook.com/814717200441834/posts/957235702856649", 
+                  "RED").get_embed()
+    await channel.send(embed=embed)
+    await ctx.send(f'Sent the feed to {channel.mention}')
+    
+@bot.command()
+async def send(ctx):
+    embed = Embed("https://www.facebook.com/TuoitrekhoaCongngheThongtinSGU", 
+                  "https://www.facebook.com/814717200441834/posts/957235702856649", 
+                  "RED").get_embed()
+    await ctx.send(embed=embed)
+    
 # Lệnh Slash
 @bot.slash_command(name="ping", description="Replies with Pong!")
 async def _ping(interaction: Interaction):
@@ -81,4 +97,19 @@ async def _servers(interaction: Interaction):
     guilds = bot.guilds
     guild_names = [guild.name for guild in guilds]
     await interaction.response.send_message(f'The bot is in the following servers: {", ".join(guild_names)}')
+
+@bot.slash_command(name="send_feed", description="Send the RSS feed to the channel")
+async def _send_feed(interaction: Interaction, channel: nextcord.TextChannel):
+    embed = Embed("https://www.facebook.com/TuoitrekhoaCongngheThongtinSGU", 
+                  "https://www.facebook.com/814717200441834/posts/957235702856649", 
+                  "RED").get_embed()
+    await channel.send(embed=embed)
+    await interaction.response.send_message(f'Sent the feed to {channel.mention}')
+    
+@bot.slash_command(name="send", description="Send the RSS feed to the channel")
+async def _send(interaction: Interaction):
+    embed = Embed("https://www.facebook.com/TuoitrekhoaCongngheThongtinSGU", 
+                  "https://www.facebook.com/814717200441834/posts/957235702856649", 
+                  "RED").get_embed()
+    await interaction.response.send_message(embed=embed)
 

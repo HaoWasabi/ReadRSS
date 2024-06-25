@@ -51,3 +51,4 @@ class Database:
 
     def close_connection(self):
         self.connection.close()
+        

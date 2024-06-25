@@ -1,20 +1,19 @@
 class ChannelFeedDTO:
-    def __init__(self, link_feed,id_server):
-        self.link_feed = link_feed
-        self.id_server=id_server
+    def __init__(self, channel_dto, feed_dto):
+        self.__channel_dto = channel_dto
+        self.__feed_dto = feed_dto
 
     def __str__(self):
-        return f"ChannelFeedDTO(link_feed={self.link_feed}, id_server={self.id_server})"
+        return f"ChannelFeedDTO(channel={self.__channel_dto}, feed={self.__feed_dto})"
 
-    def setLink_feed(self, link_feed):
-        self.link_feed=link_feed
+    def setChannel(self, channel_dto):
+        self.__channel_dto=channel_dto
 
-    def setId_server(self, id_server):
-        self.id_server=id_server
+    def setFeed(self, feed_dto):
+        self.__feed_dto=feed_dto
 
-    def getLink_feed(self):
-        return self.link_feed
+    def getChannel(self):
+        return self.__channel_dto
 
-    def getId_server(self):
-        return self.id_server
-
+    def getFeed(self):
+        return self.__feed_dto
