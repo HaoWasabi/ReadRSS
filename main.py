@@ -20,6 +20,22 @@ from bot.GUI.Embed import Embed
 from bot.GUI.Bot import bot
 import os
 
+def about_us():
+    print('''
+This is a Discord bot built with Python, ReadRSS bot brings RSS feeds 
+to your Discord server. Receive notifications from news sources 
+including Facebook and much more. 
+
+                        -- ABOUT US --
+                         
+         ██████╗  ██████╗██████╗ ███████╗██╗   ██╗     #GCdev24
+        ██╔════╝ ██╔════╝██╔══██╗██╔════╝██║   ██║     HaoWasabi
+        ██║  ███╗██║     ██║  ██║█████╗  ██║   ██║     NaelTuhline
+        ██║   ██║██║     ██║  ██║██╔══╝  ╚██╗ ██╔╝     tivibin789
+        ╚██████╔╝╚██████╗██████╔╝███████╗ ╚████╔╝   
+        ╚═════╝  ╚═════╝╚═════╝ ╚══════╝  ╚═══╝                                                                 
+''')
+
 def clear():
     db = Database()
     db.clear()
@@ -198,3 +214,4 @@ if __name__ == "__main__":
     
     # __BOT_RUNNING__
     # run()
+    about_us()
