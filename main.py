@@ -12,7 +12,7 @@ from bot.BLL.ServerBLL import ServerBLL
 from bot.BLL.ChannelBLL import ChannelBLL
 from bot.BLL.FeedEmtyBLL import FeedEmtyBLL
 from bot.BLL.ChannelEmtyBLL import ChannelEmtyBLL
-from bot.DAL.ChannelFeedDAL import ChannelFeedDAL
+from bot.BLL.ChannelFeedBLL import ChannelFeedBLL
 from bot.BLL.ServerChannelBLL import ServerChannelBLL
 from bot.utils.Database import Database
 from bot.utils.ReadRSS import ReadRSS
@@ -154,7 +154,7 @@ def test_channel_feed():
     print ('''
            -- TEST CHANNEL_FEED --
            ''')
-    channelFeedDAL = ChannelFeedDAL()
+    channelFeedBLL = ChannelFeedBLL()
     channelBLL = ChannelBLL()
     feedBLL = FeedBLL()
     
@@ -166,19 +166,19 @@ def test_channel_feed():
     
     channelFeedDTO = ChannelFeedDTO(channelDTO, feedDTO)
     print(channelFeedDTO)
-    channelFeedDAL.insertChannelFeed(channelFeedDTO)
+    channelFeedBLL.insertChannelFeed(channelFeedDTO)
     
     try:
-        print(channelFeedDAL.getChannelFeedById_channelAndLink_feed("a", "a"))
+        print(channelFeedBLL.getChannelFeedById_channelAndLink_feed("a", "a"))
         
         feedDTO.setDescription_feed("b")
         feedBLL.updateFeedByLink_feed("a", feedDTO)
         
         channelFeedDTO = ChannelFeedDTO(channelDTO, feedDTO)
-        channelFeedDAL.updateChannelFeedById_channelAndLink_feed("a", "a", channelFeedDTO)
+        channelFeedBLL.updateChannelFeedById_channelAndLink_feed("a", "a", channelFeedDTO)
         
         print("\nLIST CHANNEL_FEED DTO: BEGIN - - - -")
-        results = channelFeedDAL.getAllChannelFeed()    
+        results = channelFeedBLL.getAllChannelFeed()    
         if results:
             for i in results:
                 print(i)
@@ -201,7 +201,7 @@ if __name__ == "__main__":
     # __RSS_TESTING__
     # readRSS()
     
-    # __DAL_TESTING__
+    # __BLL_TESTING__
     # test_channel_emty()
     # test_server_channel()
     # test_feed_emty()
