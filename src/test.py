@@ -14,36 +14,8 @@ from bot.BLL.FeedEmtyBLL import FeedEmtyBLL
 from bot.BLL.ChannelEmtyBLL import ChannelEmtyBLL
 from bot.BLL.ChannelFeedBLL import ChannelFeedBLL
 from bot.BLL.ServerChannelBLL import ServerChannelBLL
-from bot.utils.Database import Database
-from bot.utils.ReadRSS import ReadRSS
-from bot.GUI.Embed import Embed
-from bot.GUI.Bot import bot
-import os
 
-def about_us():
-    print('''
-This is a Discord bot built with Python, ReadRSS bot brings RSS feeds 
-to your Discord server. Receive notifications from news sources 
-including Facebook and much more. 
-
-                        -- ABOUT US --
-                         
-         ██████╗  ██████╗██████╗ ███████╗██╗   ██╗     #GCdev24
-        ██╔════╝ ██╔════╝██╔══██╗██╔════╝██║   ██║     HaoWasabi
-        ██║  ███╗██║     ██║  ██║█████╗  ██║   ██║     NaelTuhline
-        ██║   ██║██║     ██║  ██║██╔══╝  ╚██╗ ██╔╝     tivibin789
-        ╚██████╔╝╚██████╗██████╔╝███████╗ ╚████╔╝   
-        ╚═════╝  ╚═════╝╚═════╝ ╚══════╝  ╚═══╝                                                                 
-''')
-
-def clear():
-    db = Database()
-    db.clear()
-
-def readRSS():
-    ReadRSS("https://fetchrss.com/rss/66692c903413f4ff7e03b4e2666fdd5607b27c15980a5e02.xml")
-
-def test_feed_emty():
+def testFeedEmty():
     print ('''
            -- TEST FEED_EMTY --
            ''')
@@ -76,7 +48,7 @@ def test_feed_emty():
     except Exception as e:
         print(f"Một lỗi đã xảy ra: {e}")
 
-def test_channel_emty():
+def testChannelEmty():
     print ('''
            -- TEST CHANNEL_EMTY --
            ''')
@@ -113,7 +85,7 @@ def test_channel_emty():
     except Exception as e:
         print(f"Một lỗi đã xảy ra: {e}")
 
-def test_server_channel():
+def testServerChannel():
     print ('''
            -- TEST SERVER_CHANNEL --
            ''')
@@ -150,7 +122,7 @@ def test_server_channel():
     except Exception as e:
         print(f"Một lỗi không xảy ra: {e}")
         
-def test_channel_feed():   
+def testChannelFeed():   
     print ('''
            -- TEST CHANNEL_FEED --
            ''')
@@ -187,31 +159,3 @@ def test_channel_feed():
             print("No data found for getAllChannelFeed.")
     except Exception as e:
         print(f"Một lỗi không xảy ra: {e}")
-    
-def run():
-    TOKEN = os.getenv('DISCORD_TOKEN')
-    if TOKEN:
-        bot.run(TOKEN)
-    else:
-        print("TOKEN không được tìm thấy trong file .env.")
-    
-if __name__ == "__main__":
-    clear()
-    
-    # __RSS_TESTING__
-    # readRSS()
-    
-    # __BLL_TESTING__
-    # test_channel_emty()
-    # test_server_channel()
-    # test_feed_emty()
-    # test_channel_feed()
-    
-    # __EMBED_TESTING__
-    # test_feed_emty()
-    # embed = Embed("https://www.facebook.com/TuoitrekhoaCongngheThongtinSGU", "https://www.facebook.com/814717200441834/posts/957235702856649",  "RED")
-    # print(embed)
-    
-    # __BOT_RUNNING__
-    # run()
-    about_us()

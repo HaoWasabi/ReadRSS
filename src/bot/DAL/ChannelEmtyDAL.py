@@ -46,6 +46,19 @@ class ChannelEmtyDAL:
             print(f"Error inserting data into 'tbl_channel_emty': {e}")
             return False
             
+    def deleteChannelEmtyById_channel(self, id_channel: str) -> bool:   
+        try:
+            with self.__connection:
+                self.__cursor.execute('''
+                DELETE FROM tbl_channel_emty 
+                WHERE id_channel = ? ''', (id_channel))
+                self.__connection.commit()
+                print(f"Data deleted from 'tbl_channel_emty' by id_channel successfully.")
+                return True
+        except sqlite3.Error as e:
+            print(f"Error deleting data from 'tbl_channel_emty' {e}")
+            return False
+        
     def deleteChannelEmtyById_channelAndLink_emty(self, id_channel: str, link_emty: str) -> bool:   
         try:
             with self.__connection:

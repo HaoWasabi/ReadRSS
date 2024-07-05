@@ -49,5 +49,7 @@ def ReadRSS(url):
             
             feed_entry_dto = FeedEmtyDTO(feed_dto, entry_dto)
             feed_entry_bll.insertFeedEmty(feed_entry_dto)
+            
+        print(f"{len(feed.entries)} entries found in this feed.")
     else:
-        print("Không có bài viết nào được tìm thấy trong feed này.")
+        print("No entries found in this feed.")
