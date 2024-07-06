@@ -36,7 +36,7 @@ intents.guilds = True
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('nextcord')
 
-bot = commands.Bot(command_prefix='!', intents=intents)
+bot = commands.Bot(command_prefix='_', intents=intents)
 
 # Load cogs
 async def load_cogs():
@@ -46,16 +46,7 @@ async def load_cogs():
                 await bot.load_extension(f'bot.cogs.{filename[:-3]}')
             except Exception as e:
                 print(f'Failed to load extension {filename}: {e}')
-            
-@bot.event
-async def on_ready():
-    print(f"Bot {bot.user} is ready")
-    print("Các lệnh hiện có:", [command.name for command in bot.commands])
-
-    # Đồng bộ lệnh slash
-    await bot.sync_application_commands()
-    print("Đã đồng bộ các lệnh slash")
-
+                
 def run():    
     TOKEN = os.getenv('DISCORD_TOKEN')
     if TOKEN:

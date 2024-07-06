@@ -101,9 +101,30 @@ class FeedEmtyDAL:
                 else: 
                     return None
         except sqlite3.Error as e:
-            print(f"Error fetching data from 'tbl_feed_emty' by link_feed: {e}")
+            print(f"Error fetching data from 'tbl_feed_emty' by link_feed and link_emty: {e}")
             return None
 
+    def getFeedEmtyByLinkAtom_feed(self, linkAtom_feed: str) -> Optional[FeedEmtyDTO]:
+        try:
+            with self.__connection:
+                self.__cursor.execute('''
+                SELECT f.link_feed, f.linkAtom_feed, f.title_feed, f.description_feed, f.logo_feed, f.pubDate_feed, 
+                       e.link_emty, e.title_emty, e.description_emty, e.image_emty, e.pubDate_emty
+                FROM tbl_feed_emty fe
+                JOIN tbl_feed f ON fe.link_feed = f.link_feed
+                JOIN tbl_emty e ON fe.link_emty = e.link_emty
+                WHERE fe.linkAtom_feed = ?
+                ''', (linkAtom_feed,))
+                row = self.__cursor.fetchone()
+                if row: 
+                    return FeedEmtyDTO(FeedDTO(row[0], row[1], row[2], row[3], row[4], row[5]), 
+                                   EmtyDTO(row[6], row[7], row[8], row[9], row[10]))
+                else: 
+                    return None
+        except sqlite3.Error as e:
+            print(f"Error fetching data from 'tbl_feed_emty' by link_feed: {e}")
+            return None
+        
     def getAllFeedEmty(self) -> List[FeedEmtyDTO]:
         try:
             with self.__connection:

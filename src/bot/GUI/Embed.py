@@ -2,7 +2,7 @@ import nextcord
 from bot.BLL.FeedEmtyBLL import FeedEmtyBLL
 
 class Embed:
-    def __init__(self, feed_link, emty_link, colorText="BLUE"):
+    def __init__(self, feed_link: str, emty_link: str, colorText="BLUE"):
         feed_emty_bll = FeedEmtyBLL()
         feed_emty_dto = feed_emty_bll.getFeedEmtyByLink_feedAndLink_emty(feed_link=feed_link, emty_link=emty_link)
         print(f"feed_emty_dto: {feed_emty_dto}")

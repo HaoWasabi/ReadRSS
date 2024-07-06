@@ -6,6 +6,7 @@ from bot.DTO.FeedEmtyDTO import FeedEmtyDTO
 from bot.BLL.FeedBLL import FeedBLL
 from bot.BLL.EmtyBLL import EmtyBLL
 from bot.BLL.FeedEmtyBLL import FeedEmtyBLL
+from typing import Optional
 
 def parse_html(content):
     if content is None:
@@ -18,9 +19,9 @@ def parse_html(content):
     text = soup.get_text()
     return text
 
-def ReadRSS(url):
+def ReadRSS(linkAtom_feed: str) -> Optional[str]:
     # Đọc dữ liệu từ URL RSS
-    feed = feedparser.parse(url)
+    feed = feedparser.parse(linkAtom_feed)
     print("\n__FEED__")
     print(f"Link: {feed.feed.link}")
     print(f"Link atom: {feed.feed.title_detail.base}")
@@ -51,5 +52,7 @@ def ReadRSS(url):
             feed_entry_bll.insertFeedEmty(feed_entry_dto)
             
         print(f"{len(feed.entries)} entries found in this feed.")
+        return feed.entries[0].link
     else:
         print("No entries found in this feed.")
+        return None
