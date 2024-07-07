@@ -39,10 +39,16 @@ class SlashCommands(commands.Cog):
 
     @nextcord.slash_command(name="test", description="Send the RSS feed to the channel")
     async def test(self, interaction: Interaction, channel: nextcord.TextChannel, link_atom_feed: str):
-        link_emty = ReadRSS(link_atom_feed)
-        embed = Embed(link_atom_feed, link_emty, "RED").get_embed()
-        await channel.send(embed=embed)
-        await interaction.response.send_message(f'Sent the feed to {channel.mention} successfully.')
+        try:
+            read_rss = ReadRSS(link_atom_feed)
+            link_first_entry = read_rss.getLink_firstEntry()
+            
+            embed = Embed(link_atom_feed, link_first_entry, "RED").get_embed()
+            await channel.send(embed=embed)
+            await interaction.response.send_message(f'Sent the feed to {channel.mention} successfully.')
+        except Exception as e:
+            await interaction.response.send_message(f"Error: {e}")
+            print(f"Error: {e}")
 
     @nextcord.slash_command(name="set_channel_feed", description="Set the feed of the channel")
     async def set_channel_feed(self, interaction: Interaction, channel: TextChannel, link_atom_feed: str):

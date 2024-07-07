@@ -25,9 +25,11 @@ class ChannelFeedDAL:
         try:
             self.cursor.execute('''
                 CREATE TABLE IF NOT EXISTS tbl_channel_feed(
-                    link_feed TEXT,
+                    linkAtom_feed TEXT,
                     id_channel TEXT,
-                    PRIMARY KEY (id_channel, link_feed)
+                    PRIMARY KEY (id_channel, linkAtom_feed),
+                    FOREIGN KEY (id_channel) REFERENCES tbl_channel(id_channel),
+                    FOREIGN KEY (linkAtom_feed) REFERENCES tbl_feed(linkAtom_feed)
                 )
             ''')
             self.connection.commit()
@@ -38,21 +40,21 @@ class ChannelFeedDAL:
         try:
             with self.connection:
                 self.cursor.execute('''
-                INSERT INTO tbl_channel_feed (id_channel, link_feed)
+                INSERT INTO tbl_channel_feed (id_channel, linkAtom_feed)
                 VALUES (?, ?)
-                ''', (channel_feed_dto.getFeed().getLink_feed(), channel_feed_dto.getChannel().getId_channel()))
+                ''', (channel_feed_dto.getChannel().getId_channel(), channel_feed_dto.getFeed().getLinkAtom_feed()))
                 self.connection.commit()
                 return True
         except sqlite3.Error as e:
             print(f"Error inserting data into `tbl_channel_feed`: {e}")
             return False
 
-    def deleteChannelFeedById_channelAndLink_feed(self, id_channel: str, link_feed: str) -> bool:
+    def deleteChannelFeedById_channelAndLinkAtom_feed(self, id_channel: str, linkAtom_feed: str) -> bool:
         try:
             with self.connection:
                 self.cursor.execute('''
-                DELETE FROM tbl_channel_feed WHERE link_feed = ? AND id_channel = ?
-                ''', (id_channel, link_feed))
+                DELETE FROM tbl_channel_feed WHERE id_channel = ? AND linkAtom_feed = ?
+                ''', (id_channel, linkAtom_feed))
                 self.connection.commit()
                 return True
         except sqlite3.Error as e:
@@ -71,29 +73,29 @@ class ChannelFeedDAL:
             print(f"Error deleting all data from `tbl_channel_feed`: {e}")
             return False
         
-    def updateChannelFeedById_channelAndLink_feed(self, id_channel: str, link_feed: str, channel_feed_dto: ChannelFeedDTO) -> bool:
+    def updateChannelFeedById_channelAndLinkAtom_feed(self, id_channel: str, linkAtom_feed: str, channel_feed_dto: ChannelFeedDTO) -> bool:
         try:
             with self.connection:
                 self.cursor.execute('''
-                UPDATE tbl_channel_feed SET link_feed = ?, id_channel = ?
-                WHERE link_feed = ? AND id_channel= ?
-                ''', (channel_feed_dto.getFeed().getLink_feed(), channel_feed_dto.getChannel().getId_channel(), link_feed, id_channel))
+                UPDATE tbl_channel_feed SET linkAtom_feed = ?, id_channel = ?
+                WHERE linkAtom_feed = ? AND id_channel= ?
+                ''', (channel_feed_dto.getFeed().getLinkAtom_feed(), channel_feed_dto.getChannel().getId_channel(), linkAtom_feed, id_channel))
                 self.connection.commit()
                 return True
         except sqlite3.Error as e:
             print(f"Error updating data in `tbl_channel_feed`: {e}")
             return False
 
-    def getChannelFeedById_channelAndLink_feed(self, id_channel: str, link_feed: str) -> Optional[ChannelFeedDTO]:
+    def getChannelFeedById_channelAndLinkAtom_feed(self, id_channel: str, linkAtom_feed: str) -> Optional[ChannelFeedDTO]:
         try:
             self.cursor.execute('''
             SELECT c.id_channel, c.name_channel, 
                 f.link_feed, f.linkAtom_feed, f.title_feed, f.description_feed, f.logo_feed, f.pubDate_feed
             FROM tbl_channel_feed cf
             JOIN tbl_channel c ON cf.id_channel = c.id_channel
-            JOIN tbl_feed f ON cf.link_feed = f.link_feed
-            WHERE cf.link_feed = ? AND cf.id_channel = ?
-            ''', (link_feed, id_channel))
+            JOIN tbl_feed f ON cf.linkAtom_feed = f.linkAtom_feed
+            WHERE cf.linkAtom_feed = ? AND cf.id_channel = ?
+            ''', (linkAtom_feed, id_channel))
             row = self.cursor.fetchone()
             if row:
                 return ChannelFeedDTO(ChannelDTO(row[0], row[1]), 
@@ -110,7 +112,7 @@ class ChannelFeedDAL:
                 f.link_feed, f.linkAtom_feed, f.title_feed, f.description_feed, f.logo_feed, f.pubDate_feed
             FROM tbl_channel_feed cf
             JOIN tbl_channel c ON cf.id_channel = c.id_channel
-            JOIN tbl_feed f ON cf.link_feed = f.link_feed
+            JOIN tbl_feed f ON cf.linkAtom_feed = f.linkAtom_feed
             ''')
             rows = self.cursor.fetchall()
             return [ChannelFeedDTO(ChannelDTO(row[0], row[1]), 

@@ -12,9 +12,9 @@ class ChannelFeedBLL:
         except Exception as e:
             print(f"Error inserting ChannelFeed: {e}")
     
-    def deleteChannelFeedById_channelAndLink_feed(self, id_channel: str, link_feed: str) -> bool:
+    def deleteChannelFeedById_channelAndLinkAtom_feed(self, id_channel: str, linkAtom_feed: str) -> bool:
         try:
-            return self.__channelFeedDAL.deleteChannelFeedById_channelAndLink_feed(id_channel, link_feed)
+            return self.__channelFeedDAL.deleteChannelFeedById_channelAndLinkAtom_feed(id_channel, linkAtom_feed)
         except Exception as e:
             print(f"Error deleting ChannelFeed: {e}")
             
@@ -24,15 +24,15 @@ class ChannelFeedBLL:
         except Exception as e:
             print(f"Error deleting all ChannelFeed: {e}")
             
-    def updateChannelFeedById_channelAndLink_feed(self, id_channel: str, link_feed: str, channel_feed_dto: ChannelFeedDTO) -> bool:
+    def updateChannelFeedById_channelAndLinkAtom_feed(self, id_channel: str, linkAtom_feed: str, channel_feed_dto: ChannelFeedDTO) -> bool:
         try:
-            return self.__channelFeedDAL.updateChannelFeedById_channelAndLink_feed(id_channel, link_feed, channel_feed_dto)
+            return self.__channelFeedDAL.updateChannelFeedById_channelAndLinkAtom_feed(id_channel, linkAtom_feed, channel_feed_dto)
         except Exception as e:
             print(f"Error updating ChannelFeed: {e}")
     
-    def getChannelFeedById_channelAndLink_feed(self, id_channel: str, link_feed: str) -> Optional[ChannelFeedDTO]:
+    def getChannelFeedById_channelAndLinkAtom_feed(self, id_channel: str, linkAtom_feed: str) -> Optional[ChannelFeedDTO]:
         try:
-            return self.__channelFeedDAL.getChannelFeedById_channelAndLink_feed(id_channel, link_feed)
+            return self.__channelFeedDAL.getChannelFeedById_channelAndLinkAtom_feed(id_channel, linkAtom_feed)
         except Exception as e:
             print(f"Error fetching ChannelFeed: {e}")
             

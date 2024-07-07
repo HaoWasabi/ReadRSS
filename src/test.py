@@ -14,6 +14,8 @@ from bot.BLL.FeedEmtyBLL import FeedEmtyBLL
 from bot.BLL.ChannelEmtyBLL import ChannelEmtyBLL
 from bot.BLL.ChannelFeedBLL import ChannelFeedBLL
 from bot.BLL.ServerChannelBLL import ServerChannelBLL
+from bot.GUI.Embed import Embed
+from bot.utils.ReadRSS import ReadRSS
 
 def testFeedEmty():
     print ('''
@@ -32,14 +34,14 @@ def testFeedEmty():
     feedEmtyBLL.insertFeedEmty(FeedEmtyDTO(feedDTO, emtyDTO))
     
     try:
-        print(feedEmtyBLL.getFeedEmtyByLink_feedAndLink_emty("a", "a"))
+        print(feedEmtyBLL.getFeedEmtyByLinkAtom_feedAndLink_emty("a", "a"))
            
         emtyDTO.setPubDate_emty("m")
         print(emtyDTO)
         emtyBLL.updateEmtyByLink_emty("a", emtyDTO)
     
         feedEmtyDTO = FeedEmtyDTO(feedDTO, emtyDTO)
-        feedEmtyBLL.updateFeedEmtyByLink_feedAndLink_emty("a", "a", feedEmtyDTO)
+        feedEmtyBLL.updateFeedEmtyByLinkAtom_feedAndLink_emty("a", "a", feedEmtyDTO)
     
         print("\nLIST FEED_EMTY DTO: BEGIN - - - -")
         for i in feedEmtyBLL.getAllFeedEmty(): 
@@ -141,13 +143,13 @@ def testChannelFeed():
     channelFeedBLL.insertChannelFeed(channelFeedDTO)
     
     try:
-        print(channelFeedBLL.getChannelFeedById_channelAndLink_feed("a", "a"))
+        print(channelFeedBLL.getChannelFeedById_channelAndLinkAtom_feed("a", "a"))
         
         feedDTO.setDescription_feed("b")
-        feedBLL.updateFeedByLink_feed("a", feedDTO)
+        feedBLL.updateFeedByLinkAtom_feed("a", feedDTO)
         
         channelFeedDTO = ChannelFeedDTO(channelDTO, feedDTO)
-        channelFeedBLL.updateChannelFeedById_channelAndLink_feed("a", "a", channelFeedDTO)
+        channelFeedBLL.updateChannelFeedById_channelAndLinkAtom_feed("a", "a", channelFeedDTO)
         
         print("\nLIST CHANNEL_FEED DTO: BEGIN - - - -")
         results = channelFeedBLL.getAllChannelFeed()    
@@ -159,3 +161,19 @@ def testChannelFeed():
             print("No data found for getAllChannelFeed.")
     except Exception as e:
         print(f"Một lỗi không xảy ra: {e}")
+        
+def testReadRSS():
+    read_rss = ReadRSS("https://fetchrss.com/rss/66692c903413f4ff7e03b4e2666fdd5607b27c15980a5e02.xml")
+    print(read_rss.getLink_firstEntry()) 
+        
+def testEmbeb():
+    print ('''
+           -- TEST EMBED --
+           ''')
+    # testFeedEmty()
+    link_atom_feed = "https://fetchrss.com/rss/66692c903413f4ff7e03b4e2666fdd5607b27c15980a5e02.xml"
+    read_rss = ReadRSS(link_atom_feed)
+    link_first_entry = read_rss.getLink_firstEntry()   
+    embed = Embed(link_atom_feed, link_first_entry, "RED").get_embed()
+    # embed = Embed("a", "a",  "RED")
+    print(embed)

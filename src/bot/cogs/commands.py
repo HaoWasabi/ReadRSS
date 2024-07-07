@@ -38,16 +38,24 @@ class BotCommands(commands.Cog):
 
     @commands.command()
     async def test(self, ctx, channel: TextChannel, link_atom_feed: str):
-        try: 
-            link_emty = ReadRSS(link_atom_feed)
-            embed = Embed(link_atom_feed, link_emty, "RED").get_embed()
+        try:
+            read_rss = ReadRSS(link_atom_feed)
+            link_first_entry = read_rss.getLink_firstEntry()
+            
+            embed = Embed(link_atom_feed, link_first_entry, "RED").get_embed()
             await channel.send(embed=embed)
             await ctx.send(f'Sent the feed to {channel.mention} successfully.')
-            
         except Exception as e:
             await ctx.send(f"Error: {e}")
             print(f"Error: {e}")
         
+    @commands.command()
+    async def test_rss(self, ctx, linkAtom_feed: str):
+        read_rss = ReadRSS(linkAtom_feed)
+        link_first_entry = read_rss.getLink_firstEntry()
+        embed = Embed(linkAtom_feed, link_first_entry,  "RED").get_embed()
+        await ctx.send(embed=embed)
+    
     @commands.command()
     async def set_channel_feed(self, ctx, channel: TextChannel, link_atom_feed: str):
         try: 
@@ -63,7 +71,6 @@ class BotCommands(commands.Cog):
             channelBLL.insertChannel(channelDTO)
             channelFeedBLL.insertChannelFeed(channelFeedDTO)
             await ctx.send(f"Set {channel.mention} to have {link_atom_feed} feed successfully.")
-            
         except Exception as e:
             await ctx.send(f"Error: {e}")
             print(f"Error: {e}")

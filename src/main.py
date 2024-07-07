@@ -1,13 +1,12 @@
 from test import testChannelEmty, testChannelFeed, testFeedEmty, testServerChannel
-from bot.GUI.Embed import Embed
-from bot.utils.ReadRSS import ReadRSS
+from test import testReadRSS, testEmbeb
 from bot.utils.Database import Database
 import nextcord
 from nextcord.ext import commands
-import os
 import tracemalloc
 import logging
 import asyncio
+import os
 
 
 def aboutUs():
@@ -55,8 +54,15 @@ def run():
         print("TOKEN không được tìm thấy trong file .env.")
     
 if __name__ == "__main__":
+    
+    # __BOT_RUNNING__
+    # aboutUs()
+    Database().clear()
+    asyncio.run(load_cogs())
+    run()
+    
     # __RSS_TESTING__
-    # ReadRSS("https://fetchrss.com/rss/66692c903413f4ff7e03b4e2666fdd5607b27c15980a5e02.xml")
+    # testReadRSS()
     
     # __BLL_TESTING__
     # testChannelEmty()
@@ -65,12 +71,4 @@ if __name__ == "__main__":
     # testChannelFeed()
     
     # __EMBED_TESTING__
-    # testFeedEmty()
-    # embed = Embed("https://www.facebook.com/TuoitrekhoaCongngheThongtinSGU", "https://www.facebook.com/814717200441834/posts/957235702856649",  "RED")
-    # print(embed)
-    
-    # __BOT_RUNNING__
-    aboutUs()
-    Database().clear()
-    asyncio.run(load_cogs())
-    run()
+    # testEmbeb()

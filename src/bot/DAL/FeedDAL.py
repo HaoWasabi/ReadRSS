@@ -18,8 +18,8 @@ class FeedDAL:
         try:
             self.__cursor.execute('''
             CREATE TABLE IF NOT EXISTS tbl_feed(
-                link_feed TEXT PRIMARY KEY,
-                linkAtom_feed TEXT,
+                link_feed TEXT,
+                linkAtom_feed TEXT PRIMARY KEY,
                 title_feed TEXT,
                 description_feed TEXT,
                 logo_feed TEXT,
