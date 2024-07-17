@@ -49,6 +49,18 @@ class ChannelFeedDAL:
             print(f"Error inserting data into `tbl_channel_feed`: {e}")
             return False
 
+    def deleteChannelFeedById_channel(self, id_channel: str) -> bool:
+        try:
+            with self.connection:
+                self.cursor.execute('''
+                DELETE FROM tbl_channel_feed WHERE id_channel = ?
+                ''', (id_channel,))
+                self.connection.commit()
+                return True
+        except sqlite3.Error as e:
+            print(f"Error deleting data from `tbl_channel_feed`: {e}")
+            return False
+        
     def deleteChannelFeedById_channelAndLinkAtom_feed(self, id_channel: str, linkAtom_feed: str) -> bool:
         try:
             with self.connection:

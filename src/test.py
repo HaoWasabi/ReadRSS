@@ -14,7 +14,7 @@ from bot.BLL.FeedEmtyBLL import FeedEmtyBLL
 from bot.BLL.ChannelEmtyBLL import ChannelEmtyBLL
 from bot.BLL.ChannelFeedBLL import ChannelFeedBLL
 from bot.BLL.ServerChannelBLL import ServerChannelBLL
-from bot.GUI.Embed import Embed
+from bot.GUI.FeedEmbed import FeedEmbed
 from bot.utils.ReadRSS import ReadRSS
 
 def testFeedEmty():
@@ -163,17 +163,18 @@ def testChannelFeed():
         print(f"Một lỗi không xảy ra: {e}")
         
 def testReadRSS():
-    read_rss = ReadRSS("https://fetchrss.com/rss/66692c903413f4ff7e03b4e2666fdd5607b27c15980a5e02.xml")
+    link_atom_feed = input("Nhập link atom feed: ")
+    read_rss = ReadRSS(link_atom_feed)
     print(read_rss.getLink_firstEntry()) 
         
-def testEmbeb():
+def testFeedEmbeb():
     print ('''
            -- TEST EMBED --
            ''')
     # testFeedEmty()
-    link_atom_feed = "https://fetchrss.com/rss/66692c903413f4ff7e03b4e2666fdd5607b27c15980a5e02.xml"
+    link_atom_feed = input("Nhập link atom feed: ")
     read_rss = ReadRSS(link_atom_feed)
     link_first_entry = read_rss.getLink_firstEntry()   
-    embed = Embed(link_atom_feed, link_first_entry, "RED").get_embed()
-    # embed = Embed("a", "a",  "RED")
+    embed = FeedEmbed(link_atom_feed, link_first_entry, "RED").get_embed()
+    # embed = FeedEmbed("a", "a",  "RED")
     print(embed)

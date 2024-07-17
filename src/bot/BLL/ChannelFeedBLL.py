@@ -12,6 +12,12 @@ class ChannelFeedBLL:
         except Exception as e:
             print(f"Error inserting ChannelFeed: {e}")
     
+    def deleteChannelFeedById_channel(self, id_channel: str) -> bool:
+        try:
+            return self.__channelFeedDAL.deleteChannelFeedById_channel(id_channel)
+        except Exception as e:
+            print(f"Error deleting ChannelFeed: {e}")
+            
     def deleteChannelFeedById_channelAndLinkAtom_feed(self, id_channel: str, linkAtom_feed: str) -> bool:
         try:
             return self.__channelFeedDAL.deleteChannelFeedById_channelAndLinkAtom_feed(id_channel, linkAtom_feed)

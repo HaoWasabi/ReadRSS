@@ -1,5 +1,5 @@
 from test import testChannelEmty, testChannelFeed, testFeedEmty, testServerChannel
-from test import testReadRSS, testEmbeb
+from test import testReadRSS, testFeedEmbeb
 from bot.utils.Database import Database
 import nextcord
 from nextcord.ext import commands
@@ -54,21 +54,25 @@ def run():
         print("TOKEN không được tìm thấy trong file .env.")
     
 if __name__ == "__main__":
+    aboutUs()
+    
+    # __CLEAR_DATABASE__
+    # Database().clear()
+    # Database().delete_table('tbl_channel_emty')
     
     # __BOT_RUNNING__
-    # aboutUs()
-    Database().clear()
     asyncio.run(load_cogs())
     run()
+    
     
     # __RSS_TESTING__
     # testReadRSS()
     
     # __BLL_TESTING__
-    # testChannelEmty()
     # testServerChannel()
     # testFeedEmty()
     # testChannelFeed()
     
     # __EMBED_TESTING__
-    # testEmbeb()
+    # testChannelEmty()
+    # testFeedEmbeb()
