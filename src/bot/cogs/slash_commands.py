@@ -1,6 +1,6 @@
 import nextcord
-from nextcord import Interaction, TextChannel
 from nextcord.ext import commands
+from nextcord import Interaction, TextChannel
 from bot.utils.ReadRSS import ReadRSS
 from bot.GUI.FeedEmbed import FeedEmbed
 from bot.DTO.ChannelFeedDTO import ChannelFeedDTO
@@ -26,7 +26,7 @@ class SlashCommands(commands.Cog):
         ChannelEmtyBLL().deleteChannelEmtyById_channel(channel.id)
         await interaction.response.send_message(f"Delete the history of the posts sent in {channel.mention} successfully.")
 
-    @commands.slash_command(name="clear_channel_feed", description="Delete settings of the feed sent in the channel")
+    @nextcord.slash_command(name="clear_channel_feed", description="Delete settings of the feed sent in the channel")
     async def clear_channel_feed(self, interaction: Interaction, channel: TextChannel):
         ChannelFeedBLL().deleteChannelFeedById_channel(channel.id)
         await interaction.response.send_message(f"Delete settings of the feed sent in {channel.mention} successfully.")
@@ -37,7 +37,7 @@ class SlashCommands(commands.Cog):
         await interaction.response.send_message(f"Read **{link_atom_feed}** successfully.")
 
     @nextcord.slash_command(name="test", description="Send the RSS feed to the channel")
-    async def test(self, interaction: Interaction, channel: nextcord.TextChannel, link_atom_feed: str):
+    async def test(self, interaction: Interaction, channel: TextChannel, link_atom_feed: str):
         try:
             read_rss = ReadRSS(link_atom_feed)
             link_first_entry = read_rss.getLink_firstEntry()
@@ -64,11 +64,10 @@ class SlashCommands(commands.Cog):
             channelBLL.insertChannel(channelDTO)
             channelFeedBLL.insertChannelFeed(channelFeedDTO)
             await interaction.response.send_message(f"Set {channel.mention} to have {link_atom_feed} feed successfully.")
-            
         except Exception as e:
             await interaction.response.send_message(f"Error: {e}")
             print(f"Error: {e}")
-            
+
     @nextcord.slash_command(name="show", description="Show the list of feeds in channels")
     async def show(self, interaction: Interaction):
         channelFeedBLL = ChannelFeedBLL()
@@ -78,12 +77,11 @@ class SlashCommands(commands.Cog):
             feedDTO = channelFeedDTO.getFeed()
             description += f"- {channelDTO.getName_channel()} ({channelDTO.getId_channel()}): {feedDTO.getTitle_feed()} ({feedDTO.getLink_feed()})" + "\n"
         embed = nextcord.Embed(
-            title= "List of feeds in channels",
-            description= description,
+            title="List of feeds in channels",
+            description=description,
             color=0x00aaff
-            )
+        )
         await interaction.response.send_message(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(SlashCommands(bot))
-

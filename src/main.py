@@ -1,17 +1,17 @@
-from test import testChannelEmty, testChannelFeed, testFeedEmty, testServerChannel
-from test import testReadRSS, testFeedEmbeb
-from bot.utils.Database import Database
+import os
+import logging
+import tracemalloc
+import asyncio
 import nextcord
 from nextcord.ext import commands
-import tracemalloc
-import logging
-import asyncio
-import os
+from dotenv import load_dotenv
 
+# Load environment variables
+load_dotenv()
 
-def aboutUs():
+def about_us():
     print('''
-This is a Discord bot built with Python, ReadRSS bot brings RSS feeds 
+This is a Discord bot built with Python. ReadRSS bot brings RSS feeds 
 to your Discord server. Receive notifications from news sources 
 including Facebook and much more. 
 
@@ -25,7 +25,7 @@ including Facebook and much more.
         ╚═════╝  ╚═════╝╚═════╝ ╚══════╝  ╚═══╝       
                                                                   
 ''')
-    
+
 tracemalloc.start()
 
 intents = nextcord.Intents.default()
@@ -45,34 +45,35 @@ async def load_cogs():
                 await bot.load_extension(f'bot.cogs.{filename[:-3]}')
             except Exception as e:
                 print(f'Failed to load extension {filename}: {e}')
-                
+
+@bot.event
+async def on_ready():
+    await bot.sync_all_application_commands()
+    print(f'Bot {bot.user} is ready and commands are synced.')
+
 def run():    
     TOKEN = os.getenv('DISCORD_TOKEN')
     if TOKEN:
         bot.run(TOKEN)
     else:
         print("TOKEN không được tìm thấy trong file .env.")
-    
+
 if __name__ == "__main__":
-    aboutUs()
-    
-    # __CLEAR_DATABASE__
-    # Database().clear()
-    # Database().delete_table('tbl_channel_emty')
-    
-    # __BOT_RUNNING__
+    about_us()
     asyncio.run(load_cogs())
     run()
+
+    # __CLEAR_DATABASE__
+    # Database().clear()
     
-    
-    # __RSS_TESTING__
+    # __TEST_READRSS__
     # testReadRSS()
     
-    # __BLL_TESTING__
+    # __TEST_BLL__
     # testServerChannel()
     # testFeedEmty()
     # testChannelFeed()
     
-    # __EMBED_TESTING__
+    # __TEST_EMBED__
     # testChannelEmty()
     # testFeedEmbeb()
