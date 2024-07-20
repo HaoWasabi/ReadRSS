@@ -6,6 +6,9 @@ import nextcord
 from nextcord.ext import commands
 from dotenv import load_dotenv
 
+from bot.utils.Database import Database
+from test import testChannelEmty
+
 # Load environment variables
 load_dotenv()
 
@@ -46,17 +49,10 @@ async def load_cogs():
             except Exception as e:
                 print(f'Failed to load extension {filename}: {e}')
 
-@bot.event
-async def on_ready():
-    await bot.sync_all_application_commands()
-    print(f'Bot {bot.user} is ready and commands are synced.')
-
 def run():    
     TOKEN = os.getenv('DISCORD_TOKEN')
-    if TOKEN:
-        bot.run(TOKEN)
-    else:
-        print("TOKEN không được tìm thấy trong file .env.")
+    if TOKEN: bot.run(TOKEN)
+    else: print("TOKEN không được tìm thấy trong file .env.")
 
 if __name__ == "__main__":
     about_us()
@@ -64,6 +60,7 @@ if __name__ == "__main__":
     run()
 
     # __CLEAR_DATABASE__
+    # Database().delete_table('tbl_channel_emty')
     # Database().clear()
     
     # __TEST_READRSS__
@@ -73,7 +70,7 @@ if __name__ == "__main__":
     # testServerChannel()
     # testFeedEmty()
     # testChannelFeed()
+    # testChannelEmty()
     
     # __TEST_EMBED__
-    # testChannelEmty()
     # testFeedEmbeb()

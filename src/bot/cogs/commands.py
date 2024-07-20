@@ -45,6 +45,7 @@ class BotCommands(commands.Cog):
             embed = FeedEmbed(link_atom_feed, link_first_entry, "RED").get_embed()
             await channel.send(embed=embed)
             await ctx.send(f'Sent the feed to {channel.mention} successfully.')
+       
         except Exception as e:
             await ctx.send(f"Error: {e}")
             print(f"Error: {e}")
