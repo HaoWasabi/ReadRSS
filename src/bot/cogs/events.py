@@ -3,10 +3,16 @@ import threading
 import asyncio
 import nextcord
 from nextcord.ext import commands
+from bot.DTO.ServerChannelDTO import ServerChannelDTO
 from bot.DTO.ChannelEmtyDTO import ChannelEmtyDTO
+from bot.DTO.ChannelDTO import ChannelDTO
+from bot.DTO.ServerDTO import ServerDTO
+from bot.BLL.ServerChannelBLL import ServerChannelBLL
 from bot.BLL.ChannelFeedBLL import ChannelFeedBLL
 from bot.BLL.ChannelEmtyBLL import ChannelEmtyBLL
 from bot.BLL.FeedEmtyBLL import FeedEmtyBLL
+from bot.BLL.ChannelBLL import ChannelBLL
+from bot.BLL.ServerBLL import ServerBLL
 from bot.GUI.FeedEmbed import FeedEmbed
 from bot.utils.ReadRSS import ReadRSS
 
@@ -32,13 +38,29 @@ class Events(commands.Cog):
         thread.start()
 
     def push_noti(self):
+        serverBLL = ServerBLL()
+        channelBLL = ChannelBLL()
+        serverChannelBLL = ServerChannelBLL()
+        guilds = self.bot.guilds
+        
+        for guild in guilds:
+            serverDTO = ServerDTO(str(guild.id), str(guild.name))
+            serverBLL.insertServer(serverDTO)
+            
+            for channel in guild.channels:
+                channelDTO = ChannelDTO(str(channel.id), str(channel.name))
+                
+                for channel_of_db in channelBLL.getAllChannel():
+                    if channelDTO.getId_channel() == channel_of_db.getId_channel():
+                        serverChannelDTO = ServerChannelDTO(serverDTO, channelDTO)
+                        serverChannelBLL.insertServerChannel(serverChannelDTO)        
+                
         channelFeedBLL = ChannelFeedBLL()
         channelEmtyBLL = ChannelEmtyBLL()
         feedEmtyBLL = FeedEmtyBLL()
 
         list_channel_feed = channelFeedBLL.getAllChannelFeed()
         list_feed_emty = feedEmtyBLL.getAllFeedEmty()
-        
         
         for channel_feed in list_channel_feed:
             ReadRSS(channel_feed.getFeed().getLinkAtom_feed())
@@ -60,10 +82,10 @@ class Events(commands.Cog):
                     
                     channel_to_send = self.bot.get_channel(channel_id_of_channel_emty)
                     if channel_to_send and channel_id_of_channel_feed == channel_id_of_channel_emty:
-                        embed = FeedEmbed(linkAtom_feed, link_emty, "RED").get_embed()
-                        asyncio.run_coroutine_threadsafe(channel_to_send.send(embed=embed), self.bot.loop)
-                        # asyncio.run_coroutine_threadsafe(channel_to_send.send(f"{link_emty}"), self.bot.loop)
-
+                        # embed = FeedEmbed(linkAtom_feed, link_emty).get_embed()
+                        # asyncio.run_coroutine_threadsafe(channel_to_send.send(embed=embed), self.bot.loop)
+                        asyncio.run_coroutine_threadsafe(channel_to_send.send(f"{link_emty}"), self.bot.loop)
+                    
     @commands.Cog.listener()
     async def on_ready(self):
         print(f"Bot {self.bot.user} is ready")
@@ -79,13 +101,16 @@ class Events(commands.Cog):
         if isinstance(error, commands.CommandNotFound):
             available_commands = [command.name for command in self.bot.commands]
             available_slash_commands = [command.name for command in self.bot.get_application_commands()]
+            
             command_list_1 = ", ".join(available_commands)
             command_list_2 = ", ".join(available_slash_commands)
+            
             await ctx.send(f'''
 Lệnh **{ctx.invoked_with}** không hợp lệ
 - Các lệnh command hiện có: {command_list_1}
 - Các lệnh slash command hiện có: {command_list_2}
             ''')
+        
         else:
             raise error
 
@@ -95,6 +120,7 @@ Lệnh **{ctx.invoked_with}** không hợp lệ
         available_slash_commands = [command.name for command in self.bot.get_application_commands()]
         command_list_1 = ", ".join(available_commands)
         command_list_2 = ", ".join(available_slash_commands)
+        
         if guild.system_channel:
             await guild.system_channel.send(f'''
 **{self.bot.user}** joined {guild.name} successfully!

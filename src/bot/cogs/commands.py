@@ -42,7 +42,7 @@ class BotCommands(commands.Cog):
             read_rss = ReadRSS(link_atom_feed)
             link_first_entry = read_rss.getLink_firstEntry()
             
-            embed = FeedEmbed(link_atom_feed, link_first_entry, "RED").get_embed()
+            embed = FeedEmbed(link_atom_feed, link_first_entry).get_embed()
             await channel.send(embed=embed)
             await ctx.send(f'Sent the feed to {channel.mention} successfully.')
        
@@ -80,7 +80,6 @@ class BotCommands(commands.Cog):
         embed = nextcord.Embed(
             title= "List of feeds in channels",
             description= description,
-            color=0x00aaff
             )
         await ctx.send(embed=embed)
         

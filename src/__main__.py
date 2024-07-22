@@ -7,7 +7,7 @@ from nextcord.ext import commands
 from dotenv import load_dotenv
 
 from bot.utils.Database import Database
-from test import testChannelEmty
+from test import testServerChannel, testFeedEmty, testChannelFeed, testChannelEmty
 
 # Load environment variables
 load_dotenv()
@@ -61,6 +61,8 @@ if __name__ == "__main__":
 
     # __CLEAR_DATABASE__
     # Database().delete_table('tbl_channel_emty')
+    # Database().delete_table('tbl_channel')
+    # Database().delete_table('tbl_server_channel')
     # Database().clear()
     
     # __TEST_READRSS__

@@ -42,7 +42,7 @@ class SlashCommands(commands.Cog):
             read_rss = ReadRSS(link_atom_feed)
             link_first_entry = read_rss.getLink_firstEntry()
             
-            embed = FeedEmbed(link_atom_feed, link_first_entry, "RED").get_embed()
+            embed = FeedEmbed(link_atom_feed, link_first_entry).get_embed()
             await channel.send(embed=embed)
             await interaction.response.send_message(f'Sent the feed to {channel.mention} successfully.')
         except Exception as e:
@@ -79,7 +79,6 @@ class SlashCommands(commands.Cog):
         embed = nextcord.Embed(
             title="List of feeds in channels",
             description=description,
-            color=0x00aaff
         )
         await interaction.response.send_message(embed=embed)
 

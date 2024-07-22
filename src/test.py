@@ -175,6 +175,11 @@ def testFeedEmbeb():
     link_atom_feed = input("Nhập link atom feed: ")
     read_rss = ReadRSS(link_atom_feed)
     link_first_entry = read_rss.getLink_firstEntry()   
-    embed = FeedEmbed(link_atom_feed, link_first_entry, "RED").get_embed()
-    # embed = FeedEmbed("a", "a",  "RED")
+    embed = FeedEmbed(link_atom_feed, link_first_entry).get_embed()
+    # embed = FeedEmbed("a", "a")
     print(embed)
+    
+def testChannel():
+    channelBLL = ChannelBLL()
+    for channelDTO in channelBLL.getAllChannel():
+        print(channelDTO)
