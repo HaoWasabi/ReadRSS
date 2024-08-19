@@ -1,14 +1,13 @@
-import os
-import sqlite3
+import os, sqlite3, sys
 from typing import Optional, List
-from bot.DTO.ChannelDTO import ChannelDTO
-from bot.DTO.ServerChannelDTO import ServerChannelDTO
-from bot.DTO.ServerDTO import ServerDTO
-
+from bot.dto.server_dto import ServerDTO
+from bot.dto.channel_dto import ChannelDTO
+from bot.dto.server_channel_dto import ServerChannelDTO
+    
 class ServerChannelDAL:
     def __init__(self):
         # Sử dụng đường dẫn tuyệt đối đến tệp cơ sở dữ liệu
-        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))  # Lấy thư mục gốc của dự án
         db_path = os.path.join(base_dir, "db.sqlite3")
                 
         self.__connection = sqlite3.connect(db_path)
@@ -31,13 +30,13 @@ class ServerChannelDAL:
         except sqlite3.Error as e:
             print(f"Error creating table 'tbl_server_channel': {e}")
             
-    def insertServerChannel(self, server_channel_dto: ServerChannelDTO) -> bool:
+    def insert_server_channel(self, server_channel_dto: ServerChannelDTO) -> bool:
         try:
             with self.__connection:
                 self.__cursor.execute('''
                     INSERT INTO tbl_server_channel (id_server, id_channel)
                     VALUES (?, ?)
-                    ''', (server_channel_dto.getServer().getId_server(), server_channel_dto.getChannel().getId_channel()))
+                    ''', (server_channel_dto.get_server().get_id_server(), server_channel_dto.get_channel().get_id_channel()))
                 self.__connection.commit()
                 print(f"Data inserted successfully into 'tbl_server_channel'.")
                 return True
@@ -45,9 +44,7 @@ class ServerChannelDAL:
             print(f"Error inserting data into 'tbl_server_channel': {e}")
             return False
             
-    def deleteServerChannelById_serverAndId_channel(
-        self, id_server: str, id_channel: str
-    ) -> bool:
+    def delete_server_channel_by_id_server_and_id_channel(self, id_server: str, id_channel: str) -> bool:
         try:
             with self.__connection:
                 self.__cursor.execute('''
@@ -58,10 +55,10 @@ class ServerChannelDAL:
                 print(f"Data deleted successfully from 'tbl_server_channel'.")
                 return True
         except sqlite3.Error as e:
-            print(f"Error deleting data by id_server and id_channel from 'tbl_server_channel': {e}")
+            print(f"Error deleting data from 'tbl_server_channel': {e}")
             return False
             
-    def deleteAllServerChannel(self) -> bool:
+    def delete_all_server_channel(self) -> bool:
         try:
             with self.__connection:
                 self.__cursor.execute('''
@@ -74,26 +71,7 @@ class ServerChannelDAL:
             print(f"Error deleting all data from 'tbl_server_channel': {e}")
             return False
             
-    def updateServerChannelById_serverAndId_channel(
-        self, id_server: str, id_channel: str, server_channel_dto: ServerChannelDTO
-    ) -> bool:
-        try:
-            with self.__connection:
-                self.__cursor.execute('''
-                UPDATE tbl_server_channel
-                SET id_server = ?, id_channel = ?
-                WHERE id_server = ? AND id_channel = ?
-                ''', (server_channel_dto.getServer().getId_server(), server_channel_dto.getChannel().getId_channel(), id_server, id_channel))
-                self.__connection.commit()
-                print(f"Data updated successfully in 'tbl_server_channel'.")
-                return True
-        except sqlite3.Error as e:
-            print(f"Error updating data by id_server and id_channel in 'tbl_server_channel': {e}")
-            return False
-    
-    def getServerChannelById_serverAndId_channel(
-        self, id_server: str, id_channel: str
-    ) -> Optional[ServerChannelDTO]:
+    def get_server_channel_by_id_server_and_id_channel(self, id_server: str, id_channel: str) -> Optional[ServerChannelDTO]:
         try:
             self.__cursor.execute('''
             SELECT s.id_server, s.name_server,
@@ -109,10 +87,10 @@ class ServerChannelDAL:
             else:
                 return None
         except sqlite3.Error as e:
-            print(f"Error getting data by id_server and id_channel from 'tbl_server_channel': {e}")
+            print(f"Error fetching data from 'tbl_server_channel': {e}")
             return None
     
-    def getAllServerChannel(self) -> List[ServerChannelDTO]:
+    def get_all_server_channel(self) -> List[ServerChannelDTO]:
         try:
             self.__cursor.execute('''
             SELECT s.id_server, s.name_server,
@@ -127,7 +105,7 @@ class ServerChannelDAL:
             else:
                 return []
         except sqlite3.Error as e:
-            print(f"Error getting all data from 'tbl_server_channel': {e}")
+            print(f"Error fetching all data from 'tbl_server_channel': {e}")
             return []
             
     def __del__(self):

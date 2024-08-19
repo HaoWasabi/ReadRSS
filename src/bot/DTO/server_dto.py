@@ -6,15 +6,18 @@ class ServerDTO:
     def __str__(self) -> str:
         return f"ServerDTO(id_server={self.__id_server}, name_server={self.__name_server})"
     
-    def setId_server(self, id_server: str) -> None:
+    def __eq__(self, other: object) -> bool:
+        return self.__id_server == other.__id_server and self.__name_server == other.__name_server
+    
+    def set_id_server(self, id_server: str) -> None:
         self.__id_server = id_server
         
-    def setName_server(self, name_server: str) -> None:
+    def set_name_server(self, name_server: str) -> None:
         self.__name_server = name_server
         
-    def getId_server(self) -> str:
+    def get_id_server(self) -> str:
         return self.__id_server
     
-    def getName_server(self) -> str:
+    def get_name_server(self) -> str:
         return self.__name_server
     

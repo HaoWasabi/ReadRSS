@@ -1,23 +1,23 @@
-from bot.DTO.FeedDTO import FeedDTO
-from bot.DTO.EmtyDTO import EmtyDTO
-from bot.DTO.ChannelDTO import ChannelDTO
-from bot.DTO.ServerDTO import ServerDTO
-from bot.DTO.FeedEmtyDTO import FeedEmtyDTO
-from bot.DTO.ChannelEmtyDTO import ChannelEmtyDTO
-from bot.DTO.ChannelFeedDTO import ChannelFeedDTO
-from bot.DTO.ServerChannelDTO import ServerChannelDTO
-from bot.BLL.FeedBLL import FeedBLL
-from bot.BLL.EmtyBLL import EmtyBLL
-from bot.BLL.ServerBLL import ServerBLL
-from bot.BLL.ChannelBLL import ChannelBLL
-from bot.BLL.FeedEmtyBLL import FeedEmtyBLL
-from bot.BLL.ChannelEmtyBLL import ChannelEmtyBLL
-from bot.BLL.ChannelFeedBLL import ChannelFeedBLL
-from bot.BLL.ServerChannelBLL import ServerChannelBLL
-from bot.GUI.FeedEmbed import FeedEmbed
-from bot.utils.ReadRSS import ReadRSS
+from bot.dto.feed_dto import FeedDTO
+from bot.dto.emty_dto import EmtyDTO
+from bot.dto.channel_dto import ChannelDTO
+from bot.dto.server_dto import ServerDTO
+from bot.dto.feed_emty_dto import FeedEmtyDTO
+from bot.dto.channel_emty_dto import ChannelEmtyDTO
+from bot.dto.channel_feed_dto import ChannelFeedDTO
+from bot.dto.server_channel_dto import ServerChannelDTO
+from bot.bll.feed_bll import FeedBLL
+from bot.bll.emty_bll import EmtyBLL
+from bot.bll.feed_emty_bll import FeedEmtyBLL
+from bot.bll.server_bll import ServerBLL
+from bot.bll.channel_bll import ChannelBLL
+from bot.bll.channel_emty_bll import ChannelEmtyBLL
+from bot.bll.channel_feed_bll import ChannelFeedBLL
+from bot.bll.server_channel_bll import ServerChannelBLL
+from bot.gui.feed_embeb import FeedEmbed
+from bot.utils.read_rss import ReadRSS
 
-def testFeedEmty():
+def test_feed_emty():
     print ('''
            -- TEST FEED_EMTY --
            ''')
@@ -26,31 +26,28 @@ def testFeedEmty():
     emtyBLL = EmtyBLL()
     
     feedDTO = FeedDTO("a", "a", "a", "a", "a", "a")
-    feedBLL.insertFeed(feedDTO)
+    feedBLL.insert_feed(feedDTO)
     
     emtyDTO = EmtyDTO("a", "a", "a", "a", "a")
-    emtyBLL.insertEmty(emtyDTO)
+    emtyBLL.insert_emty(emtyDTO)
     
-    feedEmtyBLL.insertFeedEmty(FeedEmtyDTO(feedDTO, emtyDTO))
+    feedEmtyBLL.insert_feed_emty(FeedEmtyDTO(feedDTO, emtyDTO))
     
     try:
-        print(feedEmtyBLL.getFeedEmtyByLinkAtom_feedAndLink_emty("a", "a"))
+        print(feedEmtyBLL.get_feed_emty_by_link_atom_feed_and_link_emty("a", "a"))
            
-        emtyDTO.setPubDate_emty("m")
+        emtyDTO.set_pubdate_emty("m")
         print(emtyDTO)
-        emtyBLL.updateEmtyByLink_emty("a", emtyDTO)
-    
-        feedEmtyDTO = FeedEmtyDTO(feedDTO, emtyDTO)
-        feedEmtyBLL.updateFeedEmtyByLinkAtom_feedAndLink_emty("a", "a", feedEmtyDTO)
+        emtyBLL.update_emty_by_link_emty("a", emtyDTO)
     
         print("\nLIST FEED_EMTY DTO: BEGIN - - - -")
-        for i in feedEmtyBLL.getAllFeedEmty(): 
+        for i in feedEmtyBLL.get_all_feed_emty(): 
             print(i)
         print("FINSH - - - - - - - - - - ")
     except Exception as e:
         print(f"Một lỗi đã xảy ra: {e}")
 
-def testChannelEmty():
+def test_channel_emty():
     print ('''
            -- TEST CHANNEL_EMTY --
            ''')
@@ -59,25 +56,22 @@ def testChannelEmty():
     emtyBLL = EmtyBLL()
     
     channelDTO = ChannelDTO("a", "a")
-    channelBLL.insertChannel(channelDTO)
+    channelBLL.insert_channel(channelDTO)
     
     emtyDTO = EmtyDTO("a", "a", "a", "a", "a")
-    emtyBLL.insertEmty(emtyDTO)
+    emtyBLL.insert_emty(emtyDTO)
     
-    channelEmtyBLL.insertChannelEmty(ChannelEmtyDTO(channelDTO, emtyDTO))
+    channelEmtyBLL.insert_channel_emty(ChannelEmtyDTO(channelDTO, emtyDTO))
     
     try:
-        print(channelEmtyBLL.getChannelEmtyById_channelAndLink_emty("a", "a"))
+        print(channelEmtyBLL.get_channel_emty_by_id_channel_and_link_emty("a", "a"))
     
-        emtyDTO.setPubDate_emty("m")
+        emtyDTO.set_pubdate_emty("m")
         print(emtyDTO)
-        emtyBLL.updateEmtyByLink_emty("a", emtyDTO)
-    
-        channelEmtyDTO = ChannelEmtyDTO(channelDTO, emtyDTO)
-        channelEmtyBLL.updateChannelEmtyById_channelAndLink_emty("a", "a", channelEmtyDTO)
+        emtyBLL.update_emty_by_link_emty("a", emtyDTO)
     
         print("\nLIST CHANNEL_EMTY DTO: BEGIN - - - -")
-        results = channelEmtyBLL.getAllChannelEmty()
+        results = channelEmtyBLL.get_all_channel_emty()
         if results:
             for i in results: 
                 print(i)
@@ -87,7 +81,7 @@ def testChannelEmty():
     except Exception as e:
         print(f"Một lỗi đã xảy ra: {e}")
 
-def testServerChannel():
+def test_server_channel():
     print ('''
            -- TEST SERVER_CHANNEL --
            ''')
@@ -96,25 +90,22 @@ def testServerChannel():
     channelBLL = ChannelBLL()
     
     serverDTO = ServerDTO("a", "a")
-    serverBLL.insertServer(serverDTO)
+    serverBLL.insert_server(serverDTO)
     
     channelDTO = ChannelDTO("a", "a")
-    channelBLL.insertChannel(channelDTO)
+    channelBLL.insert_channel(channelDTO)
     
-    serverChannelBLL.insertServerChannel(ServerChannelDTO(serverDTO, channelDTO))
+    serverChannelBLL.insert_server_channel(ServerChannelDTO(serverDTO, channelDTO))
     
     try:
-        print(serverChannelBLL.getServerChannelById_serverAndId_channel("a", "a"))
+        print(serverChannelBLL.get_server_channel_by_id_server_and_id_channel("a", "a"))
 
-        channelDTO.setName_channel("b")
+        channelDTO.set_name_channel("b")
         print(channelDTO)
-        channelBLL.updateChannelById_channel("a", channelDTO)
-        
-        serverChannelDTO = ServerChannelDTO(serverDTO, channelDTO)
-        serverChannelBLL.updateServerChannelById_serverAndId_channel("a", "a", serverChannelDTO)
+        channelBLL.update_channel_by_id_channel("a", channelDTO)
         
         print("\nLIST SERVER_CHANNEL DTO: BEGIN - - - -")
-        results = serverChannelBLL.getAllServerChannel()
+        results = serverChannelBLL.get_all_server_channel()
         if results:
             for i in results:
                 print(i)
@@ -124,7 +115,7 @@ def testServerChannel():
     except Exception as e:
         print(f"Một lỗi không xảy ra: {e}")
         
-def testChannelFeed():   
+def test_channel_feed():   
     print ('''
            -- TEST CHANNEL_FEED --
            ''')
@@ -133,26 +124,23 @@ def testChannelFeed():
     feedBLL = FeedBLL()
     
     channelDTO = ChannelDTO("a", "a")
-    channelBLL.insertChannel(channelDTO)
+    channelBLL.insert_channel(channelDTO)
     
     feedDTO = FeedDTO("a", "a", "a", "a", "a", "a")
-    feedBLL.insertFeed(feedDTO)
+    feedBLL.insert_feed(feedDTO)
     
     channelFeedDTO = ChannelFeedDTO(channelDTO, feedDTO)
     print(channelFeedDTO)
-    channelFeedBLL.insertChannelFeed(channelFeedDTO)
+    channelFeedBLL.insert_channel_feed(channelFeedDTO)
     
     try:
-        print(channelFeedBLL.getChannelFeedById_channelAndLinkAtom_feed("a", "a"))
+        print(channelFeedBLL.get_channel_feed_by_id_channel_and_link_atom_feed("a", "a"))
         
-        feedDTO.setDescription_feed("b")
-        feedBLL.updateFeedByLinkAtom_feed("a", feedDTO)
-        
-        channelFeedDTO = ChannelFeedDTO(channelDTO, feedDTO)
-        channelFeedBLL.updateChannelFeedById_channelAndLinkAtom_feed("a", "a", channelFeedDTO)
+        feedDTO.set_description_feed("b")
+        feedBLL.update_feed_by_link_atom_feed("a", feedDTO)
         
         print("\nLIST CHANNEL_FEED DTO: BEGIN - - - -")
-        results = channelFeedBLL.getAllChannelFeed()    
+        results = channelFeedBLL.get_all_channel_feed()    
         if results:
             for i in results:
                 print(i)
@@ -162,24 +150,20 @@ def testChannelFeed():
     except Exception as e:
         print(f"Một lỗi không xảy ra: {e}")
         
-def testReadRSS():
+def test_read_rss():
     link_atom_feed = input("Nhập link atom feed: ")
     read_rss = ReadRSS(link_atom_feed)
-    print(read_rss.getLink_firstEntry()) 
+    print(read_rss.get_link_first_entry()) 
         
-def testFeedEmbeb():
+def test_feed_embeb():
     print ('''
            -- TEST EMBED --
            ''')
-    # testFeedEmty()
+    # test_feed_emty()
     link_atom_feed = input("Nhập link atom feed: ")
     read_rss = ReadRSS(link_atom_feed)
-    link_first_entry = read_rss.getLink_firstEntry()   
+    link_first_entry = read_rss.get_link_first_entry()   
     embed = FeedEmbed(link_atom_feed, link_first_entry).get_embed()
     # embed = FeedEmbed("a", "a")
     print(embed)
     
-def testChannel():
-    channelBLL = ChannelBLL()
-    for channelDTO in channelBLL.getAllChannel():
-        print(channelDTO)

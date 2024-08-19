@@ -1,5 +1,5 @@
 from nextcord.ext import commands
-from bot.utils.Database import Database
+from bot.utils.database import Database
 import nextcord
 
 class AdminCommands(commands.Cog):

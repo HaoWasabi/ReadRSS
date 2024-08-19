@@ -3,24 +3,80 @@ import threading
 import asyncio
 import nextcord
 from nextcord.ext import commands
-from bot.DTO.ServerChannelDTO import ServerChannelDTO
-from bot.DTO.ChannelEmtyDTO import ChannelEmtyDTO
-from bot.DTO.ChannelDTO import ChannelDTO
-from bot.DTO.ServerDTO import ServerDTO
-from bot.BLL.ServerChannelBLL import ServerChannelBLL
-from bot.BLL.ChannelFeedBLL import ChannelFeedBLL
-from bot.BLL.ChannelEmtyBLL import ChannelEmtyBLL
-from bot.BLL.FeedEmtyBLL import FeedEmtyBLL
-from bot.BLL.ChannelBLL import ChannelBLL
-from bot.BLL.ServerBLL import ServerBLL
-from bot.GUI.FeedEmbed import FeedEmbed
-from bot.utils.ReadRSS import ReadRSS
+from bot.dto.server_channel_dto import ServerChannelDTO
+from bot.dto.channel_emty_dto import ChannelEmtyDTO
+from bot.dto.channel_dto import ChannelDTO
+from bot.dto.server_dto import ServerDTO
+from bot.bll.server_channel_bll import ServerChannelBLL
+from bot.bll.channel_feed_bll import ChannelFeedBLL
+from bot.bll.channel_emty_bll import ChannelEmtyBLL
+from bot.bll.feed_emty_bll import FeedEmtyBLL
+from bot.bll.channel_bll import ChannelBLL
+from bot.bll.server_bll import ServerBLL
+from bot.gui.feed_embeb import FeedEmbed
+from bot.utils.read_rss import ReadRSS
 
 class Events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        
+    def load_guilds(self):
+        serverBLL = ServerBLL() 
+        channelBLL = ChannelBLL()
+        serverChannelBLL = ServerChannelBLL()
+        guilds = self.bot.guilds
+        
+        for guild in guilds:
+            serverDTO = ServerDTO(str(guild.id), str(guild.name))
+            serverBLL.insert_server(serverDTO)
+            
+            for channel in guild.channels:
+                channelDTO = ChannelDTO(str(channel.id), str(channel.name))
+                
+                for channel_of_db in channelBLL.get_all_channel():
+                    if channelDTO.get_id_channel() == channel_of_db.get_id_channel():
+                        serverChannelDTO = ServerChannelDTO(serverDTO, channelDTO)
+                        serverChannelBLL.insert_server_channel(serverChannelDTO)        
 
-    def send_message(self):
+    def load_list_feed(self):
+        channelFeedBLL = ChannelFeedBLL()
+        channelEmtyBLL = ChannelEmtyBLL()
+        feedEmtyBLL = FeedEmtyBLL()
+
+        list_channel_feed = channelFeedBLL.get_all_channel_feed()
+        list_feed_emty = feedEmtyBLL.get_all_feed_emty()
+        
+        for channel_feed in list_channel_feed:
+            feed_of_channel_feed = channel_feed.get_feed()
+            ReadRSS(feed_of_channel_feed.get_link_atom_feed())
+            
+            channel_of_channel_feed = channel_feed.get_channel()
+            channel_id_of_channel_feed = int(channel_of_channel_feed.get_id_channel())
+            
+            for feed_emty in list_feed_emty:
+                feed_of_feed_emty = feed_emty.get_feed()
+                emty_of_feed_emty = feed_emty.get_emty()
+                
+                if feed_of_channel_feed == feed_of_feed_emty:
+                    channel_emty = ChannelEmtyDTO(channel_of_channel_feed, emty_of_feed_emty)
+                    link_emty = emty_of_feed_emty.get_link_emty()
+                    # linkAtom_feed = feed_of_feed_emty.get_link_atom_feed()
+                    
+                    if channelEmtyBLL.insert_channel_emty(channel_emty):
+                        channel_of_channel_emty = channel_emty.get_channel()
+                        channel_id_of_channel_emty = int(channel_of_channel_emty.get_id_channel())
+                        
+                        channel_to_send = self.bot.get_channel(channel_id_of_channel_emty)
+                        if channel_to_send and channel_id_of_channel_feed == channel_id_of_channel_emty:
+                            # embed = FeedEmbed(linkAtom_feed, link_emty).get_embed()
+                            # asyncio.run_coroutine_threadsafe(channel_to_send.send(embed=embed), self.bot.loop)
+                            asyncio.run_coroutine_threadsafe(channel_to_send.send(f"{link_emty}"), self.bot.loop)
+        
+    def push_noti(self):
+        self.load_guilds()
+        self.load_list_feed()
+        
+    def send_message(self): #test
         channel_id = 1123394796329898004
         channel = self.bot.get_channel(channel_id)
         if channel:
@@ -36,56 +92,7 @@ class Events(commands.Cog):
         thread = threading.Thread(target=self.periodic_message)
         thread.daemon = True
         thread.start()
-
-    def push_noti(self):
-        serverBLL = ServerBLL()
-        channelBLL = ChannelBLL()
-        serverChannelBLL = ServerChannelBLL()
-        guilds = self.bot.guilds
-        
-        for guild in guilds:
-            serverDTO = ServerDTO(str(guild.id), str(guild.name))
-            serverBLL.insertServer(serverDTO)
-            
-            for channel in guild.channels:
-                channelDTO = ChannelDTO(str(channel.id), str(channel.name))
-                
-                for channel_of_db in channelBLL.getAllChannel():
-                    if channelDTO.getId_channel() == channel_of_db.getId_channel():
-                        serverChannelDTO = ServerChannelDTO(serverDTO, channelDTO)
-                        serverChannelBLL.insertServerChannel(serverChannelDTO)        
-                
-        channelFeedBLL = ChannelFeedBLL()
-        channelEmtyBLL = ChannelEmtyBLL()
-        feedEmtyBLL = FeedEmtyBLL()
-
-        list_channel_feed = channelFeedBLL.getAllChannelFeed()
-        list_feed_emty = feedEmtyBLL.getAllFeedEmty()
-        
-        for channel_feed in list_channel_feed:
-            ReadRSS(channel_feed.getFeed().getLinkAtom_feed())
-            channel_of_channel_feed = channel_feed.getChannel()
-            channel_id_of_channel_feed = int(channel_of_channel_feed.getId_channel())
-            print(channel_of_channel_feed)
-            
-            for feed_emty in list_feed_emty:
-                feed_of_feed_emty = feed_emty.getFeed()
-                emty_of_feed_emty = feed_emty.getEmty()
-                channel_emty = ChannelEmtyDTO(channel_of_channel_feed, emty_of_feed_emty)
-                
-                linkAtom_feed = feed_of_feed_emty.getLinkAtom_feed()
-                link_emty = emty_of_feed_emty.getLink_emty()
-                
-                if channelEmtyBLL.insertChannelEmty(channel_emty):
-                    channel_of_channel_emty = channel_emty.getChannel()
-                    channel_id_of_channel_emty = int(channel_of_channel_emty.getId_channel())
-                    
-                    channel_to_send = self.bot.get_channel(channel_id_of_channel_emty)
-                    if channel_to_send and channel_id_of_channel_feed == channel_id_of_channel_emty:
-                        # embed = FeedEmbed(linkAtom_feed, link_emty).get_embed()
-                        # asyncio.run_coroutine_threadsafe(channel_to_send.send(embed=embed), self.bot.loop)
-                        asyncio.run_coroutine_threadsafe(channel_to_send.send(f"{link_emty}"), self.bot.loop)
-                    
+                            
     @commands.Cog.listener()
     async def on_ready(self):
         print(f"Bot {self.bot.user} is ready")

@@ -1,21 +1,21 @@
 import nextcord
-from bot.BLL.FeedEmtyBLL import FeedEmtyBLL
+from bot.bll.feed_emty_bll import FeedEmtyBLL
 
 class FeedEmbed:
     def __init__(self, linkAtom_feed: str, link_emty: str):
         feed_emty_bll = FeedEmtyBLL()
-        feed_emty_dto = feed_emty_bll.getFeedEmtyByLinkAtom_feedAndLink_emty(linkAtom_feed, link_emty)
+        feed_emty_dto = feed_emty_bll.get_feed_emty_by_link_atom_feed_and_link_emty(linkAtom_feed, link_emty)
         print(f"feed_emty_dto: {feed_emty_dto}")
         
-        self.__link = feed_emty_dto.getFeed().getLink_feed()
-        self.__logo = feed_emty_dto.getFeed().getLogo_feed()
-        self.__footer_text = feed_emty_dto.getFeed().getDescription_feed()
-        self.__title = feed_emty_dto.getFeed().getTitle_feed()
+        self.__link = feed_emty_dto.get_feed().get_link_feed()
+        self.__logo = feed_emty_dto.get_feed().get_logo_feed()
+        self.__footer_text = feed_emty_dto.get_feed().get_description_feed()
+        self.__title = feed_emty_dto.get_feed().get_title_feed()
         self.__description = f'''
-            [**Xem bài viết**]({feed_emty_dto.getEmty().getLink_emty()})
-            {feed_emty_dto.getEmty().getDescription_emty()}
+            [**Xem bài viết**]({feed_emty_dto.get_emty().get_link_emty()})
+            {feed_emty_dto.get_emty().get_description_emty()}
             '''
-        self.__image = feed_emty_dto.getEmty().getImage_emty()
+        self.__image = feed_emty_dto.get_emty().get_image_emty()
 
     def get_embed(self) -> nextcord.Embed:
         embed = nextcord.Embed(

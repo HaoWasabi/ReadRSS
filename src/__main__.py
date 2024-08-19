@@ -1,13 +1,9 @@
-import os
-import logging
-import tracemalloc
-import asyncio
-import nextcord
+import os, sys, logging, tracemalloc, asyncio, nextcord
 from nextcord.ext import commands
 from dotenv import load_dotenv
 
-from bot.utils.Database import Database
-from test import testServerChannel, testFeedEmty, testChannelFeed, testChannelEmty
+from bot.utils.database import Database
+from test import *
 
 # Load environment variables
 load_dotenv()
@@ -54,7 +50,7 @@ def run():
     if TOKEN: bot.run(TOKEN)
     else: print("TOKEN không được tìm thấy trong file .env.")
 
-if __name__ == "__main__":
+if __name__ == "__main__":    
     about_us()
     asyncio.run(load_cogs())
     run()
@@ -64,15 +60,18 @@ if __name__ == "__main__":
     # Database().delete_table('tbl_channel')
     # Database().delete_table('tbl_server_channel')
     # Database().clear()
+    # Database().drop_table('tbl_channel_feed')
+    # Database().drop_table('tbl_feed')
+    # Database().drop_table('tbl_feed_emty')
     
     # __TEST_READRSS__
-    # testReadRSS()
+    # test_read_rss()
     
     # __TEST_BLL__
-    # testServerChannel()
-    # testFeedEmty()
-    # testChannelFeed()
-    # testChannelEmty()
+    # test_server_channel()
+    # test_feed_emty()
+    # test_channel_feed()
+    # test_channel_emty()
     
     # __TEST_EMBED__
-    # testFeedEmbeb()
+    # test_feed_embeb()

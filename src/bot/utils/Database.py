@@ -1,16 +1,9 @@
-import sys
-import os
-import sqlite3
-
-# Thêm đường dẫn gốc của dự án vào sys.path
-project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-if project_root not in sys.path:
-    sys.path.append(project_root)
-
+import sys, os, sqlite3
+    
 class Database:
     def __init__(self):
         # Sử dụng đường dẫn tuyệt đối đến tệp cơ sở dữ liệu
-        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))  # Lấy thư mục gốc của dự án
         db_path = os.path.join(base_dir, "db.sqlite3")
         self.connection = sqlite3.connect(db_path)
         self.cursor = self.connection.cursor()

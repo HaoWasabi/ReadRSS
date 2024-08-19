@@ -1,15 +1,13 @@
-import sys
-import os
-import sqlite3
-from bot.DTO.ChannelDTO import ChannelDTO
+import os, sqlite3, sys
 from typing import Optional, List
-
+from bot.dto.channel_dto import ChannelDTO
+    
 class ChannelDAL:
     def __init__(self):
         # Sử dụng đường dẫn tuyệt đối đến tệp cơ sở dữ liệu
-        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))  # Lấy thư mục gốc của dự án
         db_path = os.path.join(base_dir, "db.sqlite3")
-                
+        
         self.__connection = sqlite3.connect(db_path)
         self.__cursor = self.__connection.cursor()
         self.create_table()
@@ -27,13 +25,13 @@ class ChannelDAL:
         except sqlite3.Error as e:
             print(f"Error creating table 'tbl_channel': {e}")
             
-    def insertChannel(self, channel_dto: ChannelDTO) -> bool: 
+    def insert_channel(self, channel_dto: ChannelDTO) -> bool: 
         try:
             with self.__connection:
                 self.__cursor.execute('''
                     INSERT INTO tbl_channel (id_channel, name_channel)
                     VALUES (?, ?)
-                    ''', (channel_dto.getId_channel(), channel_dto.getName_channel()))
+                    ''', (channel_dto.get_id_channel(), channel_dto.get_name_channel()))
                 self.__connection.commit()
                 print(f"Data inserted into 'tbl_channel' successfully.")
                 return True
@@ -41,7 +39,7 @@ class ChannelDAL:
             print(f"Error inserting data into 'tbl_channel': {e}")
             return False
 
-    def deleteChannelById_channel(self, id_channel: str) -> bool:
+    def delete_channel_by_id_channel(self, id_channel: str) -> bool:
         try:
             with self.__connection:
                 self.__cursor.execute('''
@@ -54,7 +52,7 @@ class ChannelDAL:
             print(f"Error deleting data from 'tbl_channel': {e}")
             return False
             
-    def deleteAllChannel(self) -> bool:
+    def delete_all_channel(self) -> bool:
         try:
             with self.__connection:
                 self.__connection.execute('''
@@ -67,14 +65,14 @@ class ChannelDAL:
             print(f"Error deleting from data 'tbl_channel': {e}")
             return False
 
-    def updateChannelById_channel(self,id_channel: str, channel_dto: ChannelDTO) -> bool:
+    def update_channel_by_id_channel(self,id_channel: str, channel_dto: ChannelDTO) -> bool:
         try:
             with self.__connection:
                 self.__cursor.execute('''
                 UPDATE tbl_channel
                 SET id_channel = ?, name_channel = ?
                 WHERE id_channel = ?
-                ''', (channel_dto.getId_channel(), channel_dto.getName_channel(), id_channel))
+                ''', (channel_dto.get_id_channel(), channel_dto.get_name_channel(), id_channel))
                 self.__connection.commit()
                 print(f"Data updated in 'tbl_channel' successfully.")
                 return True
@@ -82,7 +80,7 @@ class ChannelDAL:
             print(f"Error updating data in 'tbl_channel': {e}")
             return False
             
-    def getChannelById_channel(self, id_channel: str) -> Optional[ChannelDTO]:
+    def get_channel_by_id_channel(self, id_channel: str) -> Optional[ChannelDTO]:
         try:
             self.__cursor.execute('''
             SELECT * FROM tbl_channel WHERE id_channel = ?
@@ -97,7 +95,7 @@ class ChannelDAL:
             return None
 
         
-    def getAllChannel(self) -> List[ChannelDTO]:
+    def get_all_channel(self) -> List[ChannelDTO]:
         try:
             self.__cursor.execute('''
             SELECT * FROM tbl_channel
