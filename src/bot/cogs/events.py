@@ -73,7 +73,7 @@ class Events(commands.Cog):
                             asyncio.run_coroutine_threadsafe(channel_to_send.send(f"{link_emty}"), self.bot.loop)
         
     def push_noti(self):
-        self.load_guilds()
+        # self.load_guilds()
         self.load_list_feed()
         
     def send_message(self): #test

@@ -1,11 +1,14 @@
 from bot.dto.feed_dto import FeedDTO
 from bot.dto.emty_dto import EmtyDTO
+from bot.dto.color_dto import ColorDTO
 from bot.dto.channel_dto import ChannelDTO
 from bot.dto.server_dto import ServerDTO
 from bot.dto.feed_emty_dto import FeedEmtyDTO
 from bot.dto.channel_emty_dto import ChannelEmtyDTO
 from bot.dto.channel_feed_dto import ChannelFeedDTO
 from bot.dto.server_channel_dto import ServerChannelDTO
+from bot.dto.server_color import ServerColorDTO
+from bot.dal.server_color_dal import ServerColorDAL
 from bot.bll.feed_bll import FeedBLL
 from bot.bll.emty_bll import EmtyBLL
 from bot.bll.feed_emty_bll import FeedEmtyBLL
@@ -14,6 +17,7 @@ from bot.bll.channel_bll import ChannelBLL
 from bot.bll.channel_emty_bll import ChannelEmtyBLL
 from bot.bll.channel_feed_bll import ChannelFeedBLL
 from bot.bll.server_channel_bll import ServerChannelBLL
+from bot.bll.server_color_bll import ServerColorBLL
 from bot.gui.feed_embeb import FeedEmbed
 from bot.utils.read_rss import ReadRSS
 
@@ -147,6 +151,34 @@ def test_channel_feed():
             print("FINSH - - - - - - - - - - ")
         else:
             print("No data found for getAllChannelFeed.")
+    except Exception as e:
+        print(f"Một lỗi không xảy ra: {e}")
+
+def test_server_color():
+    print ('''
+           -- TEST SERVER_COLOR --
+           ''')
+    colorDTO = ColorDTO("RED")
+    serverDTO = ServerDTO("d", "a")
+    serverColorDTO = ServerColorDTO(serverDTO, colorDTO)
+    print(serverColorDTO)
+    serverColorBLL = ServerColorBLL()
+    # serverColorBLL.delete_all_server_color()
+    serverColorBLL.insert_server_color(serverColorDTO)
+    
+    try:
+        print(serverColorBLL.get_server_color_by_id_server("b"))
+        serverColorDTO.set_color(ColorDTO("BLUE"))
+        serverColorBLL.update_server_color_by_id_server("a", serverColorDTO)
+        
+        print("\nLIST SERVER_COLOR DTO: BEGIN - - - -")
+        results = serverColorBLL.get_all_server_color()
+        if results:
+            for i in results:
+                print(i)
+            print("FINSH - - - - - - - - - - ")
+        else:
+            print("No data found for getAllServerColor.")
     except Exception as e:
         print(f"Một lỗi không xảy ra: {e}")
         

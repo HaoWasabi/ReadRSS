@@ -1,9 +1,8 @@
 import os, sys, logging, tracemalloc, asyncio, nextcord
 from nextcord.ext import commands
 from dotenv import load_dotenv
-
 from bot.utils.database import Database
-from test import *
+from test import test_server_color
 
 # Load environment variables
 load_dotenv()
@@ -62,7 +61,7 @@ if __name__ == "__main__":
     # Database().clear()
     # Database().drop_table('tbl_channel_feed')
     # Database().drop_table('tbl_feed')
-    # Database().drop_table('tbl_feed_emty')
+    # Database().drop_table('tbl_server_color')
     
     # __TEST_READRSS__
     # test_read_rss()
@@ -72,6 +71,7 @@ if __name__ == "__main__":
     # test_feed_emty()
     # test_channel_feed()
     # test_channel_emty()
+    # test_server_color()
     
     # __TEST_EMBED__
     # test_feed_embeb()
