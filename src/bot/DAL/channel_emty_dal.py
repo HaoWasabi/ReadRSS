@@ -1,8 +1,8 @@
 import os, sqlite3, sys
 from typing import Optional, List
-from bot.dto.channel_dto import ChannelDTO
-from bot.dto.emty_dto import EmtyDTO
-from bot.dto.channel_emty_dto import ChannelEmtyDTO
+from ..DTO.channel_dto import ChannelDTO
+from ..DTO.emty_dto import EmtyDTO
+from ..DTO.channel_emty_dto import ChannelEmtyDTO
     
 class ChannelEmtyDAL:
     def __init__(self):

@@ -1,6 +1,6 @@
 import os, sqlite3, sys
 from typing import Optional, List
-from bot.dto.emty_dto import EmtyDTO
+from ..DTO.emty_dto import EmtyDTO
     
 class EmtyDAL:
     def __init__(self):

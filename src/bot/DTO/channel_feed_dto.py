@@ -1,5 +1,6 @@
-from bot.dto.channel_dto import ChannelDTO
-from bot.dto.feed_dto import FeedDTO
+from ..DTO.channel_dto import ChannelDTO
+from ..DTO.feed_dto import FeedDTO
+from types import NotImplementedType
 
 class ChannelFeedDTO:
     def __init__(self, channel_dto: ChannelDTO, feed_dto: FeedDTO):
@@ -10,6 +11,8 @@ class ChannelFeedDTO:
         return f"ChannelFeedDTO(channel={self.__channel_dto}, feed={self.__feed_dto})"
 
     def __eq__(self, other: object) -> bool:
+        if not isinstance(other, ChannelFeedDTO):
+            return NotImplementedType
         return self.__channel_dto == other.__channel_dto and self.__feed_dto == other.__feed_dto
     
     def set_channel(self, channel_dto: ChannelDTO) -> None:

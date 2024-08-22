@@ -1,8 +1,8 @@
 import os, sqlite3, sys
 from typing import List, Optional
-from bot.dto.feed_dto import FeedDTO
-from bot.dto.emty_dto import EmtyDTO
-from bot.dto.feed_emty_dto import FeedEmtyDTO
+from ..DTO.feed_dto import FeedDTO
+from ..DTO.emty_dto import EmtyDTO
+from ..DTO.feed_emty_dto import FeedEmtyDTO
     
 class FeedEmtyDAL:
     def __init__(self):

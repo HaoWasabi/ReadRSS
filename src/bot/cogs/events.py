@@ -3,17 +3,17 @@ import threading
 import asyncio
 import nextcord
 from nextcord.ext import commands
-from bot.dto.server_channel_dto import ServerChannelDTO
-from bot.dto.channel_emty_dto import ChannelEmtyDTO
-from bot.dto.channel_dto import ChannelDTO
-from bot.dto.server_dto import ServerDTO
-from bot.bll.server_channel_bll import ServerChannelBLL
-from bot.bll.channel_feed_bll import ChannelFeedBLL
-from bot.bll.channel_emty_bll import ChannelEmtyBLL
-from bot.bll.feed_emty_bll import FeedEmtyBLL
-from bot.bll.channel_bll import ChannelBLL
-from bot.bll.server_bll import ServerBLL
-from bot.gui.feed_embeb import FeedEmbed
+from ..DTO.server_channel_dto import ServerChannelDTO
+from ..DTO.channel_emty_dto import ChannelEmtyDTO
+from ..DTO.channel_dto import ChannelDTO
+from ..DTO.server_dto import ServerDTO
+from ..BLL.server_channel_bll import ServerChannelBLL
+from ..BLL.channel_feed_bll import ChannelFeedBLL
+from ..BLL.channel_emty_bll import ChannelEmtyBLL
+from ..BLL.feed_emty_bll import FeedEmtyBLL
+from ..BLL.channel_bll import ChannelBLL
+from ..BLL.server_bll import ServerBLL
+from ..GUI.feed_embeb import FeedEmbed
 from bot.utils.read_rss import ReadRSS
 
 class Events(commands.Cog):
@@ -131,4 +131,4 @@ Lệnh **{ctx.invoked_with}** không hợp lệ
         ''')
 
 async def setup(bot):
-    await bot.add_cog(Events(bot))
+    bot.add_cog(Events(bot))

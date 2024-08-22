@@ -1,5 +1,6 @@
-from bot.dto.server_dto import ServerDTO
-from bot.dto.color_dto import ColorDTO
+from ..DTO.server_dto import ServerDTO
+from ..DTO.color_dto import ColorDTO
+from types import NotImplementedType
 
 class ServerColorDTO:
     def __init__(self, server_dto: ServerDTO, color_dto: ColorDTO):
@@ -10,6 +11,8 @@ class ServerColorDTO:
         return f"ServerColorDTO(server={self.__server_dto}, color={self.__color_dto})"
     
     def __eq__(self, other: object) -> bool:
+        if not isinstance(other, ServerColorDTO):
+            return NotImplementedType
         return self.__server_dto == other.__server_dto and self.__color_dto == other.__color_dto
     
     def set_server(self, server_dto: ServerDTO) -> None:

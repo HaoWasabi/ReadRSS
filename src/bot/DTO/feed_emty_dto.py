@@ -1,6 +1,6 @@
-from bot.dto.feed_dto import FeedDTO
-from bot.dto.emty_dto import EmtyDTO
-
+from ..DTO.feed_dto import FeedDTO
+from ..DTO.emty_dto import EmtyDTO
+from types import NotImplementedType
 class FeedEmtyDTO:
     def __init__(self, feed_dto: FeedDTO, emty_dto: EmtyDTO):
         self.__feed_dto = feed_dto
@@ -10,6 +10,8 @@ class FeedEmtyDTO:
         return f"FeedEmtyDTO(feed={self.__feed_dto}, emty={self.__emty_dto})"
 
     def __eq__(self, other: object) -> bool:
+        if not isinstance(other, FeedEmtyDTO):
+            return NotImplementedType
         return self.__feed_dto == other.__feed_dto and self.__emty_dto == other.__emty_dto
     
     def set_feed(self, feed_dto: FeedDTO) -> None:

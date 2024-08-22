@@ -1,3 +1,5 @@
+from types import NotImplementedType
+
 class FeedDTO:
     def __init__(self, link_feed: str, link_atom_feed: str, title_feed: str, description_feed: str, logo_feed: str, pubDate_feed: str):
         self.__link_feed = link_feed
@@ -10,7 +12,9 @@ class FeedDTO:
     def __str__(self) -> str:
         return f"FeedDTO(link_feed={self.__link_feed}, link_atom_feed={self.__link_atom_feed}, title_feed={self.__title_feed}, description_feed={self.__description_feed}, logo_feed={self.__logo_feed}, pubdate_feed={self.__pubdate_feed})"
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: object) -> bool | NotImplementedType:
+        if not isinstance(other, FeedDTO):
+            return NotImplementedType
         return self.__link_feed == other.__link_feed and self.__link_atom_feed == other.__link_atom_feed and self.__title_feed == other.__title_feed and self.__description_feed == other.__description_feed and self.__logo_feed == other.__logo_feed and self.__pubdate_feed == other.__pubdate_feed
     
     def set_link_feed(self, link_feed: str) -> None:

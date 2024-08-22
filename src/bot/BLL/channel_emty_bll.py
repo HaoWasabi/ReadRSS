@@ -1,5 +1,5 @@
-from bot.dto.channel_emty_dto import ChannelEmtyDTO
-from bot.dal.channel_emty_dal import ChannelEmtyDAL
+from ..DTO.channel_emty_dto import ChannelEmtyDTO
+from ..DAL.channel_emty_dal import ChannelEmtyDAL
 from typing import Optional, List
 
 class ChannelEmtyBLL:
@@ -11,24 +11,28 @@ class ChannelEmtyBLL:
             return self.__channelEmtyDAL.insert_channel_emty(channel_emty_dto)
         except Exception as e:
             print(f"Error inserting ChannelEmty: {e}")
+            return False
     
     def delete_channel_emty_by_id_channel(self, id_channel: str) -> bool:  
         try:
             return self.__channelEmtyDAL.delete_channel_emty_by_id_channel(id_channel)
         except Exception as e:
             print(f"Error deleting ChannelEmty: {e}")
+            return False
             
     def delete_channel_emty_by_id_channel_and_link_emty(self, id_channel: str, link_emty: str) -> bool:
         try:
             return self.__channelEmtyDAL.delete_channel_emty_by_id_channel_and_link_emty(id_channel, link_emty)
         except Exception as e:
             print(f"Error deleting ChannelEmty: {e}")
+            return False
             
     def delete_all_channel_emty(self) -> bool:
         try:
             return self.__channelEmtyDAL.delete_all_channel_emty()
         except Exception as e:
             print(f"Error deleting ChannelEmty: {e}")
+            return False
     
     def get_channel_emty_by_id_channel_and_link_emty(self, id_channel: str, link_emty: str) -> Optional[ChannelEmtyDTO]:
         try:
@@ -41,3 +45,4 @@ class ChannelEmtyBLL:
             return self.__channelEmtyDAL.get_all_channel_emty()
         except Exception as e:
             print(f"Error fetchting ChannelEmty: {e}")
+            return []

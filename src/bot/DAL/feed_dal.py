@@ -1,6 +1,6 @@
 import os, sqlite3, sys
 from typing import List, Optional
-from bot.dto.feed_dto import FeedDTO
+from ..DTO.feed_dto import FeedDTO
     
 class FeedDAL:
     def __init__(self):

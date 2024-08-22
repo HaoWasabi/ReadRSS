@@ -1,6 +1,6 @@
-from bot.dto.server_dto import ServerDTO
-from bot.dto.channel_dto import ChannelDTO
-
+from ..DTO.server_dto import ServerDTO
+from ..DTO.channel_dto import ChannelDTO
+from types import NotImplementedType
 class ServerChannelDTO:
     def __init__(self, server_dto: ServerDTO, channel_dto: ChannelDTO):
         self.__server_dto = server_dto
@@ -10,6 +10,8 @@ class ServerChannelDTO:
         return f"ServerChannelDTO(server_dto={self.__server_dto}, channel_dto={self.__channel_dto})"
     
     def __eq__(self, other: object) -> bool:
+        if not isinstance(object, ServerChannelDTO):
+            return NotImplementedType
         return self.__server_dto == other.__server_dto and self.__channel_dto == other.__channel_dto
     
     def set_server(self, server_dto: ServerDTO) -> None:

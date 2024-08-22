@@ -1,3 +1,5 @@
+from types import NotImplementedType
+
 class ServerDTO:
     def __init__(self, id_server: str, name_server: str):
         self.__id_server = id_server
@@ -7,6 +9,8 @@ class ServerDTO:
         return f"ServerDTO(id_server={self.__id_server}, name_server={self.__name_server})"
     
     def __eq__(self, other: object) -> bool:
+        if not isinstance(other, ServerDTO):
+            return NotImplementedType
         return self.__id_server == other.__id_server and self.__name_server == other.__name_server
     
     def set_id_server(self, id_server: str) -> None:
