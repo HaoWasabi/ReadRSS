@@ -4,14 +4,14 @@ import nextcord
 
 class AdminCommands(commands.Cog):
     def __init__(self, bot):
-        self.__bot = bot
+        self.bot = bot
 
     @commands.command(name="shutdown")
     @commands.is_owner()
     async def shutdown(self, ctx):
         try: 
             await ctx.send("Bot is shutting down...")
-            await self.__bot.close()
+            await self.bot.close()
         except Exception as e:
             print(f"Error: {e}")
             await ctx.send(f"Error: {e}")
@@ -25,7 +25,7 @@ class AdminCommands(commands.Cog):
     @commands.command(name="servers")
     @commands.is_owner()
     async def servers(self, ctx):
-        guilds = self.__bot.guilds
+        guilds = self.bot.guilds
         num = 0
         for guild in guilds:
             guild_names += [guild.name]

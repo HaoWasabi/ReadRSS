@@ -2,7 +2,7 @@ import os, sqlite3, sys
 from typing import Optional, List
 from bot.dto.server_dto import ServerDTO
 from bot.dto.color_dto import ColorDTO
-from bot.dto.server_color import ServerColorDTO
+from bot.dto.server_color_dto import ServerColorDTO
 
 class ServerColorDAL:
     def __init__(self):
@@ -20,7 +20,7 @@ class ServerColorDAL:
             CREATE TABLE IF NOT EXISTS tbl_server_color(
                 id_server TEXT PRIMARY KEY,
                 hex_color TEXT,
-                hex_name TEXT,
+                name_color TEXT,
                 FOREIGN KEY (id_server) REFERENCES tbl_server(id_server)
             )
             ''')
@@ -34,7 +34,7 @@ class ServerColorDAL:
             with self.__connection:
                 color_dto = server_color_dto.get_color()
                 self.__cursor.execute('''
-                    INSERT INTO tbl_server_color (id_server, hex_color, hex_name)
+                    INSERT INTO tbl_server_color (id_server, hex_color, name_color)
                     VALUES (?, ?, ?)
                     ''', (server_color_dto.get_server().get_id_server(), color_dto.get_hex_color(), color_dto.get_name_color()))
                 self.__connection.commit()
@@ -77,7 +77,7 @@ class ServerColorDAL:
                 color_dto = server_color_dto.get_color()
                 self.__cursor.execute('''
                 UPDATE tbl_server_color
-                SET hex_color = ?, hex_name = ?
+                SET hex_color = ?, name_color = ?
                 WHERE id_server = ?
                 ''', (color_dto.get_hex_color(), color_dto.get_name_color(), id_server))
                 self.__connection.commit()
@@ -90,12 +90,14 @@ class ServerColorDAL:
     def get_server_color_by_id_server(self, id_server: str) -> Optional[ServerColorDTO]:
         try:
             self.__cursor.execute('''
-            SELECT * FROM tbl_server_color
-            WHERE id_server = ?
+            SELECT s.id_server, s.name_server, sc.name_color
+            FROM tbl_server_color sc
+            JOIN tbl_server s ON sc.id_server = s.id_server
+            WHERE sc.id_server = ?
             ''', (id_server,))
             row = self.__cursor.fetchone()
             if row:
-                server_color_dto = ServerColorDTO(ServerDTO(row[0]), ColorDTO(row[1]))
+                server_color_dto = ServerColorDTO(ServerDTO(row[0], row[1]), ColorDTO(row[2]))
                 return server_color_dto
             return None
         except sqlite3.Error as e:
@@ -105,12 +107,14 @@ class ServerColorDAL:
     def get_all_server_color(self) -> List[ServerColorDTO]:
         try:
             self.__cursor.execute('''
-            SELECT * FROM tbl_server_color
+            SELECT s.id_server, s.name_server, sc.name_color
+            FROM tbl_server_color sc
+            JOIN tbl_server s ON sc.id_server = s.id_server
             ''')
             rows = self.__cursor.fetchall()
             server_color_dtos = []
             for row in rows:
-                server_color_dto = ServerColorDTO(ServerDTO(row[0]), ColorDTO(row[1]))
+                server_color_dto = ServerColorDTO(ServerDTO(row[0], row[1]), ColorDTO(row[2]))
                 server_color_dtos.append(server_color_dto)
             return server_color_dtos
         except sqlite3.Error as e:

@@ -1,4 +1,4 @@
-from bot.dto.server_color import ServerColorDTO
+from bot.dto.server_color_dto import ServerColorDTO
 from bot.dal.server_color_dal import ServerColorDAL
 from typing import Optional, List
 

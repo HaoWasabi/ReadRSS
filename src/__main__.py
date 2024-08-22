@@ -24,35 +24,47 @@ including Facebook and much more.
                                                                   
 ''')
 
+# Start memory tracking
 tracemalloc.start()
 
+# Set up intents
 intents = nextcord.Intents.default()
 intents.message_content = True
 intents.guilds = True
 
+# Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('nextcord')
 
+# Set up bot instance
 bot = commands.Bot(command_prefix='_', intents=intents)
 
-# Load cogs
+# Load cogs asynchronously
 async def load_cogs():
-    for filename in os.listdir(os.path.join(os.path.dirname(__file__), 'bot/cogs')):
+    cogs_dir = os.path.join(os.path.dirname(__file__), 'bot/cogs')
+    for filename in os.listdir(cogs_dir):
         if filename.endswith('.py') and filename != '__init__.py':
+            cog_name = f'bot.cogs.{filename[:-3]}'
             try:
-                await bot.load_extension(f'bot.cogs.{filename[:-3]}')
+                await bot.load_extension(cog_name)
+                logger.info(f'Successfully loaded extension {cog_name}')
             except Exception as e:
-                print(f'Failed to load extension {filename}: {e}')
+                logger.error(f'Failed to load extension {cog_name}: {e}')
 
-def run():    
+def run_bot():
     TOKEN = os.getenv('DISCORD_TOKEN')
-    if TOKEN: bot.run(TOKEN)
-    else: print("TOKEN không được tìm thấy trong file .env.")
+    if TOKEN:
+        bot.run(TOKEN)
+    else:
+        logger.error("DISCORD_TOKEN not found in .env file.")
 
-if __name__ == "__main__":    
+if __name__ == "__main__":
+    # Display about info
     about_us()
+    
+    # Run bot and load cogs
     asyncio.run(load_cogs())
-    run()
+    run_bot()
 
     # __CLEAR_DATABASE__
     # Database().delete_table('tbl_channel_emty')
@@ -62,7 +74,7 @@ if __name__ == "__main__":
     # Database().drop_table('tbl_channel_feed')
     # Database().drop_table('tbl_feed')
     # Database().drop_table('tbl_server_color')
-    
+
     # __TEST_READRSS__
     # test_read_rss()
     

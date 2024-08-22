@@ -21,30 +21,30 @@ class Events(commands.Cog):
         self.bot = bot
         
     def load_guilds(self):
-        serverBLL = ServerBLL() 
-        channelBLL = ChannelBLL()
-        serverChannelBLL = ServerChannelBLL()
+        server_bll = ServerBLL() 
+        channel_bll = ChannelBLL()
+        server_channel_bll = ServerChannelBLL()
         guilds = self.bot.guilds
         
         for guild in guilds:
-            serverDTO = ServerDTO(str(guild.id), str(guild.name))
-            serverBLL.insert_server(serverDTO)
+            server_dto = ServerDTO(str(guild.id), str(guild.name))
+            server_bll.insert_server(server_dto)
             
             for channel in guild.channels:
-                channelDTO = ChannelDTO(str(channel.id), str(channel.name))
+                channel_dto = ChannelDTO(str(channel.id), str(channel.name))
                 
-                for channel_of_db in channelBLL.get_all_channel():
-                    if channelDTO.get_id_channel() == channel_of_db.get_id_channel():
-                        serverChannelDTO = ServerChannelDTO(serverDTO, channelDTO)
-                        serverChannelBLL.insert_server_channel(serverChannelDTO)        
+                for channel_of_db in channel_bll.get_all_channel():
+                    if channel_dto.get_id_channel() == channel_of_db.get_id_channel():
+                        server_channel_dto = ServerChannelDTO(server_dto, channel_dto)
+                        server_channel_bll.insert_server_channel(server_channel_dto)
 
     def load_list_feed(self):
-        channelFeedBLL = ChannelFeedBLL()
-        channelEmtyBLL = ChannelEmtyBLL()
-        feedEmtyBLL = FeedEmtyBLL()
+        channel_feed_bll = ChannelFeedBLL()
+        channel_emty_bll = ChannelEmtyBLL()
+        feed_emty_bll = FeedEmtyBLL()
 
-        list_channel_feed = channelFeedBLL.get_all_channel_feed()
-        list_feed_emty = feedEmtyBLL.get_all_feed_emty()
+        list_channel_feed = channel_feed_bll.get_all_channel_feed()
+        list_feed_emty = feed_emty_bll.get_all_feed_emty()
         
         for channel_feed in list_channel_feed:
             feed_of_channel_feed = channel_feed.get_feed()
@@ -60,23 +60,19 @@ class Events(commands.Cog):
                 if feed_of_channel_feed == feed_of_feed_emty:
                     channel_emty = ChannelEmtyDTO(channel_of_channel_feed, emty_of_feed_emty)
                     link_emty = emty_of_feed_emty.get_link_emty()
-                    # linkAtom_feed = feed_of_feed_emty.get_link_atom_feed()
                     
-                    if channelEmtyBLL.insert_channel_emty(channel_emty):
+                    if channel_emty_bll.insert_channel_emty(channel_emty):
                         channel_of_channel_emty = channel_emty.get_channel()
                         channel_id_of_channel_emty = int(channel_of_channel_emty.get_id_channel())
                         
                         channel_to_send = self.bot.get_channel(channel_id_of_channel_emty)
                         if channel_to_send and channel_id_of_channel_feed == channel_id_of_channel_emty:
-                            # embed = FeedEmbed(linkAtom_feed, link_emty).get_embed()
-                            # asyncio.run_coroutine_threadsafe(channel_to_send.send(embed=embed), self.bot.loop)
                             asyncio.run_coroutine_threadsafe(channel_to_send.send(f"{link_emty}"), self.bot.loop)
-        
+
     def push_noti(self):
-        # self.load_guilds()
         self.load_list_feed()
         
-    def send_message(self): #test
+    def send_message(self):  # Test
         channel_id = 1123394796329898004
         channel = self.bot.get_channel(channel_id)
         if channel:
@@ -84,7 +80,6 @@ class Events(commands.Cog):
 
     def periodic_message(self):
         while True:
-            # self.send_message()
             self.push_noti()
             time.sleep(10)
 
@@ -96,8 +91,8 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print(f"Bot {self.bot.user} is ready")
-        print("Các lệnh command hiện có:", [command.name for command in self.bot.commands])
-        print("Các lệnh slash command hiện có:", [command.name for command in self.bot.get_application_commands()])
+        print("Current commands:", [command.name for command in self.bot.commands])
+        print("Current slash commands:", [command.name for command in self.bot.get_application_commands()])
         self.start_periodic_messages()
         
         await self.bot.sync_all_application_commands()

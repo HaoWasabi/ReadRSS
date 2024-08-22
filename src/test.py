@@ -7,8 +7,7 @@ from bot.dto.feed_emty_dto import FeedEmtyDTO
 from bot.dto.channel_emty_dto import ChannelEmtyDTO
 from bot.dto.channel_feed_dto import ChannelFeedDTO
 from bot.dto.server_channel_dto import ServerChannelDTO
-from bot.dto.server_color import ServerColorDTO
-from bot.dal.server_color_dal import ServerColorDAL
+from bot.dto.server_color_dto import ServerColorDTO
 from bot.bll.feed_bll import FeedBLL
 from bot.bll.emty_bll import EmtyBLL
 from bot.bll.feed_emty_bll import FeedEmtyBLL
@@ -158,18 +157,25 @@ def test_server_color():
     print ('''
            -- TEST SERVER_COLOR --
            ''')
+    serverBLL = ServerBLL()
+    serverDTO = ServerDTO("b", "a")
+    serverBLL.insert_server(serverDTO)
+    
     colorDTO = ColorDTO("RED")
-    serverDTO = ServerDTO("d", "a")
     serverColorDTO = ServerColorDTO(serverDTO, colorDTO)
+    print(serverDTO)
+    print(colorDTO)
     print(serverColorDTO)
+    
     serverColorBLL = ServerColorBLL()
     # serverColorBLL.delete_all_server_color()
     serverColorBLL.insert_server_color(serverColorDTO)
     
     try:
         print(serverColorBLL.get_server_color_by_id_server("b"))
-        serverColorDTO.set_color(ColorDTO("BLUE"))
-        serverColorBLL.update_server_color_by_id_server("a", serverColorDTO)
+        serverColorDTO.set_color(ColorDTO("A"))
+        serverColorBLL.update_server_color_by_id_server("b", serverColorDTO)
+        # serverColorBLL.delete_server_color_by_id_server("b")
         
         print("\nLIST SERVER_COLOR DTO: BEGIN - - - -")
         results = serverColorBLL.get_all_server_color()
