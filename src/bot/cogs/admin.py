@@ -1,9 +1,11 @@
 from nextcord.ext import commands
-from bot.utils.database import Database
-import nextcord
+from ..utils.Database import dataBase
+from nextcord import Guild
+from nextcord.ext.commands import Bot
 
 class AdminCommands(commands.Cog):
-    def __init__(self, bot):
+    
+    def __init__(self, bot: Bot):
         self.bot = bot
 
     @commands.command(name="shutdown")
@@ -19,7 +21,7 @@ class AdminCommands(commands.Cog):
     @commands.command(name="superclear")
     @commands.is_owner()
     async def superclear(self, ctx):
-        Database().clear()
+        dataBase.clear()
         await ctx.send("Cleared all data in the database successfully.")
 
     @commands.command(name="servers")
@@ -27,8 +29,9 @@ class AdminCommands(commands.Cog):
     async def servers(self, ctx):
         guilds = self.bot.guilds
         num = 0
+        guild_names = []
         for guild in guilds:
-            guild_names += [guild.name]
+            guild_names.append(guild.name)
             num += 1
         await ctx.send(f'The bot joined **{num}** guilds: **{", ".join(guild_names)}**')
       

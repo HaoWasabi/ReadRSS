@@ -1,12 +1,12 @@
 import feedparser
 from bs4 import BeautifulSoup
 from typing import Optional
-from bot.dto.feed_dto import FeedDTO
-from bot.dto.emty_dto import EmtyDTO
-from bot.dto.feed_emty_dto import FeedEmtyDTO
-from bot.bll.feed_bll import FeedBLL
-from bot.bll.emty_bll import EmtyBLL
-from bot.bll.feed_emty_bll import FeedEmtyBLL
+from ..DTO.feed_dto import FeedDTO
+from ..DTO.emty_dto import EmtyDTO
+from ..DTO.feed_emty_dto import FeedEmtyDTO
+from ..BLL.feed_bll import FeedBLL
+from ..BLL.emty_bll import EmtyBLL
+from ..BLL.feed_emty_bll import FeedEmtyBLL
 
 def parse_html(content):
     if content is None:
@@ -22,7 +22,7 @@ def parse_html(content):
 class ReadRSS:
     def __init__(self, linkAtom_feed: str):
         self.__feed = feedparser.parse(linkAtom_feed)
-        logo_url = self.__feed.feed.image.href if 'image' in self.__feed.feed else None
+        logo_url = self.__feed.feed.image.href if 'image' in self.__feed.feed else ''
         feed_dto = FeedDTO(self.__feed.feed.link, self.__feed.feed.title_detail.base, self.__feed.feed.title, self.__feed.feed.description, logo_url, self.__feed.feed.updated)
         
         feed_bll = FeedBLL()

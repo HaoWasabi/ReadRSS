@@ -1,5 +1,6 @@
-from bot.dto.channel_dto import ChannelDTO
-from bot.dto.emty_dto import EmtyDTO
+from ..DTO.channel_dto import ChannelDTO
+from ..DTO.emty_dto import EmtyDTO
+from types import NotImplementedType
 
 class ChannelEmtyDTO:
     def __init__(self, channel_dto: ChannelDTO, emty_dto: EmtyDTO):
@@ -10,6 +11,8 @@ class ChannelEmtyDTO:
         return f"ChannelEmtyDTO(channel={self.__channel_dto}, emty={self.__emty_dto})"
     
     def __eq__(self, other: object) -> bool:
+        if not isinstance(other, ChannelEmtyDTO):
+            return NotImplementedType
         return self.__channel_dto == other.__channel_dto and self.__emty_dto == other.__emty_dto
     
     def set_channel(self, channel_dto: ChannelDTO) -> None:

@@ -1,8 +1,8 @@
 import os, sqlite3, sys
 from typing import Optional, List
-from bot.dto.server_dto import ServerDTO
-from bot.dto.channel_dto import ChannelDTO
-from bot.dto.server_channel_dto import ServerChannelDTO
+from ..DTO.server_dto import ServerDTO
+from ..DTO.channel_dto import ChannelDTO
+from ..DTO.server_channel_dto import ServerChannelDTO
     
 class ServerChannelDAL:
     def __init__(self):

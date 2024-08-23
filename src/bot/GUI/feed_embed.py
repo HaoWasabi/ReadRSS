@@ -1,11 +1,16 @@
 import nextcord
-from bot.bll.feed_emty_bll import FeedEmtyBLL
+from ..BLL.feed_emty_bll import FeedEmtyBLL
 
 class FeedEmbed:
     def __init__(self, linkAtom_feed: str, link_emty: str):
         feed_emty_bll = FeedEmtyBLL()
         feed_emty_dto = feed_emty_bll.get_feed_emty_by_link_atom_feed_and_link_emty(linkAtom_feed, link_emty)
         print(f"feed_emty_dto: {feed_emty_dto}")
+        
+        
+        # NOTE: cái này em không biết sử lý sao nữa
+        if feed_emty_dto is None:
+            return
         
         self.__link = feed_emty_dto.get_feed().get_link_feed()
         self.__logo = feed_emty_dto.get_feed().get_logo_feed()

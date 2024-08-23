@@ -1,8 +1,8 @@
 import os, sqlite3, sys
 from typing import List, Optional
-from bot.dto.channel_dto import ChannelDTO
-from bot.dto.feed_dto import FeedDTO
-from bot.dto.channel_feed_dto import ChannelFeedDTO
+from ..DTO.channel_dto import ChannelDTO
+from ..DTO.feed_dto import FeedDTO
+from ..DTO.channel_feed_dto import ChannelFeedDTO
 
 class ChannelFeedDAL:
     def __init__(self):

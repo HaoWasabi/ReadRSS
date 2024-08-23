@@ -1,6 +1,6 @@
 import os, sqlite3, sys
 from typing import Optional, List
-from bot.dto.server_dto import ServerDTO
+from ..DTO.server_dto import ServerDTO
     
 class ServerDAL:
     def __init__(self):

@@ -1,13 +1,13 @@
 import os, sqlite3, sys
 from typing import Optional, List
-from bot.dto.channel_dto import ChannelDTO
+from ..DTO.channel_dto import ChannelDTO
     
 class ChannelDAL:
     def __init__(self):
         # Sử dụng đường dẫn tuyệt đối đến tệp cơ sở dữ liệu
         base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))  # Lấy thư mục gốc của dự án
         db_path = os.path.join(base_dir, "db.sqlite3")
-        
+
         self.__connection = sqlite3.connect(db_path)
         self.__cursor = self.__connection.cursor()
         self.create_table()
@@ -112,3 +112,5 @@ class ChannelDAL:
 
     def __del__(self):
         self.__connection.close()
+
+

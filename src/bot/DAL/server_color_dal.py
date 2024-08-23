@@ -1,8 +1,8 @@
 import os, sqlite3, sys
 from typing import Optional, List
-from bot.dto.server_dto import ServerDTO
-from bot.dto.color_dto import ColorDTO
-from bot.dto.server_color_dto import ServerColorDTO
+from ..DTO.server_dto import ServerDTO
+from ..DTO.color_dto import ColorDTO
+from ..DTO.server_color_dto import ServerColorDTO
 
 class ServerColorDAL:
     def __init__(self):

@@ -1,8 +1,8 @@
 import os, sys, logging, tracemalloc, asyncio, nextcord
 from nextcord.ext import commands
 from dotenv import load_dotenv
-from bot.utils.database import Database
-from test import test_server_color
+from bot.utils.Database import Database
+# from test import test_server_color
 
 # Load environment variables
 load_dotenv()
@@ -33,7 +33,7 @@ intents.message_content = True
 intents.guilds = True
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format="p%(process)s %(pathname)s:%(lineno)d %(levelname)s - %(message)s")
 logger = logging.getLogger('nextcord')
 
 # Set up bot instance
@@ -46,7 +46,7 @@ async def load_cogs():
         if filename.endswith('.py') and filename != '__init__.py':
             cog_name = f'bot.cogs.{filename[:-3]}'
             try:
-                await bot.load_extension(cog_name)
+                bot.load_extension(cog_name)
                 logger.info(f'Successfully loaded extension {cog_name}')
             except Exception as e:
                 logger.error(f'Failed to load extension {cog_name}: {e}')
