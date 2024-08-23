@@ -1,5 +1,4 @@
-discord
-discord-py-slash-command
+nextcord
 tracemalloc
 bs4
 feedparser

@@ -17,7 +17,7 @@ from bot.bll.channel_emty_bll import ChannelEmtyBLL
 from bot.bll.channel_feed_bll import ChannelFeedBLL
 from bot.bll.server_channel_bll import ServerChannelBLL
 from bot.bll.server_color_bll import ServerColorBLL
-from bot.gui.feed_embeb import FeedEmbed
+from bot.gui.feed_embed import FeedEmbed
 from bot.utils.read_rss import ReadRSS
 
 def test_feed_emty():
@@ -173,7 +173,7 @@ def test_server_color():
     
     try:
         print(serverColorBLL.get_server_color_by_id_server("b"))
-        serverColorDTO.set_color(ColorDTO("A"))
+        serverColorDTO.set_color(ColorDTO("YELLOW"))
         serverColorBLL.update_server_color_by_id_server("b", serverColorDTO)
         # serverColorBLL.delete_server_color_by_id_server("b")
         
@@ -193,15 +193,4 @@ def test_read_rss():
     read_rss = ReadRSS(link_atom_feed)
     print(read_rss.get_link_first_entry()) 
         
-def test_feed_embeb():
-    print ('''
-           -- TEST EMBED --
-           ''')
-    # test_feed_emty()
-    link_atom_feed = input("Nhập link atom feed: ")
-    read_rss = ReadRSS(link_atom_feed)
-    link_first_entry = read_rss.get_link_first_entry()   
-    embed = FeedEmbed(link_atom_feed, link_first_entry).get_embed()
-    # embed = FeedEmbed("a", "a")
-    print(embed)
     

@@ -13,7 +13,7 @@ from bot.bll.channel_emty_bll import ChannelEmtyBLL
 from bot.bll.feed_emty_bll import FeedEmtyBLL
 from bot.bll.channel_bll import ChannelBLL
 from bot.bll.server_bll import ServerBLL
-from bot.gui.feed_embeb import FeedEmbed
+from bot.gui.feed_embed import FeedEmbed
 from bot.utils.read_rss import ReadRSS
 
 class Events(commands.Cog):
@@ -131,4 +131,4 @@ Lệnh **{ctx.invoked_with}** không hợp lệ
         ''')
 
 async def setup(bot):
-    await bot.add_cog(Events(bot))
+    bot.add_cog(Events(bot))

@@ -28,26 +28,23 @@ class ReadRSS:
         feed_bll = FeedBLL()
         feed_bll.insert_feed(feed_dto)
         
-        entry_bll = EmtyBLL()
-        feed_entry_bll = FeedEmtyBLL()
+        emty_bll = EmtyBLL()
+        feed_emty_bll = FeedEmtyBLL()
         if self.__feed.entries:
             media_content = ""
-            for entry in reversed(self.__feed.entries):
-                media_content = entry.media_content[0]['url']
-                if 'media_content' in entry: 
-                    if 'https://scontent-dus1-1.xx.fbcdn.net' not in media_content:
-                        media_content = ""
+            for emty in reversed(self.__feed.entries):
+                media_content = emty.media_content[0]['url']
+                # if 'media_content' in emty: 
+                #     if 'https://scontent-dus1-1.xx.fbcdn.net' not in media_content:
+                #         media_content = ""
                 
-                entry_dto = EmtyDTO(entry.link, entry.title, parse_html(entry.description), media_content, entry.published)
-                entry_bll.insert_emty(entry_dto)
+                emty_dto = EmtyDTO(emty.link, emty.title, parse_html(emty.description), media_content, emty.published)
+                emty_bll.insert_emty(emty_dto)
                 
-                feed_entry_dto = FeedEmtyDTO(feed_dto, entry_dto)
-                feed_entry_bll.insert_feed_emty(feed_entry_dto)
-                
-            print(f"{len(self.__feed.entries)} entries found in this feed.")
+                feed_emty_dto = FeedEmtyDTO(feed_dto, emty_dto)
+                feed_emty_bll.insert_feed_emty(feed_emty_dto)
 
     def get_link_first_entry(self) -> Optional[str]:
         if self.__feed is not None and self.__feed.entries:
             return self.__feed.entries[0].link
-        print("No entries found in this feed.")
         return None
