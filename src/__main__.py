@@ -33,7 +33,7 @@ intents.message_content = True
 intents.guilds = True
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format="p%(process)s %(pathname)s:%(lineno)d %(levelname)s - %(message)s")
 logger = logging.getLogger('nextcord')
 
 # Set up bot instance

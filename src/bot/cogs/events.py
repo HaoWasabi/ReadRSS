@@ -2,7 +2,7 @@ import time
 import threading
 import asyncio
 import nextcord
-from nextcord.ext import commands
+from nextcord.ext import commands, tasks
 from ..DTO.server_channel_dto import ServerChannelDTO
 from ..DTO.channel_emty_dto import ChannelEmtyDTO
 from ..DTO.channel_dto import ChannelDTO
@@ -14,7 +14,7 @@ from ..BLL.feed_emty_bll import FeedEmtyBLL
 from ..BLL.channel_bll import ChannelBLL
 from ..BLL.server_bll import ServerBLL
 from ..GUI.feed_embeb import FeedEmbed
-from bot.utils.read_rss import ReadRSS
+from ..utils.read_rss import ReadRSS
 
 class Events(commands.Cog):
     def __init__(self, bot):
@@ -38,7 +38,7 @@ class Events(commands.Cog):
                         server_channel_dto = ServerChannelDTO(server_dto, channel_dto)
                         server_channel_bll.insert_server_channel(server_channel_dto)
 
-    def load_list_feed(self):
+    async def load_list_feed(self):
         channel_feed_bll = ChannelFeedBLL()
         channel_emty_bll = ChannelEmtyBLL()
         feed_emty_bll = FeedEmtyBLL()
@@ -67,33 +67,29 @@ class Events(commands.Cog):
                         
                         channel_to_send = self.bot.get_channel(channel_id_of_channel_emty)
                         if channel_to_send and channel_id_of_channel_feed == channel_id_of_channel_emty:
-                            asyncio.run_coroutine_threadsafe(channel_to_send.send(f"{link_emty}"), self.bot.loop)
+                            await channel_to_send.send(f"{link_emty}")
 
-    def push_noti(self):
-        self.load_list_feed()
+    # NOTE: background main task
+    # push notify where have change every 10 second
+    @tasks.loop(seconds=10)
+    async def push_noti(self):
+        await self.load_list_feed()
+        
+    @push_noti.before_loop
+    async def await_bot_ready(self):
+        await self.bot.wait_until_ready()
         
     def send_message(self):  # Test
         channel_id = 1123394796329898004
         channel = self.bot.get_channel(channel_id)
         if channel:
             asyncio.run_coroutine_threadsafe(channel.send('Bot has started!'), self.bot.loop)
-
-    def periodic_message(self):
-        while True:
-            self.push_noti()
-            time.sleep(10)
-
-    def start_periodic_messages(self):
-        thread = threading.Thread(target=self.periodic_message)
-        thread.daemon = True
-        thread.start()
                             
     @commands.Cog.listener()
     async def on_ready(self):
         print(f"Bot {self.bot.user} is ready")
         print("Current commands:", [command.name for command in self.bot.commands])
         print("Current slash commands:", [command.name for command in self.bot.get_application_commands()])
-        self.start_periodic_messages()
         
         await self.bot.sync_all_application_commands()
         print(f'Bot {self.bot.user} is ready and commands are synced.')
@@ -106,7 +102,6 @@ class Events(commands.Cog):
             
             command_list_1 = ", ".join(available_commands)
             command_list_2 = ", ".join(available_slash_commands)
-            
             await ctx.send(f'''
 Lệnh **{ctx.invoked_with}** không hợp lệ
 - Các lệnh command hiện có: {command_list_1}

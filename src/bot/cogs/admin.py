@@ -1,5 +1,5 @@
 from nextcord.ext import commands
-from ..utils.Database import Database
+from ..utils.Database import dataBase
 from nextcord import Guild
 from nextcord.ext.commands import Bot
 
@@ -21,7 +21,7 @@ class AdminCommands(commands.Cog):
     @commands.command(name="super_clear")
     @commands.is_owner()
     async def super_clear(self, ctx):
-        Database().clear()
+        dataBase.clear()
         await ctx.send("Cleared all data in the database successfully.")
 
     @commands.command(name="servers")
