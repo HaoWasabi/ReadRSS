@@ -18,9 +18,9 @@ class AdminCommands(commands.Cog):
             print(f"Error: {e}")
             await ctx.send(f"Error: {e}")
     
-    @commands.command(name="super_clear")
+    @commands.command(name="superclear")
     @commands.is_owner()
-    async def super_clear(self, ctx):
+    async def superclear(self, ctx):
         dataBase.clear()
         await ctx.send("Cleared all data in the database successfully.")
 

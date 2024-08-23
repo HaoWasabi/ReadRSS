@@ -8,16 +8,25 @@ This is a Discord bot built with Python, ReadRSS bot brings RSS feeds to your Di
 4. Create a `.env` file and add your Discord bot token: `DISCORD_TOKEN=your_token_here`
 5. Run the bot: `python main.py`
 
-## Basic commands
-+ /insert <channel_name> <link_feed> # register 1 feed in a channel based on links and name channel
-+ /delete <channel_name> <link_feed> # cancel registration 1 feed in 1 channel based on link feed and name channel
-+ /delelte <channel_name> # cancel registration of all feeds in a channel based on the name of the channel
-+ /show # allows viewing all registered feed in channels
-+ /show <link_feed> # allows viewing 1 feed registered in channel channels
-+ /test <feed_link># send a notice of the latest post from a registered feed page to be checked to check
-+ /test_all <feed_link> # send the entire post from a registered feed page to check
-+ /clear # withdraw all messages
+## Basic slash_commands
++ `/ping` # Check bot latency
++ `/clear_channel_entry` # Clear channel post history
++ `/clear_channel_feed` # Clear channel feed settings
++ `/test_feed` # Test sending an RSS feed
++ `/set_channel_feed` # Set the channel will send the feed
++ `/set_color` # Set the color of all embeds that you want it would send
++ `/show_feeds` # Show list of feeds in channels in your server
 
+## Admin commands
++ `_shutdown` # Shut down the bot
++ `_servers` # Show the list of guilds that bot have joined
++ `_superclear` # Clear all database
 
-
-
+## Other information
+Đồ án được xây dựng theo mô hình 3 lớp mở rộng. Trong đó:
++ dal: xử lý logic truy cập dữ liệu.
++ bll: xử lý logic các yêu cầu từ lớp trình bày.
++ gui: Xử lý giao diện
++ dto: Chứa các lớp dùng để chuyển dữ liệu giữa các lớp hoặc tầng khác nhau. Mỗi lớp dto chứa có chứa các thuộc tính của các thực thể và các mối quan hệ.
++ utils: Chứa các tệp tiện ích hoặc các hàm hỗ trợ mở rộng.
++ cogs: chứa các hàm sự kiện, lệnh bất đồng bộ tương tác với người dùng. 

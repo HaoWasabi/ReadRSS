@@ -60,7 +60,7 @@ def run_bot():
 
 if __name__ == "__main__":
     # Display about info
-    about_us()
+    # about_us()
     
     # Run bot and load cogs
     asyncio.run(load_cogs())
@@ -84,6 +84,5 @@ if __name__ == "__main__":
     # test_channel_feed()
     # test_channel_emty()
     # test_server_color()
-    
-    # __TEST_EMBED__
-    # test_feed_embeb()
+
+

@@ -33,14 +33,3 @@ class FeedEmbed:
         embed.set_footer(text=self.__footer_text)
         return embed
 
-    # def __str__(self) -> str:
-    #     return (f'''
-    #         __ str __
-    #         Title (title_feed): {embed.title}
-    #         Description (title_emty + description_emty): 
-    #         "{embed.description}"
-    #         Image (image_emty): {embed.image.url}
-    #         Author Name (title_feed): {embed.author.name}
-    #         Author URL (link_feed): {embed.author.url}
-    #         Author Icon URL (logo_feed): {embed.author.icon_url}
-    #         ''')

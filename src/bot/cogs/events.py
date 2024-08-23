@@ -13,7 +13,7 @@ from ..BLL.channel_emty_bll import ChannelEmtyBLL
 from ..BLL.feed_emty_bll import FeedEmtyBLL
 from ..BLL.channel_bll import ChannelBLL
 from ..BLL.server_bll import ServerBLL
-from ..GUI.feed_embeb import FeedEmbed
+from ..GUI.feed_embed import FeedEmbed
 from ..utils.read_rss import ReadRSS
 
 class Events(commands.Cog):
