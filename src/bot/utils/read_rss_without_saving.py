@@ -1,9 +1,9 @@
 import feedparser
 from bs4 import BeautifulSoup
 from typing import Optional
-from bot.dto.feed_dto import FeedDTO
-from bot.dto.emty_dto import EmtyDTO
-from bot.dto.feed_emty_dto import FeedEmtyDTO
+from ..DTO.feed_dto import FeedDTO
+from ..DTO.emty_dto import EmtyDTO
+from ..DTO.feed_emty_dto import FeedEmtyDTO
 
 def parse_html(content):
     if content is None:

@@ -104,7 +104,7 @@ class SlashCommands(commands.Cog):
             feed_dto = channel_feed_dto.get_feed()
             
             channel = self.bot.get_channel(int(channel_dto.get_id_channel()))
-            
+            if (interaction.guild is None): return
             if channel in interaction.guild.channels:
                 description += f"{channel_dto.get_name_channel()} : [{feed_dto.get_title_feed()}]({feed_dto.get_link_feed()})" + "\n"
         

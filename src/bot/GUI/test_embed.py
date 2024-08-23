@@ -1,5 +1,5 @@
 import nextcord
-from bot.dto.feed_emty_dto import FeedEmtyDTO
+from ..DTO.feed_emty_dto import FeedEmtyDTO
 
 class TestEmbed:
     def __init__(self, feed_emty_dto: FeedEmtyDTO):
