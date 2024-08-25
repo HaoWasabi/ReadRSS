@@ -2,7 +2,7 @@ import os, sys, logging, tracemalloc, asyncio, nextcord
 from nextcord.ext import commands
 from dotenv import load_dotenv
 from bot.utils.Database import Database
-# from test import test_server_color
+from test import *
 
 # Load environment variables
 load_dotenv()
@@ -15,12 +15,12 @@ including Facebook and much more.
 
                         -- ABOUT US --
                          
-         ██████╗  ██████╗██████╗ ███████╗██╗   ██╗     #GCdev24
-        ██╔════╝ ██╔════╝██╔══██╗██╔════╝██║   ██║     HaoWasabi
-        ██║  ███╗██║     ██║  ██║█████╗  ██║   ██║     NaelTuhline
-        ██║   ██║██║     ██║  ██║██╔══╝  ╚██╗ ██╔╝     tivibin789
-        ╚██████╔╝╚██████╗██████╔╝███████╗ ╚████╔╝   
-        ╚═════╝  ╚═════╝╚═════╝ ╚══════╝  ╚═══╝       
+         ██████╗  ██████╗██████╗ ███████╗██╗   ██╗     Summer 2024
+        ██╔════╝ ██╔════╝██╔══██╗██╔════╝██║   ██║     + HaoWasabi
+        ██║  ███╗██║     ██║  ██║█████╗  ██║   ██║     + nguyluky
+        ██║   ██║██║     ██║  ██║██╔══╝  ╚██╗ ██╔╝     + NaelTuhline
+        ╚██████╔╝╚██████╗██████╔╝███████╗ ╚████╔╝      + tivibin789
+        ╚═════╝  ╚═════╝╚═════╝ ╚══════╝  ╚═══╝        
                                                                   
 ''')
 
@@ -59,14 +59,11 @@ def run_bot():
         logger.error("DISCORD_TOKEN not found in .env file.")
 
 if __name__ == "__main__":
-    # Display about info
-    # about_us()
-    
     # Run bot and load cogs
     asyncio.run(load_cogs())
     run_bot()
 
-    # __CLEAR_DATABASE__
+    ## __CLEAR_DATABASE__
     # Database().delete_table('tbl_channel_emty')
     # Database().delete_table('tbl_channel')
     # Database().delete_table('tbl_server_channel')
@@ -75,14 +72,17 @@ if __name__ == "__main__":
     # Database().drop_table('tbl_feed')
     # Database().drop_table('tbl_server_color')
 
-    # __TEST_READRSS__
+    ## __TEST_UTILS__
     # test_read_rss()
+    # test_text_processor()
     
-    # __TEST_BLL__
+    ## __TEST_BLL__
     # test_server_channel()
     # test_feed_emty()
     # test_channel_feed()
     # test_channel_emty()
     # test_server_color()
 
+    ## Display about info
+    # about_us()
 

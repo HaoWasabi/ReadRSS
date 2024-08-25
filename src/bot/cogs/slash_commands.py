@@ -16,6 +16,7 @@ from ..BLL.server_channel_bll import ServerChannelBLL
 from ..BLL.server_color_bll import ServerColorBLL
 from ..GUI.feed_embed import FeedEmbed
 from ..GUI.test_embed import TestEmbed
+from ..GUI.custom_embed import CustomEmbed
 from ..utils.read_rss import ReadRSS
 from ..utils.read_rss_without_saving import ReadRSSWithoutSaving
 
@@ -45,7 +46,7 @@ class SlashCommands(commands.Cog):
             read_rss = ReadRSSWithoutSaving(link_atom_feed)
             feed_emty_dto = read_rss.get_first_feed_emty()
             
-            embed = TestEmbed(feed_emty_dto).get_embed()
+            embed = TestEmbed(feed_emty_dto).get_embed() # type: ignore
             await channel.send(embed=embed)
             await interaction.response.send_message(f'Sent the feed to {channel.mention} successfully.')
        
@@ -66,7 +67,7 @@ class SlashCommands(commands.Cog):
             feed_dto = feed_bll.get_feed_by_link_atom_feed(link_atom_feed)
             server_dto = ServerDTO(str(channel.guild.id), channel.guild.name)
             channel_dto = ChannelDTO(str(channel.id), channel.name)
-            channel_feed_dto = ChannelFeedDTO(channel_dto, feed_dto)
+            channel_feed_dto = ChannelFeedDTO(channel_dto, feed_dto) # type: ignore
             server_channel_dto = ServerChannelDTO(server_dto, channel_dto)
             
             server_bll.insert_server(server_dto)
@@ -83,7 +84,7 @@ class SlashCommands(commands.Cog):
     async def set_color(self, interaction: Interaction, color: str):
         try:
             color_dto = ColorDTO(color)
-            server_dto = ServerDTO(str(interaction.guild.id), interaction.guild.name)
+            server_dto = ServerDTO(str(interaction.guild.id), interaction.guild.name) # type: ignore
             server_color_dto = ServerColorDTO(server_dto, color_dto)
             server_color_bll = ServerColorBLL()
 
@@ -97,8 +98,9 @@ class SlashCommands(commands.Cog):
 
     @nextcord.slash_command(name="show_feeds", description="Show list of feeds in channels")
     async def show(self, interaction: Interaction):
-        description = ""
+        value_channel = ""; value_feed = ""; num = 0
         channel_feed_bll = ChannelFeedBLL()
+        
         for channel_feed_dto in channel_feed_bll.get_all_channel_feed():
             channel_dto = channel_feed_dto.get_channel()
             feed_dto = channel_feed_dto.get_feed()
@@ -106,12 +108,16 @@ class SlashCommands(commands.Cog):
             channel = self.bot.get_channel(int(channel_dto.get_id_channel()))
             if (interaction.guild is None): return
             if channel in interaction.guild.channels:
-                description += f"{channel_dto.get_name_channel()} : [{feed_dto.get_title_feed()}]({feed_dto.get_link_feed()})" + "\n"
-        
-        embed = nextcord.Embed(
+                value_channel += f"{channel_dto.get_name_channel()}\n"
+                value_feed += f"[{feed_dto.get_title_feed()}]({feed_dto.get_link_feed()})\n"
+                num += 1
+                
+        embed = CustomEmbed(
             title= "List of feeds in channels",
-            description= description,
+            description= "You have " + str(num) + " feeds in channels",
         )
+        embed.add_field(name="channel", value=value_channel)
+        embed.add_field(name="feed", value=value_feed)
         await interaction.response.send_message(embed=embed)
         
         

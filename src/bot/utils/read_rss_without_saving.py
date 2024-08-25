@@ -4,17 +4,8 @@ from typing import Optional
 from ..DTO.feed_dto import FeedDTO
 from ..DTO.emty_dto import EmtyDTO
 from ..DTO.feed_emty_dto import FeedEmtyDTO
+from ..utils.text_processor import TextProcessor
 
-def parse_html(content):
-    if content is None:
-        return None
-    
-    # Use BeautifulSoup to parse the HTML content
-    soup = BeautifulSoup(content, 'html.parser')
-    
-    # Strip away HTML tags and keep only the text
-    text = soup.get_text()
-    return text
 
 class ReadRSSWithoutSaving:
     def __init__(self, linkAtom_feed: str):
@@ -28,7 +19,7 @@ class ReadRSSWithoutSaving:
             if 'media_content' in emty: 
                 if 'https://scontent-dus1-1.xx.fbcdn.net' not in media_content:
                     media_content = ""
-            self.__emty_dto = EmtyDTO(emty.link, emty.title, parse_html(emty.description), media_content, emty.published)
+            self.__emty_dto = EmtyDTO(emty.link, emty.title, TextProcessor().parse_html(emty.description), media_content, emty.published)
             self.__feed_emty_dto = FeedEmtyDTO(self.__feed_dto, self.__emty_dto)
 
     def get_first_feed_emty(self) -> Optional[FeedEmtyDTO]:

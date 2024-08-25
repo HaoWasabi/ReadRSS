@@ -1,8 +1,8 @@
 class ColorDTO:
     def __init__(self, color: str):
         color_mapping = {
-            "RED": "0xFF0000",
-            "ORANGE": "0xFFA500",
+            "RED": "0xFF0000", 
+            "ORANGE": "0xFFA500", 
             "YELLOW": "0xFFFF00",
             "GREEN": "0x00FF00",
             "BLUE": "0x0000FF",

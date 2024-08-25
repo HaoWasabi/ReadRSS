@@ -46,7 +46,7 @@ class ChannelFeedDAL:
         try:
             with self.connection:
                 self.cursor.execute('''
-                DELETE FROM tbl_channel_feed WHERE id_channel = ? AND link_atom_feed = ?
+                DELETE FROM tbl_channel_feed WHERE id_channel = ?
                 ''', (id_channel,))
                 self.connection.commit()
                 print(f"Data deleted from 'tbl_channel_feed' successfully.")

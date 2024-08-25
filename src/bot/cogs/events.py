@@ -19,7 +19,7 @@ from ..utils.read_rss import ReadRSS
 class Events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        
+
     def load_guilds(self):
         server_bll = ServerBLL() 
         channel_bll = ChannelBLL()
@@ -67,10 +67,13 @@ class Events(commands.Cog):
                         
                         channel_to_send = self.bot.get_channel(channel_id_of_channel_emty)
                         if channel_to_send and channel_id_of_channel_feed == channel_id_of_channel_emty:
-                            await channel_to_send.send(f"{link_emty}")
+                            print(f"Send message to {channel_to_send}")
+                            # await channel_to_send.send(f"{link_emty}")
+                            feed_embed = FeedEmbed(feed_of_feed_emty.get_link_atom_feed(), link_emty)
+                            await channel_to_send.send(embed=feed_embed.get_embed())
 
     # NOTE: background main task
-    # push notify where have change every 10 second
+    # push notify where have change every 10 seconds
     @tasks.loop(seconds=10)
     async def push_noti(self):
         await self.load_list_feed()
@@ -79,12 +82,6 @@ class Events(commands.Cog):
     async def await_bot_ready(self):
         await self.bot.wait_until_ready()
         
-    def send_message(self):  # Test
-        channel_id = 1123394796329898004
-        channel = self.bot.get_channel(channel_id)
-        if channel:
-            asyncio.run_coroutine_threadsafe(channel.send('Bot has started!'), self.bot.loop)
-                            
     @commands.Cog.listener()
     async def on_ready(self):
         print(f"Bot {self.bot.user} is ready")
@@ -93,7 +90,11 @@ class Events(commands.Cog):
         
         await self.bot.sync_all_application_commands()
         print(f'Bot {self.bot.user} is ready and commands are synced.')
-        
+
+        # Start the push_noti loop here once the bot is ready
+        if not self.push_noti.is_running():
+            self.push_noti.start()
+
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.CommandNotFound):
