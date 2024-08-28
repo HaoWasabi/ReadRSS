@@ -28,7 +28,7 @@ class ReadRSS:
                 #     if 'https://scontent-dus1-1.xx.fbcdn.net' not in media_content:
                 #         media_content = ""
                 
-                emty_dto = EmtyDTO(emty.link, emty.title, TextProcessor().parse_html(emty.description), media_content, emty.published)
+                emty_dto = EmtyDTO(emty.link, emty.title, TextProcessor.parse_html(emty.description), media_content, emty.published) # type: ignore
                 emty_bll.insert_emty(emty_dto)
                 
                 feed_emty_dto = FeedEmtyDTO(feed_dto, emty_dto)
