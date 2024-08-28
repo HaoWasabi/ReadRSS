@@ -41,14 +41,14 @@ class BotCommands(commands.Cog):
         await ctx.send(f"Deleted feed settings for {channel.mention} successfully.")
 
     @commands.command()
-    async def test(self, ctx, channel: TextChannel, link_atom_feed: str):
+    async def test_feed(self, ctx, channel: TextChannel, link_atom_feed: str):
         try:
             read_rss = ReadRSSWithoutSaving(link_atom_feed)
             feed_emty_dto = read_rss.get_first_feed_emty()
             
             if feed_emty_dto is None:
                 raise TypeError("link_first_entry is None")
-            embed = TestEmbed(feed_emty_dto).get_embed()
+            embed = TestEmbed(str(ctx.guild.id), feed_emty_dto).get_embed()
             await channel.send(embed=embed)
             await ctx.send(f'Sent the feed to {channel.mention} successfully.')
        
@@ -92,34 +92,47 @@ class BotCommands(commands.Cog):
             
             if server_color_bll.insert_server_color(server_color_dto) == False:
                 server_color_bll.update_server_color_by_id_server(server_dto.get_id_server(), server_color_dto)
+
+            hex_color = server_color_dto.get_color().get_hex_color()
+            embed = nextcord.Embed(title="Set color", description=f"Set color **{color_dto.get_name_color()}** successfully.", color=int(hex_color, 16))
             
-            await ctx.send(f"Set color **{color_dto.get_name_color()}** successfully.")
+            await ctx.send(embed=embed)
         except Exception as e:
             await ctx.send(f"Error: {e}")
             print(f"Error: {e}")
                        
     @commands.command()
     async def show(self, ctx):
-        value_channel = ""; value_feed = ""; num = 0
-        channel_feed_bll = ChannelFeedBLL()
-        
-        for channel_feed_dto in channel_feed_bll.get_all_channel_feed():
-            channel_dto = channel_feed_dto.get_channel()
-            feed_dto = channel_feed_dto.get_feed()
+        try:
+            value_channel = ""
+            value_feed = ""
+            num = 0
+            channel_feed_bll = ChannelFeedBLL()
+            id_server = str(ctx.guild.id)  # Move the id_server definition outside the loop to ensure it's always defined
             
-            channel = self.bot.get_channel(int(channel_dto.get_id_channel()))
-            if channel in ctx.guild.channels:
-                value_channel += f"{channel_dto.get_name_channel()}\n"
-                value_feed += f"[{feed_dto.get_title_feed()}]({feed_dto.get_link_feed()})\n"
-                num += 1
+            for channel_feed_dto in channel_feed_bll.get_all_channel_feed():
+                channel_dto = channel_feed_dto.get_channel()
+                feed_dto = channel_feed_dto.get_feed()
                 
-        embed = CustomEmbed(
-            title= "List of feeds in channels",
-            description= "You have " + str(num) + " feeds in channels",
-        )
-        embed.add_field(name="channel", value=value_channel)
-        embed.add_field(name="feed", value=value_feed)
-        await ctx.send(embed=embed)
-        
+                channel = self.bot.get_channel(int(channel_dto.get_id_channel()))
+                if channel in ctx.guild.channels:
+                    value_channel += f"{channel_dto.get_name_channel()}\n"
+                    value_feed += f"[{feed_dto.get_title_feed()}]({feed_dto.get_link_feed()})\n"
+                    num += 1
+                    
+            embed = CustomEmbed(
+                id_server=id_server,
+                title="List of feeds in channels",
+                description=f"You have {num} feeds in channels",
+            )
+            embed.add_field(name="channel", value=value_channel)
+            embed.add_field(name="feed", value=value_feed)
+            await ctx.send(embed=embed)
+            
+        except Exception as e:
+            await ctx.send(f"Error: {e}")
+            print(f"Error: {e}")
+
+                
 async def setup(bot):
     bot.add_cog(BotCommands(bot))

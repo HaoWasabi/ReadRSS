@@ -1,17 +1,19 @@
 class ColorDTO:
     def __init__(self, color: str):
         color_mapping = {
-            "RED": "0xFF0000", 
-            "ORANGE": "0xFFA500", 
-            "YELLOW": "0xFFFF00",
-            "GREEN": "0x00FF00",
-            "BLUE": "0x0000FF",
-            "PURPLE": "0xFF00FF",
+            "red": "0xFF0000", 
+            "orange": "0xFFA500", 
+            "yellow": "0xF1C40F",
+            "green": "0x2ECC71",
+            "blue": "0x3498DB",
+            "purple": "0x9B59B6",
+            "gray": "0x808080",
+            "black": "0x2F3136"
         }
         
         # Set the color, or default to white if the color is not in the mapping
-        self.__hex_color = color_mapping[color] if color in color_mapping else "0xFFFFFF"
-        self.__name_color = color if color in color_mapping else "WHITE"
+        self.__hex_color = color_mapping[color] if color in color_mapping else "0x808080"
+        self.__name_color = color if color in color_mapping else "gray"
         
     def __str__(self):
         return f"ColorDTO(name_color={self.__name_color}, hex_color={self.__hex_color})"

@@ -59,7 +59,7 @@ def run_bot():
         logger.error("DISCORD_TOKEN not found in .env file.")
 
 if __name__ == "__main__":
-    # Run bot and load cogs
+    ## Run bot and load cogs
     asyncio.run(load_cogs())
     run_bot()
 
