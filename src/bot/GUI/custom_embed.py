@@ -12,8 +12,12 @@ class CustomEmbed(nextcord.Embed):
 
         if 'color' not in kwargs:
             # If no color is provided, use the server's default color
-            default_color = server_color_dto.get_color().get_hex_color() # type: ignore
+            if (server_color_dto is None):
+                default_color = "0xFF0000"
+            else:
+                default_color = server_color_dto.get_color().get_hex_color() # type: ignore
             kwargs['color'] = nextcord.Color(int(default_color, 16))  # Convert hex to int
+
         super().__init__(**kwargs)
 
     def set_color(self, color):

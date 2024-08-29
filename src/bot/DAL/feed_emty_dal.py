@@ -32,8 +32,8 @@ class FeedEmtyDAL:
         try:
             with self.__connection:
                 self.__cursor.execute('''
-                    INSERT INTO tbl_feed_emty (link_atom_feed, link_emty)
-                    VALUES (?, ?)
+                    INSERT OR IGNORE INTO tbl_feed_emty (link_atom_feed, link_emty)
+                    VALUES (?, ?) 
                 ''', (feed_emty_dto.get_feed().get_link_atom_feed(), feed_emty_dto.get_emty().get_link_emty()))
                 self.__connection.commit()
                 print(f"Data inserted into 'tbl_feed_emty' successfully.")

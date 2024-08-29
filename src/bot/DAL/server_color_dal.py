@@ -93,13 +93,14 @@ class ServerColorDAL:
             SELECT s.id_server, s.name_server, sc.name_color
             FROM tbl_server_color sc
             JOIN tbl_server s ON sc.id_server = s.id_server
-            WHERE sc.id_server = ?
+            WHERE s.id_server=?;
             ''', (id_server,))
             row = self.__cursor.fetchone()
             if row:
                 server_color_dto = ServerColorDTO(ServerDTO(row[0], row[1]), ColorDTO(row[2]))
                 return server_color_dto
             return None
+
         except sqlite3.Error as e:
             print(f"Error selecting data from 'tbl_server_color': {e}")
             return None

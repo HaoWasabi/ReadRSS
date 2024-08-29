@@ -31,8 +31,8 @@ class EmtyDAL:
         try:
             with self.__connection:
                 self.__cursor.execute('''
-                INSERT INTO tbl_emty (link_emty, title_emty, description_emty, image_emty, pubdate_emty)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT OR IGNORE INTO tbl_emty (link_emty, title_emty, description_emty, image_emty, pubdate_emty)
+                    VALUES (?, ?, ?, ?, ?) 
                 ''', (str(emty_dto.get_link_emty()), str(emty_dto.get_title_emty()), str(emty_dto.get_description_emty()), str(emty_dto.get_image_emty()), str(emty_dto.get_pubdate_emty())))
                 self.__connection.commit()
                 print(f"Data inserted into 'tbl_emty' successfully.")

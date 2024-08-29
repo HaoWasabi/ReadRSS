@@ -1,5 +1,6 @@
 import nextcord
-from nextcord.ext import commands, tasks, 
+from nextcord.ext import commands
+from nextcord.ext import tasks
 from ..DTO.server_channel_dto import ServerChannelDTO
 from ..DTO.channel_emty_dto import ChannelEmtyDTO
 from ..DTO.server_color_dto import ServerColorDTO
@@ -17,9 +18,8 @@ from ..GUI.feed_embed import FeedEmbed
 from ..utils.read_rss import ReadRSS
 
 class Events(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.push_noti.start()
 
     async def load_guilds(self):
         try:
@@ -36,7 +36,6 @@ class Events(commands.Cog):
             print(f"Error loading guilds: {e}")
             
     async def load_list_feed(self):
-        try: 
             channel_feed_bll = ChannelFeedBLL()
             channel_emty_bll = ChannelEmtyBLL()
             feed_emty_bll = FeedEmtyBLL()
@@ -64,25 +63,34 @@ class Events(commands.Cog):
                             channel_id_of_channel_emty = int(channel_of_channel_emty.get_id_channel())
                             
                             channel_to_send = self.bot.get_channel(channel_id_of_channel_emty)
+                            if channel_to_send is None:
+                                return
                             if channel_to_send and channel_id_of_channel_feed == channel_id_of_channel_emty:
-                                print(f"Sending message to {channel_to_send}")
-                                # NOTE: Lỗi chưa tự gửi đươc embed
-                                feed_embed = FeedEmbed(channel_of_channel_emty.get_id_channel(), feed_of_feed_emty.get_link_atom_feed(), link_emty).get_embed()
-                                await channel_to_send.send(embed=feed_embed)
-                                # await channel_to_send.send(f"{link_emty}")
-        
-        except Exception as e:
-            print(f"Error loading list feed: {e}")
+                                try:
+                                    print(f"Sending message to {channel_to_send}")
+                                    # NOTE: Lỗi chưa tự gửi đươc embed
+                                    # ERROR id server không phải là channel_id
+                                    server_id = str(channel_to_send.guild.id)
+                                    link_atom = feed_of_feed_emty.get_link_atom_feed()
+                                    feed_embed = FeedEmbed(server_id, link_atom, link_emty)
+                                    await channel_to_send.send(embed=feed_embed.get_embed())
+                                    # await channel_to_send.send(f"{link_emty}")
+                                except TypeError as e:
+                                    print(f"Error loading list feed: {e}")
+
             
-    @tasks.loop(seconds=10)
+    @tasks.loop(minutes=10)
     async def push_noti(self):
+        print('run background task')
         await self.load_list_feed()
         await self.load_guilds()
         
     @push_noti.before_loop
     async def await_bot_ready(self):
         # đợi cho bot đăng nhập xong
+        print('waiting...')
         await self.bot.wait_until_ready()
+        print('start')
         
     @commands.Cog.listener()
     async def on_ready(self):

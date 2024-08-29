@@ -143,4 +143,4 @@ class SlashCommands(commands.Cog):
             print(f"Error: {e}")
             
 async def setup(bot):
-    await bot.add_cog(SlashCommands(bot))
+    bot.add_cog(SlashCommands(bot))
