@@ -31,14 +31,14 @@ class SlashCommands(commands.Cog):
     async def ping(self, interaction: Interaction):
         await interaction.response.send_message(f'Pong! {round(self.bot.latency * 1000)}ms')
 
-    @nextcord.slash_command(name="clear_channel_entry", description="Clear channel post history")
-    async def clear_channel_entry(self, interaction: Interaction, channel: TextChannel = SlashOption(description="The target channel")):
+    @nextcord.slash_command(name="clear_history", description="Clear channel post history")
+    async def clear_history(self, interaction: Interaction, channel: TextChannel = SlashOption(description="The target channel")):
         channel_emty_bll = ChannelEmtyBLL()
         channel_emty_bll.delete_channel_emty_by_id_channel(str(channel.id))
         await interaction.response.send_message(f"Deleted the history of posts in {channel.mention} successfully.")
 
-    @nextcord.slash_command(name="clear_channel_feed", description="Clear channel feed settings")
-    async def clear_channel_feed(self, interaction: Interaction, channel: TextChannel = SlashOption(description="The target channel")):
+    @nextcord.slash_command(name="delete_feed", description="Delete feed notification channel settings")
+    async def delete_feed(self, interaction: Interaction, channel: TextChannel = SlashOption(description="The target channel")):
         channel_feed_bll = ChannelFeedBLL()
         channel_feed_bll.delete_channel_feed_by_id_channel(str(channel.id))
         await interaction.response.send_message(f"Deleted feed settings for {channel.mention} successfully.")
@@ -57,8 +57,8 @@ class SlashCommands(commands.Cog):
             await interaction.followup.send(f"Error: {e}")
             print(f"Error: {e}")
 
-    @nextcord.slash_command(name="set_channel_feed", description="Set a channel feed")
-    async def set_channel_feed(self, interaction: Interaction, channel: TextChannel = SlashOption(description="The target channel"), link_atom_feed: str = SlashOption(description="The Atom/RSS feed link")):
+    @nextcord.slash_command(name="set_feed", description="Set feed notification channel")
+    async def set_feed(self, interaction: Interaction, channel: TextChannel = SlashOption(description="The target channel"), link_atom_feed: str = SlashOption(description="The Atom/RSS feed link")):
         try:
             ReadRSS(link_atom_feed)
             feed_bll = FeedBLL()
@@ -88,8 +88,9 @@ class SlashCommands(commands.Cog):
                         color: str = SlashOption(
                             name="color",
                             description="Choose a color for the embeds",
-                            choices={"Red": "red", "Green": "green", "Blue": "blue", "Black": "black", "Gray": "gray",
-                                     "Yellow": "yellow", "Purple": "purple", "Orange": "orange", }
+                            choices={"Red": "red", "Orange": "orange", "Yellow": "yellow", "Green": "green", 
+                                     "Blue": "blue", "Purple": "purple", "Black": "black", "Gray": "gray",
+                                    }
                         )):
         try:
             color_dto = ColorDTO(color)
@@ -140,7 +141,6 @@ class SlashCommands(commands.Cog):
         except Exception as e:
             await interaction.send(f"Error: {e}")
             print(f"Error: {e}")
-
             
 async def setup(bot):
     await bot.add_cog(SlashCommands(bot))

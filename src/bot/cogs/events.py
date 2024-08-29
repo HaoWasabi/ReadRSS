@@ -66,9 +66,9 @@ class Events(commands.Cog):
                             if channel_to_send and channel_id_of_channel_feed == channel_id_of_channel_emty:
                                 print(f"Sending message to {channel_to_send}")
                                 # NOTE: Lỗi chưa tự gửi đươc embed
-                                # feed_embed = FeedEmbed(channel_of_channel_emty.get_id_channel(), feed_of_feed_emty.get_link_atom_feed(), link_emty)
-                                # await channel_to_send.send(embed=feed_embed.get_embed())
-                                await channel_to_send.send(f"{link_emty}")
+                                feed_embed = FeedEmbed(channel_of_channel_emty.get_id_channel(), feed_of_feed_emty.get_link_atom_feed(), link_emty).get_embed()
+                                await channel_to_send.send(embed=feed_embed)
+                                # await channel_to_send.send(f"{link_emty}")
         
         except Exception as e:
             print(f"Error loading list feed: {e}")
@@ -103,12 +103,20 @@ class Events(commands.Cog):
             command_list_1 = ", ".join(available_commands)
             command_list_2 = ", ".join(available_slash_commands)
             
+            server_color_bll = ServerColorBLL()
+            server_dto = ServerDTO(str(ctx.guild.id), ctx.guild.name)
+            server_color_dto = server_color_bll.get_server_color_by_id_server(server_dto.get_id_server())
+            hex_color = server_color_dto.get_color().get_hex_color() # type: ignore
+            
             embed = nextcord.Embed(
                 title=f"Lệnh **{ctx.invoked_with}** không hợp lệ",
                 description=f'''
+Lệnh tiền tố: `{ctx.prefix}`
 - Các lệnh command hiện có: {command_list_1}
 - Các lệnh slash command hiện có: {command_list_2}
-''')
+                ''',
+                color = int(hex_color, 16) if hex_color else nextcord.Color(0x808080)
+            )
             await ctx.send(embed=embed)
         else:
             raise error
@@ -120,14 +128,23 @@ class Events(commands.Cog):
         command_list_1 = ", ".join(available_commands)
         command_list_2 = ", ".join(available_slash_commands)
         
+        server_color_bll = ServerColorBLL()
+        server_dto = ServerDTO(str(guild.id), guild.name)
+        server_color_dto = server_color_bll.get_server_color_by_id_server(server_dto.get_id_server())
+        hex_color = server_color_dto.get_color().get_hex_color() # type: ignore
+            
         if guild.system_channel:
             embed = nextcord.Embed(
                 title=f"**{self.bot.user}** joined {guild.name} successfully!",
                 description=f'''
+Aloha! Tôi là **{self.bot.user}**, bot giúp bạn nhận thông báo bài đăng mới từ Facebook và các ứng dụng khác một cách miễn phí. Thay vì trả phí cho những bot khác, hãy sử dụng tôi. Đóng góp ý kiến hay cần hỗ trợ ư, tham gia server **[Greencode](https://discord.com/invite/Q7NXBFpZeM)** nhé. Hàng chùa bất diệt!
+Lệnh tiền tố: `{self.bot.command_prefix}`
 - Các lệnh command hiện có: {command_list_1}
 - Các lệnh slash command hiện có: {command_list_2}
-                '''
+                ''',
+                color = int(hex_color, 16) if hex_color else nextcord.Color(0x808080)
             )
+            embed.set_thumbnail(url="https://cdn-longterm.mee6.xyz/plugins/welcome/images/911798642518663208/d7a41040adf3036620000c397fbfa21a487c9e5bb1db698fd3081ed541f4b5c1.gif")
             await guild.system_channel.send(embed=embed)
 
 async def setup(bot):

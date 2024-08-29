@@ -2,7 +2,7 @@ import os, sys, logging, tracemalloc, asyncio, nextcord
 from nextcord.ext import commands
 from dotenv import load_dotenv
 from bot.utils.Database import Database
-from test import *
+from test import * # type: ignore
 
 # Load environment variables
 load_dotenv()

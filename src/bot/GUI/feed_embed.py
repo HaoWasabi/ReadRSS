@@ -31,4 +31,3 @@ class FeedEmbed:
         embed.set_author(name=self.__title, url=self.__link, icon_url=self.__logo)
         embed.set_footer(text=self.__footer_text)
         return embed
-

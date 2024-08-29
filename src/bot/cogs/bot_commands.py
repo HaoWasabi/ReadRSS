@@ -14,7 +14,6 @@ from ..BLL.channel_bll import ChannelBLL
 from ..BLL.channel_emty_bll import ChannelEmtyBLL
 from ..BLL.channel_feed_bll import ChannelFeedBLL
 from ..BLL.server_channel_bll import ServerChannelBLL
-from ..GUI.feed_embed import FeedEmbed
 from ..GUI.test_embed import TestEmbed
 from ..GUI.custom_embed import CustomEmbed
 from ..utils.read_rss import ReadRSS
@@ -29,13 +28,13 @@ class BotCommands(commands.Cog):
         await ctx.send(f'Pong! {round(self.bot.latency * 1000)}ms')
         
     @commands.command()
-    async def clear_channel_entry(self, ctx, channel: TextChannel):
+    async def clear_history(self, ctx, channel: TextChannel):
         channel_emty_bll = ChannelEmtyBLL()
         channel_emty_bll.delete_channel_emty_by_id_channel(str(channel.id))
         await ctx.send(f"Deleted the history of posts in {channel.mention} successfully.")
         
     @commands.command()
-    async def clear_channel_feed(self, ctx, channel: TextChannel):
+    async def delete_feed(self, ctx, channel: TextChannel):
         channel_feed_bll = ChannelFeedBLL()
         channel_feed_bll.delete_channel_feed_by_id_channel(str(channel.id))
         await ctx.send(f"Deleted feed settings for {channel.mention} successfully.")
@@ -57,7 +56,7 @@ class BotCommands(commands.Cog):
             print(f"Error: {e}")
     
     @commands.command()
-    async def set_channel_feed(self, ctx, channel: TextChannel, link_atom_feed: str):
+    async def set_feed(self, ctx, channel: TextChannel, link_atom_feed: str):
         try: 
             ReadRSS(link_atom_feed)
             feed_bll = FeedBLL()
