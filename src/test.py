@@ -19,6 +19,7 @@ from bot.BLL.server_channel_bll import ServerChannelBLL
 from bot.BLL.server_color_bll import ServerColorBLL
 from bot.GUI.feed_embed import FeedEmbed
 from bot.utils.read_rss import ReadRSS
+from bot.utils.text_processor import TextProcessor
 
 def test_feed_emty():
     print ('''
@@ -193,4 +194,9 @@ def test_read_rss():
     read_rss = ReadRSS(link_atom_feed)
     print(read_rss.get_link_first_entry()) 
         
+def test_text_processor():
+    text_processor = TextProcessor() 
+    text = input("Nhập đoạn code chứa unicode escape: ")
+    text = text_processor.proccess_unicode_text(text)
+    print(text)
     
