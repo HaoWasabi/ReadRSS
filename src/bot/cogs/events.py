@@ -2,7 +2,7 @@ import time
 import threading
 import asyncio
 import nextcord
-from nextcord.ext import commands, tasks
+from nextcord.ext import commands, tasks, 
 from ..DTO.server_channel_dto import ServerChannelDTO
 from ..DTO.channel_emty_dto import ChannelEmtyDTO
 from ..DTO.channel_dto import ChannelDTO
@@ -19,6 +19,7 @@ from ..utils.read_rss import ReadRSS
 class Events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.push_noti.start()
         
     def load_guilds(self):
         server_bll = ServerBLL() 
@@ -77,6 +78,7 @@ class Events(commands.Cog):
         
     @push_noti.before_loop
     async def await_bot_ready(self):
+        # đợi cho bot đăng nhập xong
         await self.bot.wait_until_ready()
         
     def send_message(self):  # Test
@@ -125,5 +127,6 @@ Lệnh **{ctx.invoked_with}** không hợp lệ
 - Các lệnh slash command hiện có: {command_list_2}
         ''')
 
-async def setup(bot):
+async def setup(bot: commands.Bot):
+    # NOTE: add_cog là một funstion bình thường không phải là async funstion
     bot.add_cog(Events(bot))
