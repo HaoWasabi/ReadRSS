@@ -1,21 +1,27 @@
 import nextcord
 from nextcord.ext import commands
 from nextcord import TextChannel
+from typing import Optional
+
 from ..DTO.server_dto import ServerDTO
 from ..DTO.channel_dto import ChannelDTO
 from ..DTO.color_dto import ColorDTO
 from ..DTO.channel_feed_dto import ChannelFeedDTO
 from ..DTO.server_channel_dto import ServerChannelDTO
 from ..DTO.server_color_dto import ServerColorDTO
+
 from ..BLL.server_color_bll import ServerColorBLL
 from ..BLL.feed_bll import FeedBLL
 from ..BLL.server_bll import ServerBLL
 from ..BLL.channel_bll import ChannelBLL
+from ..BLL.feed_emty_bll import FeedEmtyBLL
 from ..BLL.channel_emty_bll import ChannelEmtyBLL
 from ..BLL.channel_feed_bll import ChannelFeedBLL
 from ..BLL.server_channel_bll import ServerChannelBLL
+
 from ..GUI.test_embed import TestEmbed
 from ..GUI.custom_embed import CustomEmbed
+
 from ..utils.read_rss import ReadRSS
 from ..utils.read_rss_without_saving import ReadRSSWithoutSaving
 
@@ -28,15 +34,38 @@ class BotCommands(commands.Cog):
         await ctx.send(f'Pong! {round(self.bot.latency * 1000)}ms')
         
     @commands.command()
-    async def clear_history(self, ctx, channel: TextChannel):
+    async def clear_history(self, ctx, channel: TextChannel, link_atom_feed: Optional[str]):
         channel_emty_bll = ChannelEmtyBLL()
-        channel_emty_bll.delete_channel_emty_by_id_channel(str(channel.id))
+        if link_atom_feed is None:
+            channel_emty_bll.delete_channel_emty_by_id_channel(str(channel.id))
+        
+        else:
+            channel_feed_bll = ChannelFeedBLL()
+            channel_emty_bll = ChannelEmtyBLL()
+            feed_emty_bll = FeedEmtyBLL()
+            
+            list_channel_feed = channel_feed_bll.get_all_channel_feed()
+            list_feed_emty = feed_emty_bll.get_all_feed_emty()
+            
+            for channel_feed in list_channel_feed:
+                feed_of_channel_feed = channel_feed.get_feed()
+                
+                for feed_emty in list_feed_emty:
+                    feed_of_feed_emty = feed_emty.get_feed()
+                    link_emty_of_feed_emty = feed_emty.get_emty().get_link_emty()
+                    
+                    if feed_of_channel_feed == feed_of_feed_emty and feed_of_channel_feed.get_link_atom_feed() == link_atom_feed:
+                        channel_emty_bll.delete_channel_emty_by_id_channel_and_link_emty(str(channel.id), link_emty_of_feed_emty)
+        
         await ctx.send(f"Deleted the history of posts in {channel.mention} successfully.")
         
     @commands.command()
-    async def delete_feed(self, ctx, channel: TextChannel):
-        channel_feed_bll = ChannelFeedBLL()
-        channel_feed_bll.delete_channel_feed_by_id_channel(str(channel.id))
+    async def delete_feed(self, ctx, channel: TextChannel, link_atom_feed: Optional[str] = None):
+        channel_feed_bll = ChannelFeedBLL()  
+        if link_atom_feed is None:
+            channel_feed_bll.delete_channel_feed_by_id_channel(str(channel.id))
+        else:
+            channel_feed_bll.delete_channel_feed_by_id_channel_and_link_atom_feed(str(channel.id), link_atom_feed) 
         await ctx.send(f"Deleted feed settings for {channel.mention} successfully.")
 
     @commands.command()
@@ -93,7 +122,11 @@ class BotCommands(commands.Cog):
                 server_color_bll.update_server_color_by_id_server(server_dto.get_id_server(), server_color_dto)
 
             hex_color = server_color_dto.get_color().get_hex_color()
-            embed = nextcord.Embed(title="Set color", description=f"Set color **{color_dto.get_name_color()}** successfully.", color=int(hex_color, 16))
+            embed = CustomEmbed(
+                id_server=server_dto.get_id_server(),
+                title="Set color", 
+                description=f"Set color **{color_dto.get_name_color()}** successfully.",
+                color=int(hex_color, 16))
             
             await ctx.send(embed=embed)
         except Exception as e:
@@ -115,7 +148,7 @@ class BotCommands(commands.Cog):
                 
                 channel = self.bot.get_channel(int(channel_dto.get_id_channel()))
                 if channel in ctx.guild.channels:
-                    value_channel += f"{channel_dto.get_name_channel()}\n"
+                    value_channel += f"{channel.mention}\n"
                     value_feed += f"[{feed_dto.get_title_feed()}]({feed_dto.get_link_feed()})\n"
                     num += 1
                     

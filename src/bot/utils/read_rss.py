@@ -1,5 +1,4 @@
 import feedparser
-from bs4 import BeautifulSoup
 from typing import Optional
 from ..DTO.feed_dto import FeedDTO
 from ..DTO.emty_dto import EmtyDTO
@@ -21,12 +20,15 @@ class ReadRSS:
         emty_bll = EmtyBLL()
         feed_emty_bll = FeedEmtyBLL()
         if self.__feed.entries:
-            media_content = ""
             for emty in reversed(self.__feed.entries):
-                media_content = emty.media_content[0]['url']
-                # if 'media_content' in emty: 
-                #     if 'https://scontent-dus1-1.xx.fbcdn.net' not in media_content:
-                #         media_content = ""
+                media_content = ""
+                
+                # Kiểm tra thuộc tính 'media_content'
+                if hasattr(emty, 'media_content') and emty.media_content:
+                    media_content = emty.media_content[0]['url']
+                    # Kiểm tra điều kiện bổ sung nếu cần thiết
+                    if 'https://scontent-dus1-1.xx.fbcdn.net' not in media_content:
+                        media_content = ""
                 
                 emty_dto = EmtyDTO(emty.link, emty.title, TextProcessor.parse_html(emty.description), media_content, emty.published) # type: ignore
                 emty_bll.insert_emty(emty_dto)

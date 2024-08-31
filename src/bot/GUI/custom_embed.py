@@ -18,6 +18,10 @@ class CustomEmbed(nextcord.Embed):
                 default_color = server_color_dto.get_color().get_hex_color() # type: ignore
             kwargs['color'] = nextcord.Color(int(default_color, 16))  # Convert hex to int
 
+        # Set a default footer if not already set
+        if 'footer' not in kwargs:
+            self.set_footer(text="GCdev Summer Project 2024")
+            
         super().__init__(**kwargs)
 
     def set_color(self, color):
