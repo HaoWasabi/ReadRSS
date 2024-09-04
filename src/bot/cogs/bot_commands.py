@@ -136,11 +136,12 @@ class BotCommands(commands.Cog):
     @commands.command()
     async def show(self, ctx):
         try:
-            value_channel = ""
-            value_feed = ""
             num = 0
             channel_feed_bll = ChannelFeedBLL()
-            id_server = str(ctx.guild.id)  # Move the id_server definition outside the loop to ensure it's always defined
+            id_server = str(ctx.guild.id)
+            
+            # Tạo dictionary để nhóm các channel và feed theo server
+            server_data = {}
             
             for channel_feed_dto in channel_feed_bll.get_all_channel_feed():
                 channel_dto = channel_feed_dto.get_channel()
@@ -148,20 +149,34 @@ class BotCommands(commands.Cog):
                 
                 channel = self.bot.get_channel(int(channel_dto.get_id_channel()))
                 if channel in ctx.guild.channels:
-                    value_channel += f"{channel.mention}\n"
-                    value_feed += f"[{feed_dto.get_title_feed()}]({feed_dto.get_link_feed()})\n"
-                    num += 1
+                    server_name = f"**Server:** {ctx.guild.name} ({ctx.guild.id})"
+                    channel_info = f"- **Channel:** {channel.mention} - [{feed_dto.get_title_feed()}]({feed_dto.get_link_feed()})"
                     
+                    # Thêm channel và feed vào server tương ứng
+                    if server_name not in server_data:
+                        server_data[server_name] = []
+                    server_data[server_name].append(channel_info)
+                    num += 1
+            
+            # Chuẩn bị nội dung cho embed
             embed = CustomEmbed(
                 id_server=id_server,
-                title="List of feeds in channels",
-                description=f"You have {num} feeds in channels",
+                title="List of Feeds in Channels",
+                description=f"You have {num} feeds in channels:",
             )
-            embed.add_field(name="channel", value=value_channel)
-            embed.add_field(name="feed", value=value_feed)
-            await ctx.send(embed=embed)
             
+            # Thêm thông tin server và channel vào embed
+            for server_name, channels in server_data.items():
+                embed.add_field(
+                    name=server_name,
+                    value="\n".join(channels) if channels else "No channels found.",
+                    inline=False
+                )
+            
+            await ctx.send(embed=embed)
+                
         except Exception as e:
+            # Thông báo lỗi
             await ctx.send(f"Error: {e}")
             print(f"Error: {e}")
 

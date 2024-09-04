@@ -137,11 +137,11 @@ class Events(commands.Cog):
             
             embed = CustomEmbed(
                 id_server=str(ctx.guild.id),
-                title=f"Lệnh **{ctx.invoked_with}** không hợp lệ",
+                title=f"Command **{ctx.invoked_with}** is invalid",
                 description=f'''
-Lệnh tiền tố: `{ctx.prefix}`
-- Các lệnh command hiện có: {command_list_1}
-- Các lệnh slash command hiện có: {command_list_2}
+command prefix: `{ctx.prefix}`
+- The current commands have: {command_list_1}
+- The current slash commands have: {command_list_2}
                 ''',
                 color = int(hex_color, 16) if hex_color else nextcord.Color(0x808080)
             )
@@ -164,12 +164,13 @@ Lệnh tiền tố: `{ctx.prefix}`
         if guild.system_channel:
             embed = CustomEmbed(
                 id_server=str(guild.id),
-                title=f"**{self.bot.user}** joined {guild.name} successfully!",
+                title=f"**Aloha {guild.name}!**",
                 description=f'''
-Aloha! Tôi là **{self.bot.user}**, bot giúp bạn nhận thông báo bài đăng mới từ Facebook và các ứng dụng khác một cách miễn phí. Thay vì trả phí cho những bot khác, hãy sử dụng tôi. Đóng góp ý kiến hay cần hỗ trợ ư, tham gia server **[Greencode](https://discord.com/invite/Q7NXBFpZeM)** nhé. Hàng chùa bất diệt!
-Lệnh tiền tố: `{self.bot.command_prefix}`
-- Các lệnh command hiện có: {command_list_1}
-- Các lệnh slash command hiện có: {command_list_2}
+I am ** {self.bot.user} **, bot helps you receive a new post from Facebook and other applications for free. Instead of paying other bots, use me. Contribute ideas or need support, participate in ** [GreenCode](https://discord.com/invite/Q7NXBFpZeM)** server!
+
+command prefix: `{self.bot.command_prefix}`
+- The current commands have: {command_list_1}
+- The current slash commands have: {command_list_2}
                 ''',
                 color = int(hex_color, 16) if hex_color else nextcord.Color(0x808080)
             )

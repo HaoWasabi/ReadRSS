@@ -21,7 +21,7 @@ from ..BLL.server_color_bll import ServerColorBLL
 
 from ..GUI.test_embed import TestEmbed
 from ..GUI.custom_embed import CustomEmbed
-from ..GUI.link_button import LinkButton
+from ..GUI.button_of_help_command import ButtonOfHelpCommnad
 
 from ..utils.read_rss_without_saving import ReadRSSWithoutSaving
 from ..utils.read_rss import ReadRSS
@@ -151,33 +151,48 @@ class SlashCommands(commands.Cog):
     @nextcord.slash_command(name="show", description="Shows a list of feeds in channels.")
     async def show(self, interaction: Interaction):
         try:
-            value_channel = ""
-            value_feed = ""
             num = 0
             channel_feed_bll = ChannelFeedBLL()
-            id_server = str(interaction.guild.id)  # type: ignore # Ensures id_server is always defined
+            id_server = str(interaction.guild.id)  # type: ignore
+            
+            # Tạo dictionary để nhóm các channel và feed theo server
+            server_data = {}
             
             for channel_feed_dto in channel_feed_bll.get_all_channel_feed():
                 channel_dto = channel_feed_dto.get_channel()
                 feed_dto = channel_feed_dto.get_feed()
                 
                 channel = self.bot.get_channel(int(channel_dto.get_id_channel()))
-                if channel in interaction.guild.channels: # type: ignore
-                    value_channel += f"{channel.mention}\n"
-                    value_feed += f"[{feed_dto.get_title_feed()}]({feed_dto.get_link_feed()})\n"
-                    num += 1
+                if channel in interaction.guild.channels:  # type: ignore
+                    server_name = f"**Server:** {interaction.guild.name} ({interaction.guild.id})" # type: ignore
+                    channel_info = f"- **Channel:** {channel.mention} - [{feed_dto.get_title_feed()}]({feed_dto.get_link_feed()})"
                     
+                    # Thêm channel và feed vào server tương ứng
+                    if server_name not in server_data:
+                        server_data[server_name] = []
+                    server_data[server_name].append(channel_info)
+                    num += 1
+            
+            # Chuẩn bị nội dung cho embed
             embed = CustomEmbed(
                 id_server=id_server,
-                title="List of feeds in channels",
-                description=f"You have {num} feeds in channels",
+                title="List of Feeds in Channels",
+                description=f"You have {num} feeds in channels:",
             )
-            embed.add_field(name="channel", value=value_channel)
-            embed.add_field(name="feed", value=value_feed)
-            await interaction.send(embed=embed)
             
+            # Thêm thông tin server và channel vào embed
+            for server_name, channels in server_data.items():
+                embed.add_field(
+                    name=server_name,
+                    value="\n".join(channels) if channels else "No channels found.",
+                    inline=False
+                )
+            
+            await interaction.send(embed=embed)  # Sửa từ "ctx.send" thành "interaction.send"
+                
         except Exception as e:
-            await interaction.send(f"Error: {e}", ephemeral=True)
+            # Thông báo lỗi
+            await interaction.send(f"Error: {e}", ephemeral=True)  # Gửi lỗi một cách riêng tư
             print(f"Error: {e}")
         
     @nextcord.slash_command(name="help", description="List of commands")
@@ -199,13 +214,13 @@ class SlashCommands(commands.Cog):
                     id_server=str(interaction.guild.id), 
                     title="List of commands",
                     description=f'''
-Lệnh tiền tố: `{self.bot.command_prefix}`
-- Các lệnh command hiện có: {command_list_1}
-- Các lệnh slash command hiện có: {command_list_2}
+command prefix `{self.bot.command_prefix}`
+- The current commands have: {command_list_1}
+- The current slash commands have: {command_list_2}
                     ''',
                     color=int(hex_color, 16) if hex_color else nextcord.Color(0x808080)
                 )
-                await interaction.response.send_message(embed=embed, view=LinkButton())
+                await interaction.response.send_message(embed=embed, view=ButtonOfHelpCommnad())
         
         except Exception as e:
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)

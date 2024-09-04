@@ -67,6 +67,21 @@ class ChannelFeedDAL:
         except sqlite3.Error as e:
             print(f"Error deleting data from `tbl_channel_feed`: {e}")
             return False
+        
+    def delete_channel_feed_by_id_channel_and_link_feed(self, id_channel: str, link_feed: str) -> bool:
+        try:
+            with self.connection:
+                self.cursor.execute('''
+                DELETE FROM tbl_channel_feed WHERE id_channel = ? AND link_atom_feed = (
+                    SELECT link_atom_feed FROM tbl_feed WHERE link_feed = ?
+                )
+                ''', (id_channel, link_feed))
+                self.connection.commit()
+                print(f"Data deleted from 'tbl_channel_feed' successfully.")
+                return True
+        except sqlite3.Error as e:
+            print(f"Error deleting data from `tbl_channel_feed`: {e}")
+            return False
 
     def delete_all_channel_feed(self) -> bool:
         try:

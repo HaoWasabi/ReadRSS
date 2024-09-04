@@ -27,6 +27,13 @@ class ChannelFeedBLL:
             print(f"Error deleting ChannelFeed: {e}")
             return False
             
+    def delete_channel_feed_by_id_channel_and_link_feed(self, id_channel: str, link_feed: str) -> bool:
+        try:
+            return self.__channelFeedDAL.delete_channel_feed_by_id_channel_and_link_feed(id_channel, link_feed)
+        except Exception as e:
+            print(f"Error deleting ChannelFeed: {e}")
+            return False
+        
     def delete_all_channel_feed(self) -> bool:
         try:
             return self.__channelFeedDAL.delete_all_channel_feed()
