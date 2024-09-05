@@ -3,6 +3,7 @@ from nextcord.ext import commands
 from typing import Optional
 from ..utils.Database import dataBase
 from nextcord.ext.commands import Bot
+from ..BLL.channel_bll import ChannelBLL
 from ..BLL.channel_feed_bll import ChannelFeedBLL
 from ..BLL.channel_emty_bll import ChannelEmtyBLL
 from ..GUI.custom_embed import CustomEmbed
@@ -31,15 +32,31 @@ class AdminCommands(commands.Cog):
     
     @commands.command(name="superclear")
     @commands.is_owner()
-    async def superclear(self, ctx):
-        embed = CustomEmbed(
-            id_server=str(ctx.guild.id),
-            title="Warning",
-            description="Choice an option to clear in database.",
-            color=0xFFA500
-        )
-        await ctx.send(embed=embed, view=SelectView(user=ctx.author))
-
+    async def superclear(self, ctx, id_channel: Optional[str] = None, link_emty: Optional[str] = None):
+        try:
+            channel_bll = ChannelBLL()
+            if id_channel is not None:
+                name_channel = channel_bll.get_channel_by_id_channel(id_channel).get_name_channel() # type: ignore
+                channel_emty_bll = ChannelEmtyBLL()
+                if link_emty is None:
+                    channel_emty_bll.delete_channel_emty_by_id_channel(id_channel)
+                else:
+                    channel_emty_bll.delete_channel_emty_by_id_channel_and_link_emty(id_channel, link_emty)
+                await ctx.send(f"Deleted the history of posts in **{name_channel}** (`{id_channel}`) successfully.")
+     
+            else: 
+                embed = CustomEmbed(
+                    id_server=str(ctx.guild.id),
+                    title="Warning",
+                    description="Choice an option to clear in database.",
+                    color=0xFFA500
+                )
+                await ctx.send(embed=embed, view=SelectView(user=ctx.author))
+        
+        except Exception as e:
+            await ctx.send(f"Error: {e}")
+            print(f"Error: {e}")
+            
     @commands.command(name="supershow")
     @commands.is_owner()
     async def supershow(self, ctx):
@@ -94,18 +111,21 @@ class AdminCommands(commands.Cog):
     async def superdelete(self, ctx, id_channel: str, link_feed: Optional[str] = None):
         try:
             channel_feed_bll = ChannelFeedBLL()
-            if link_feed is None:
-                channel_feed_bll.delete_channel_feed_by_id_channel(id_channel)
-            else:
-                channel_feed_bll.delete_channel_feed_by_id_channel_and_link_feed(id_channel, link_feed)
-            
-            embed = CustomEmbed(
-                id_server=str(ctx.guild.id),
-                title="Warning",
-                description=f"Deleted feed settings for {id_channel} successfully.",
-                color=0xFFA500
-            )
-            await ctx.send(embed=embed)
+            channel_bll = ChannelBLL()
+            name_channel = channel_bll.get_channel_by_id_channel(id_channel).get_name_channel() # type: ignore
+            if name_channel is not None:
+                if link_feed is None:
+                    channel_feed_bll.delete_channel_feed_by_id_channel(id_channel)
+                else:
+                    channel_feed_bll.delete_channel_feed_by_id_channel_and_link_feed(id_channel, link_feed)
+                
+                embed = CustomEmbed(
+                    id_server=str(ctx.guild.id),
+                    title="Warning",
+                    description=f"Deleted feed settings for **{name_channel}** (`{id_channel}`) successfully.",
+                    color=0xFFA500
+                )
+                await ctx.send(embed=embed)
         except Exception as e:
             await ctx.send(f"Error: {e}", e)
             print(f"Error: {e}")
