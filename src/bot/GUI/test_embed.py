@@ -1,5 +1,6 @@
 from ..DTO.feed_emty_dto import FeedEmtyDTO
 from ..GUI.custom_embed import CustomEmbed
+from ..utils.text_processor import TextProcessor
 
 class TestEmbed:
     def __init__(self, id_server: str, feed_emty_dto: FeedEmtyDTO):
@@ -13,6 +14,7 @@ class TestEmbed:
             [**Xem bài viết**]({self.__feed_emty_dto.get_emty().get_link_emty()})
             {self.__feed_emty_dto.get_emty().get_description_emty()}
             '''
+        self.__description = TextProcessor.clean_feed_text(self.__description)
         self.__image = self.__feed_emty_dto.get_emty().get_image_emty()
         
     def get_embed(self) -> CustomEmbed:

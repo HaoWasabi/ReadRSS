@@ -12,29 +12,31 @@ class ReadRSS:
     def __init__(self, linkAtom_feed: str):
         self.__feed = feedparser.parse(linkAtom_feed)
         logo_url = self.__feed.feed.image.href if 'image' in self.__feed.feed else ''
-        feed_dto = FeedDTO(self.__feed.feed.link, self.__feed.feed.title_detail.base, self.__feed.feed.title, self.__feed.feed.description, logo_url, self.__feed.feed.updated)
+        description = TextProcessor.clean_feed_text(self.__feed.feed.description) if hasattr(self.__feed.feed, 'description') else ''
+        feed_dto = FeedDTO(self.__feed.feed.link, self.__feed.feed.title_detail.base, self.__feed.feed.title, description, logo_url, self.__feed.feed.updated)
         
         feed_bll = FeedBLL()
         feed_bll.insert_feed(feed_dto)
         
         emty_bll = EmtyBLL()
         feed_emty_bll = FeedEmtyBLL()
+        
         if self.__feed.entries:
-            for emty in reversed(self.__feed.entries):
-                media_content = ""
+            emty = self.__feed.entries[0]
+            media_content = ""
                 
                 # Kiểm tra thuộc tính 'media_content'
-                if hasattr(emty, 'media_content') and emty.media_content:
-                    media_content = emty.media_content[0]['url']
-                    # Kiểm tra điều kiện bổ sung nếu cần thiết
-                    if 'https://scontent-dus1-1.xx.fbcdn.net' not in media_content:
-                        media_content = ""
+            if hasattr(emty, 'media_content') and emty.media_content:
+                media_content = emty.media_content[0]['url']
+                # Kiểm tra điều kiện bổ sung nếu cần thiết
+                if 'https://scontent-dus1-1.xx.fbcdn.net' not in media_content:
+                    media_content = ""
                 
-                emty_dto = EmtyDTO(emty.link, emty.title, TextProcessor.parse_html(emty.description), media_content, emty.published) # type: ignore
-                emty_bll.insert_emty(emty_dto)
+            emty_dto = EmtyDTO(emty.link, emty.title, TextProcessor.parse_html(emty.description), media_content, emty.published) # type: ignore
+            emty_bll.insert_emty(emty_dto)
                 
-                feed_emty_dto = FeedEmtyDTO(feed_dto, emty_dto)
-                feed_emty_bll.insert_feed_emty(feed_emty_dto)
+            feed_emty_dto = FeedEmtyDTO(feed_dto, emty_dto)
+            feed_emty_bll.insert_feed_emty(feed_emty_dto)
 
     def get_link_first_entry(self) -> Optional[str]:
         if self.__feed is not None and self.__feed.entries:

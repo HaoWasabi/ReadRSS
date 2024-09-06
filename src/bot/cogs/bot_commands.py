@@ -24,6 +24,7 @@ from ..GUI.custom_embed import CustomEmbed
 
 from ..utils.read_rss import ReadRSS
 from ..utils.read_rss_without_saving import ReadRSSWithoutSaving
+from ..utils.get_rss import GetRSS
 
 class BotCommands(commands.Cog):
     def __init__(self, bot):
@@ -180,6 +181,15 @@ class BotCommands(commands.Cog):
             await ctx.send(f"Error: {e}")
             print(f"Error: {e}")
 
-                
+    @commands.command()
+    async def get_rss(self, ctx, url: str):
+        try:
+            link_rss = GetRSS(url).get_rss_link()
+            await ctx.send(f"RSS link: {link_rss}")
+            
+        except Exception as e:
+            await ctx.send(f"Error: {e}")
+            print(f"Error: {e}")
+            
 async def setup(bot):
     bot.add_cog(BotCommands(bot))

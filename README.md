@@ -1,5 +1,5 @@
 # ReadRSS
-This is a Discord bot built with Python, ReadRSS bot brings RSS feeds to your Discord server.  Receive notifications from news sources including Facebook and much more. 
+This is a Discord bot built with Python, Aiko brings RSS feeds to your Discord server. Receive notifications from news sources including Facebook and much more. 
 
 ## Installation
 1. Clone the repository

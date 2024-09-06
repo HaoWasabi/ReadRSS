@@ -25,6 +25,7 @@ from ..GUI.button_of_help_command import ButtonOfHelpCommnad
 
 from ..utils.read_rss_without_saving import ReadRSSWithoutSaving
 from ..utils.read_rss import ReadRSS
+from ..utils.get_rss import GetRSS
 
 class SlashCommands(commands.Cog):
     def __init__(self, bot):
@@ -235,6 +236,15 @@ command prefix `{self.bot.command_prefix}`
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)
             print(f"Error: {e}")
 
+    @nextcord.slash_command(name="get_rss", description="Get the RSS link of a website")
+    async def get_rss(self, interaction: Interaction, url: str = SlashOption(description="The website URL")):
+        try:
+            link_rss = GetRSS(url).get_rss_link()
+            await interaction.response.send_message(f"RSS link: {link_rss}")
+        
+        except Exception as e:
+            await interaction.response.send_message(f"Error: {e}", ephemeral=True)
+            print(f"Error: {e}")
             
 async def setup(bot):
     bot.add_cog(SlashCommands(bot))
