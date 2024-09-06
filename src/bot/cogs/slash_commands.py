@@ -65,14 +65,23 @@ class SlashCommands(commands.Cog):
             print(f"Error: {e}")
 
     @nextcord.slash_command(name="delete_feed", description="Delete feed notification channel settings")
-    async def delete_feed(self, interaction: Interaction, channel: TextChannel = SlashOption(description="The target channel"), link_atom_feed: Optional[str] = SlashOption(description="The Atom/RSS feed link")):
+    async def delete_feed(self, interaction: Interaction, 
+                          channel: TextChannel = SlashOption(description="The target channel"), 
+                          link_atom_feed: Optional[str] = SlashOption(description="The Atom/RSS feed link"), 
+                          link_feed: Optional[str] = SlashOption(description="The feed link")):
         try:
             channel_feed_bll = ChannelFeedBLL()
-            if link_atom_feed is None:
-                channel_feed_bll.delete_channel_feed_by_id_channel(str(channel.id))
-            else:
+            if link_atom_feed is None and link_feed is not None:
+                channel_feed_bll.delete_channel_feed_by_id_channel_and_link_feed(str(channel.id), link_feed)
+            
+            elif link_atom_feed is not None and link_feed is None:
                 channel_feed_bll.delete_channel_feed_by_id_channel_and_link_atom_feed(str(channel.id), link_atom_feed)
+           
+            elif link_atom_feed is None and link_feed is None:
+                channel_feed_bll.delete_channel_feed_by_id_channel(str(channel.id))
+            
             await interaction.response.send_message(f"Deleted feed settings for {channel.mention} successfully.")
+        
         except Exception as e:
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)
             print(f"Error: {e}")

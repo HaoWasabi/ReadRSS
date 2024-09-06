@@ -65,8 +65,8 @@ if __name__ == "__main__":
 
     ## __CLEAR_DATABASE__
     # Database().delete_table('tbl_channel_emty')
-    # Database().delete_table('tbl_channel')
-    # Database().delete_table('tbl_server_channel')
+    # Database().delete_table('tbl_feed_emty')
+    # Database().delete_table('tbl_emty')
     # Database().clear()
     # Database().drop_table('tbl_channel_feed')
     # Database().drop_table('tbl_feed')

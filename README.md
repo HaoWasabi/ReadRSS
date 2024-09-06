@@ -10,17 +10,20 @@ This is a Discord bot built with Python, ReadRSS bot brings RSS feeds to your Di
 
 ## Basic slash_commands
 + `/ping` # Check bot latency
++ `/help` # Show all commands
 + `/clear_channel_entry` # Clear channel post history
 + `/clear_channel_feed` # Clear channel feed settings
-+ `/test_feed` # Test sending an RSS feed
 + `/set_channel_feed` # Set the channel will send the feed
 + `/set_color` # Set the color of all embeds that you want it would send
 + `/show_feeds` # Show list of feeds in channels in your server
++ `/test_feed` # Test sending an RSS feed
 
 ## Admin commands
 + `_shutdown` # Shut down the bot
 + `_servers` # Show the list of guilds that bot have joined
-+ `_superclear` # Clear all database
++ `_superclear` # Clear database
++ `_supershow` # Show all channels have setting inform feed
++ `_superdelete`# Delete setting inform feed in all channels
 
 ## Other information
 Đồ án được xây dựng theo mô hình 3 lớp mở rộng. Trong đó:
