@@ -21,8 +21,9 @@ from ..BLL.server_color_bll import ServerColorBLL
 
 from ..GUI.test_embed import TestEmbed
 from ..GUI.custom_embed import CustomEmbed
+from ..GUI.select_clear import SelectClear
 from ..GUI.button_of_help_command import ButtonOfHelpCommnad
-
+from ..GUI.button_of_ctrl_command import ButtonOfCtrlCommand
 from ..utils.read_rss_without_saving import ReadRSSWithoutSaving
 from ..utils.read_rss import ReadRSS
 from ..utils.get_rss import GetRSS
@@ -88,11 +89,25 @@ class SlashCommands(commands.Cog):
             print(f"Error: {e}")
             
     @nextcord.slash_command(name="test_feed", description="Test sending an RSS feed")
-    async def test_feed(self, interaction: Interaction, channel: TextChannel = SlashOption(description="The target channel"), link_atom_feed: str = SlashOption(description="The Atom/RSS feed link")):
+    async def test_feed(self, interaction: Interaction, 
+                        channel: TextChannel = SlashOption(description="The target channel"), 
+                        link_atom_feed: Optional[str] = None, 
+                        link_feed: Optional[str] = None):
         try:
-            read_rss = ReadRSSWithoutSaving(link_atom_feed)
+            if link_atom_feed is None and link_feed is not None:
+                get_rss = GetRSS(link_feed)
+                if get_rss.get_rss_link() is None:
+                    await interaction.response.send_message(f'link RSS feed is not found.')
+                    return
+                else: 
+                    link_atom_feed = get_rss.get_rss_link()
+            
+            if link_atom_feed is None:
+                await interaction.response.send_message(f'link Atom feed is not found.')
+                return
+            
+            read_rss = ReadRSSWithoutSaving(link_atom_feed)    
             feed_emty_dto = read_rss.get_first_feed_emty()
-
             embed = TestEmbed(str(interaction.guild.id), feed_emty_dto).get_embed()  # type: ignore
             await channel.send(embed=embed)
             await interaction.response.send_message(f'Sent the feed to {channel.mention} successfully.')
@@ -102,8 +117,23 @@ class SlashCommands(commands.Cog):
             print(f"Error: {e}")
 
     @nextcord.slash_command(name="set_feed", description="Set feed notification channel")
-    async def set_feed(self, interaction: Interaction, channel: TextChannel = SlashOption(description="The target channel"), link_atom_feed: str = SlashOption(description="The Atom/RSS feed link")):
+    async def set_feed(self, interaction: Interaction, 
+                       channel: TextChannel = SlashOption(description="The target channel"), 
+                       link_atom_feed: Optional[str] = None, 
+                       link_feed: Optional[str] = None):
         try:
+            if link_atom_feed is None and link_feed is not None:
+                get_rss = GetRSS(link_feed)
+                if get_rss.get_rss_link() is None:
+                    await interaction.response.send_message(f'link RSS feed is not found.')
+                    return
+                else: 
+                    link_atom_feed = get_rss.get_rss_link()
+            
+            if link_atom_feed is None:
+                await interaction.response.send_message(f'link Atom feed is not found.')
+                return
+            
             ReadRSS(link_atom_feed)
             feed_bll = FeedBLL()
             server_bll = ServerBLL()
@@ -240,7 +270,7 @@ command prefix `{self.bot.command_prefix}`
     async def get_rss(self, interaction: Interaction, url: str = SlashOption(description="The website URL")):
         try:
             link_rss = GetRSS(url).get_rss_link()
-            await interaction.response.send_message(f"RSS link: {link_rss}")
+            await interaction.response.send_message(f"RSS link: {link_rss}") if link_rss else await interaction.response.send_message("No RSS link found.")
         
         except Exception as e:
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)

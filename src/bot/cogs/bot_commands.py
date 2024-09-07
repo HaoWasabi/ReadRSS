@@ -70,8 +70,19 @@ class BotCommands(commands.Cog):
         await ctx.send(f"Deleted feed settings for {channel.mention} successfully.")
 
     @commands.command()
-    async def test_feed(self, ctx, channel: TextChannel, link_atom_feed: str):
+    async def test_feed(self, ctx, channel: TextChannel, link_feed: str):
         try:
+            get_rss = GetRSS(link_feed)
+            if get_rss.get_rss_link() is None:
+                await ctx.send(f'link RSS feed is not found.')
+                return
+            else: 
+                link_atom_feed = get_rss.get_rss_link()
+            
+            if link_atom_feed is None:
+                await ctx.send(f'link Atom feed is not found.')
+                return            
+    
             read_rss = ReadRSSWithoutSaving(link_atom_feed)
             feed_emty_dto = read_rss.get_first_feed_emty()
             
@@ -185,7 +196,7 @@ class BotCommands(commands.Cog):
     async def get_rss(self, ctx, url: str):
         try:
             link_rss = GetRSS(url).get_rss_link()
-            await ctx.send(f"RSS link: {link_rss}")
+            await ctx.send(f"RSS link: {link_rss}") if link_rss else await ctx.send("No RSS link found.")
             
         except Exception as e:
             await ctx.send(f"Error: {e}")

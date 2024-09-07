@@ -19,7 +19,21 @@ class FeedEmtyBLL:
         except Exception as e:
             print(f"Error deleting FeedEmty: {e}")
             return False
+        
+    def delete_feed_emty_by_link_feed_and_link_emty(self, feed_link: str, emty_link: str) -> bool:
+        try:
+            return self.__FeedEmtyDAL.delete_feed_emty_by_link_feed_and_link_emty(feed_link, emty_link)
+        except Exception as e:
+            print(f"Error deleting FeedEmty: {e}")
+            return False
             
+    def delete_feed_emty_by_link_feed(self, link_feed: str) -> bool:
+        try:
+            return self.__FeedEmtyDAL.delete_feed_emty_by_link_feed(link_feed)
+        except Exception as e:
+            print(f"Error deleting FeedEmty: {e}")
+            return False
+        
     def delete_all_feed_emty(self) -> bool:
         try:
             return self.__FeedEmtyDAL.delete_all_feed_emty()

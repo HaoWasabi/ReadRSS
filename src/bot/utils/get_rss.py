@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+from typing import Optional
 import requests
 
 class GetRSS:
@@ -14,7 +15,5 @@ class GetRSS:
         else:
             self.__rss_link = None
 
-    def get_rss_link(self) -> str:
-        if self.__rss_link is None:
-            return "RSS link not found"
-        return str(self.__rss_link)
+    def get_rss_link(self) -> Optional[str]:
+        return str(self.__rss_link) if self.__rss_link else None

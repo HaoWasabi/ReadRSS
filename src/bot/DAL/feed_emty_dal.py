@@ -54,6 +54,35 @@ class FeedEmtyDAL:
         except sqlite3.Error as e:
             print(f"Error deleting data from 'tbl_feed_emty': {e}")
             return False
+    
+    def delete_feed_emty_by_link_feed_and_link_emty(self, link_feed: str, link_emty: str) -> bool:
+        try:
+            with self.__connection:
+                self.__cursor.execute('''
+                DELETE FROM tbl_feed_emty WHERE link_atom_feed IN (
+                    SELECT link_atom_feed FROM tbl_feed WHERE link_feed = ?
+                ) AND link_emty = ?
+                ''', (link_feed, link_emty))
+                self.__connection.commit()
+                print(f"Data deleted from 'tbl_feed_emty' successfully.")
+                return True
+        except sqlite3.Error as e:
+            print(f"Error deleting data from 'tbl_feed_emty': {e}")
+            return False
+    
+    def delete_feed_emty_by_link_feed(self, link_feed: str) -> bool:
+        try:
+            with self.__connection:
+                self.__cursor.execute('''
+                DELETE FROM tbl_feed_emty WHERE link_atom_feed IN (
+                    SELECT link_atom_feed FROM tbl_feed WHERE link_feed = ?
+                )''', (link_feed,))
+                self.__connection.commit()
+                print(f"Data deleted from 'tbl_feed_emty' successfully.")
+                return True
+        except sqlite3.Error as e:
+            print(f"Error deleting data from 'tbl_feed_emty': {e}")
+            return False
 
     def delete_all_feed_emty(self) -> bool:
         try:

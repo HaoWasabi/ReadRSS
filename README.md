@@ -11,6 +11,7 @@ This is a Discord bot built with Python, Aiko brings RSS feeds to your Discord s
 ## Basic slash_commands
 + `/ping` # Check bot latency
 + `/help` # Show all commands
++ `/get_rss` # Get the RSS link of a website (if it has)
 + `/clear_channel_entry` # Clear channel post history
 + `/clear_channel_feed` # Clear channel feed settings
 + `/set_channel_feed` # Set the channel will send the feed
@@ -20,10 +21,7 @@ This is a Discord bot built with Python, Aiko brings RSS feeds to your Discord s
 
 ## Admin commands
 + `_shutdown` # Shut down the bot
-+ `_servers` # Show the list of guilds that bot have joined
-+ `_superclear` # Clear database
-+ `_supershow` # Show all channels have setting inform feed
-+ `_superdelete`# Delete setting inform feed in all channels
++ `_ctrl` # show the control panel to to control the bot
 
 ## Other information
 Đồ án được xây dựng theo mô hình 3 lớp mở rộng. Trong đó:

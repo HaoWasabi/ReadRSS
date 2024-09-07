@@ -9,7 +9,7 @@ class ReadRSSWithoutSaving:
     def __init__(self, linkAtom_feed: str):
         self.__feed = feedparser.parse(linkAtom_feed)
         logo_url = self.__feed.feed.image.href if 'image' in self.__feed.feed else ''
-        description = TextProcessor.clean_feed_text(self.__feed.feed.description) if hasattr(self.__feed.feed, 'description') else ''
+        description = self.__feed.feed.description if hasattr(self.__feed.feed, 'description') else ''
         self.__feed_dto = FeedDTO(self.__feed.feed.link, self.__feed.feed.title_detail.base, self.__feed.feed.title, description, logo_url, self.__feed.feed.updated) # type: ignore
         
         if self.__feed.entries:
