@@ -14,7 +14,7 @@ https://discord.com/oauth2/authorize?client_id=1236720788187381760&permissions=0
         ██║   ██║██║     ██║  ██║██╔══╝  ╚██╗ ██╔╝     + NaelTuhline
         ╚██████╔╝╚██████╗██████╔╝███████╗ ╚████╔╝      + tivibin789
         ╚═════╝  ╚═════╝╚═════╝ ╚══════╝  ╚═══╝        
-``
+```
 ## Installation
 1. Clone the repository
 2. Create a virtual environment and activate it
