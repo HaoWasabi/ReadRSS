@@ -20,6 +20,13 @@ class ServerChannelBLL:
             print(f"Error deleting server_channel: {e}")
             return False
     
+    def delete_server_channel_by_id_channel(self, id_channel: str) -> bool:
+        try:
+            return self.__serverChannelDAL.delete_server_channel_by_id_channel(id_channel)
+        except Exception as e:
+            print(f"Error deleting server_channel: {e}")
+            return False
+        
     def delete_all_server_channel(self) -> bool:
         try:
             return self.__serverChannelDAL.delete_all_server_channel()
@@ -39,4 +46,12 @@ class ServerChannelBLL:
         except Exception as e:
             print(f"Error fetching server_channel: {e}")
             return []
+        
+    def get_all_server_channel_by_id_server(self, id_server: str) -> List[ServerChannelDTO]:
+        try:
+            return self.__serverChannelDAL.get_all_server_channel_by_id_server(id_server)
+        except Exception as e:
+            print(f"Error fetching server_channel: {e}")
+            return []
+        
             

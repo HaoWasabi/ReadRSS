@@ -116,6 +116,46 @@ class FeedEmtyDAL:
             print(f"Error fetching data from 'tbl_feed_emty': {e}")
             return None
 
+    def get_all_feed_emty_by_link_atom_feed(self, link_atom_feed: str) -> List[FeedEmtyDTO]:
+        try:
+            with self.__connection:
+                self.__cursor.execute('''
+                SELECT f.link_feed, f.link_atom_feed, f.title_feed, f.description_feed, f.logo_feed, f.pubDate_feed, 
+                       e.link_emty, e.title_emty, e.description_emty, e.image_emty, e.pubDate_emty
+                FROM tbl_feed_emty fe
+                JOIN tbl_feed f ON fe.link_atom_feed = f.link_atom_feed
+                JOIN tbl_emty e ON fe.link_emty = e.link_emty
+                WHERE fe.link_atom_feed = ? 
+                ''', (link_atom_feed,))
+                rows = self.__cursor.fetchall()
+                if rows:
+                    return [FeedEmtyDTO(FeedDTO(row[0], row[1], row[2], row[3], row[4], row[5]), 
+                                        EmtyDTO(row[6], row[7], row[8], row[9], row[10])) for row in rows]
+                return []
+        except sqlite3.Error as e:
+            print(f"Error fetching data from 'tbl_feed_emty': {e}")
+            return []
+        
+    def get_all_feed_emty_by_link_feed(self, link_feed: str) -> List[FeedEmtyDTO]:
+        try:
+            with self.__connection:
+                self.__cursor.execute('''
+                SELECT f.link_feed, f.link_atom_feed, f.title_feed, f.description_feed, f.logo_feed, f.pubDate_feed, 
+                       e.link_emty, e.title_emty, e.description_emty, e.image_emty, e.pubDate_emty
+                FROM tbl_feed_emty fe
+                JOIN tbl_feed f ON fe.link_atom_feed = f.link_atom_feed
+                JOIN tbl_emty e ON fe.link_emty = e.link_emty
+                WHERE f.link_feed = ? 
+                ''', (link_feed,))
+                rows = self.__cursor.fetchall()
+                if rows:
+                    return [FeedEmtyDTO(FeedDTO(row[0], row[1], row[2], row[3], row[4], row[5]), 
+                                        EmtyDTO(row[6], row[7], row[8], row[9], row[10])) for row in rows]
+                return []
+        except sqlite3.Error as e:
+            print(f"Error fetching data from 'tbl_feed_emty': {e}")
+            return []
+        
     def get_all_feed_emty(self) -> List[FeedEmtyDTO]:
         try:
             with self.__connection:

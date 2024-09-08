@@ -1,6 +1,20 @@
 # ReadRSS
 This is a Discord bot built with Python, Aiko brings RSS feeds to your Discord server. Receive notifications from news sources including Facebook and much more. 
 
+```
+https://discord.com/oauth2/authorize?client_id=1236720788187381760&permissions=0&integration_type=0&scope=bot
+```
+
+```
+                        -- ABOUT US --
+                         
+         ██████╗  ██████╗██████╗ ███████╗██╗   ██╗     Summer 2024
+        ██╔════╝ ██╔════╝██╔══██╗██╔════╝██║   ██║     + HaoWasabi
+        ██║  ███╗██║     ██║  ██║█████╗  ██║   ██║     + nguyluky
+        ██║   ██║██║     ██║  ██║██╔══╝  ╚██╗ ██╔╝     + NaelTuhline
+        ╚██████╔╝╚██████╗██████╔╝███████╗ ╚████╔╝      + tivibin789
+        ╚═════╝  ╚═════╝╚═════╝ ╚══════╝  ╚═══╝        
+``
 ## Installation
 1. Clone the repository
 2. Create a virtual environment and activate it

@@ -6,24 +6,6 @@ from test import * # type: ignore
 
 # Load environment variables
 load_dotenv()
-
-def about_us():
-    print('''
-This is a Discord bot built with Python. Aiko brings RSS feeds 
-to your Discord server. Receive notifications from news sources 
-including Facebook and much more. 
-
-                        -- ABOUT US --
-                         
-         ██████╗  ██████╗██████╗ ███████╗██╗   ██╗     Summer 2024
-        ██╔════╝ ██╔════╝██╔══██╗██╔════╝██║   ██║     + HaoWasabi
-        ██║  ███╗██║     ██║  ██║█████╗  ██║   ██║     + nguyluky
-        ██║   ██║██║     ██║  ██║██╔══╝  ╚██╗ ██╔╝     + NaelTuhline
-        ╚██████╔╝╚██████╗██████╔╝███████╗ ╚████╔╝      + tivibin789
-        ╚═════╝  ╚═════╝╚═════╝ ╚══════╝  ╚═══╝        
-                                                                  
-''')
-
 # Start memory tracking
 tracemalloc.start()
 
@@ -62,27 +44,3 @@ if __name__ == "__main__":
     ## Run bot and load cogs
     asyncio.run(load_cogs())
     run_bot()
-
-    ## __CLEAR_DATABASE__
-    # Database().delete_table('tbl_channel_emty')
-    # Database().delete_table('tbl_feed_emty')
-    # Database().delete_table('tbl_emty')
-    # Database().clear()
-    # Database().drop_table('tbl_channel_feed')
-    # Database().drop_table('tbl_feed')
-    # Database().drop_table('tbl_server_color')
-
-    ## __TEST_UTILS__
-    # test_read_rss()
-    # test_text_processor()
-    
-    ## __TEST_BLL__
-    # test_server_channel()
-    # test_feed_emty()
-    # test_channel_feed()
-    # test_channel_emty()
-    # test_server_color()
-
-    ## Display about info
-    # about_us()
-

@@ -44,10 +44,18 @@ def test_feed_emty():
         print(emtyDTO)
         emtyBLL.update_emty_by_link_emty("a", emtyDTO)
     
-        print("\nLIST FEED_EMTY DTO: BEGIN - - - -")
+        print("\nLIST FEED_EMTY DTO GET ALL FEED EMTY: BEGIN - - - -")
         for i in feedEmtyBLL.get_all_feed_emty(): 
             print(i)
         print("FINSH - - - - - - - - - - ")
+        
+        print("\nLIST FEED_EMTY DTO GET ALL FEED EMTY BY LINK FEED: BEGIN - - - -")
+        for i in feedEmtyBLL.get_all_feed_emty_by_link_feed("a"): 
+            print(i)
+        print("FINSH - - - - - - - - - - ")
+        feedEmtyBLL.delete_all_feed_emty()
+        feedBLL.delete_all_feed()
+        emtyBLL.delete_all_emty()
     except Exception as e:
         print(f"Một lỗi đã xảy ra: {e}")
 

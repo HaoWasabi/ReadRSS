@@ -57,6 +57,20 @@ class ServerChannelDAL:
         except sqlite3.Error as e:
             print(f"Error deleting data from 'tbl_server_channel': {e}")
             return False
+    
+    def delete_server_channel_by_id_channel(self, id_channel: str) -> bool:
+        try:
+            with self.__connection:
+                self.__cursor.execute('''
+                DELETE FROM tbl_server_channel
+                WHERE id_channel = ?
+                ''', (id_channel,))
+                self.__connection.commit()
+                print(f"Data deleted successfully from 'tbl_server_channel'.")
+                return True
+        except sqlite3.Error as e:
+            print(f"Error deleting data from 'tbl_server_channel': {e}")
+            return False
             
     def delete_all_server_channel(self) -> bool:
         try:
@@ -108,5 +122,24 @@ class ServerChannelDAL:
             print(f"Error fetching all data from 'tbl_server_channel': {e}")
             return []
             
+    def get_all_server_channel_by_id_server(self, id_server: str) -> List[ServerChannelDTO]:
+        try:
+            self.__cursor.execute('''
+            SELECT s.id_server, s.name_server,
+                    c.id_channel, c.name_channel
+            FROM tbl_server_channel sc
+            JOIN tbl_server s ON sc.id_server = s.id_server
+            JOIN tbl_channel c ON sc.id_channel = c.id_channel
+            WHERE sc.id_server = ?
+            ''', (id_server,))
+            rows = self.__cursor.fetchall()
+            if rows:
+                return [ServerChannelDTO(ServerDTO(row[0], row[1]), ChannelDTO(row[2], row[3])) for row in rows]
+            else:
+                return []
+        except sqlite3.Error as e:
+            print(f"Error fetching all data from 'tbl_server_channel': {e}")
+            return []
+        
     def __del__(self):
         self.__connection.close()

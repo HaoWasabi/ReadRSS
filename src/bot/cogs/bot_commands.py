@@ -63,10 +63,31 @@ class BotCommands(commands.Cog):
     @commands.command()
     async def delete_feed(self, ctx, channel: TextChannel, link_atom_feed: Optional[str] = None):
         channel_feed_bll = ChannelFeedBLL()  
+        channel_emty_bll = ChannelEmtyBLL()
+        
         if link_atom_feed is None:
+            server_channel_bll = ServerChannelBLL()
+            channel_bll = ChannelBLL()
             channel_feed_bll.delete_channel_feed_by_id_channel(str(channel.id))
+            channel_emty_bll.delete_channel_emty_by_id_channel(str(channel.id))
+            server_channel_bll.delete_server_channel_by_id_channel(str(channel.id))
+            channel_bll.delete_channel_by_id_channel(str(channel.id))
         else:
+            feed_emty_bll = FeedEmtyBLL()
             channel_feed_bll.delete_channel_feed_by_id_channel_and_link_atom_feed(str(channel.id), link_atom_feed) 
+            list_channel_feed = channel_feed_bll.get_all_channel_feed()
+            list_feed_emty = feed_emty_bll.get_all_feed_emty_by_link_atom_feed(link_atom_feed)
+            
+            for channel_feed in list_channel_feed:
+                feed_of_channel_feed = channel_feed.get_feed()
+                
+                for feed_emty in list_feed_emty:
+                    feed_of_feed_emty = feed_emty.get_feed()
+                    link_emty_of_feed_emty = feed_emty.get_emty().get_link_emty()
+                    
+                    if feed_of_channel_feed == feed_of_feed_emty and feed_of_channel_feed.get_link_atom_feed() == link_atom_feed:
+                        channel_emty_bll.delete_channel_emty_by_id_channel_and_link_emty(str(channel.id), link_emty_of_feed_emty)
+        
         await ctx.send(f"Deleted feed settings for {channel.mention} successfully.")
 
     @commands.command()

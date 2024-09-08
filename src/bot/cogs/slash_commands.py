@@ -68,25 +68,55 @@ class SlashCommands(commands.Cog):
 
     @nextcord.slash_command(name="delete_feed", description="Delete feed notification channel settings")
     async def delete_feed(self, interaction: Interaction, 
-                          channel: TextChannel = SlashOption(description="The target channel"), 
-                          link_atom_feed: Optional[str] = SlashOption(description="The Atom/RSS feed link"), 
-                          link_feed: Optional[str] = SlashOption(description="The feed link")):
+                        channel: TextChannel = SlashOption(description="The target channel"), 
+                        link_atom_feed: Optional[str] = SlashOption(description="The Atom/RSS feed link"), 
+                        link_feed: Optional[str] = SlashOption(description="The feed link")):
         try:
             channel_feed_bll = ChannelFeedBLL()
-            if link_atom_feed is None and link_feed is not None:
-                channel_feed_bll.delete_channel_feed_by_id_channel_and_link_feed(str(channel.id), link_feed)
+            channel_emty_bll = ChannelEmtyBLL()
+
+            if link_atom_feed or link_feed:
+                feed_emty_bll = FeedEmtyBLL()
+                list_channel_feed = channel_feed_bll.get_all_channel_feed_by_id_channel(str(channel.id))
+                list_feed_emty = []
+
+                if link_feed:
+                    channel_feed_bll.delete_channel_feed_by_id_channel_and_link_feed(str(channel.id), link_feed)
+                    list_feed_emty = feed_emty_bll.get_all_feed_emty_by_link_feed(link_feed)
+                elif link_atom_feed:
+                    channel_feed_bll.delete_channel_feed_by_id_channel_and_link_atom_feed(str(channel.id), link_atom_feed)
+                    list_feed_emty = feed_emty_bll.get_all_feed_emty_by_link_atom_feed(link_atom_feed)
+
+                for channel_feed in list_channel_feed:
+                    for feed_emty in list_feed_emty:
+                        if channel_feed.get_feed() == feed_emty.get_feed() and (
+                            channel_feed.get_feed().get_link_atom_feed() == link_atom_feed or channel_feed.get_feed().get_link_feed() == link_feed):
+                            channel_emty_bll.delete_channel_emty_by_id_channel_and_link_emty(str(channel.id), feed_emty.get_emty().get_link_emty())
+
+                if len(list_channel_feed) == 1:
+                    self.delete_channel_data(channel.id)
             
-            elif link_atom_feed is not None and link_feed is None:
-                channel_feed_bll.delete_channel_feed_by_id_channel_and_link_atom_feed(str(channel.id), link_atom_feed)
-           
-            elif link_atom_feed is None and link_feed is None:
-                channel_feed_bll.delete_channel_feed_by_id_channel(str(channel.id))
-            
+            else:
+                self.delete_channel_data(channel.id)
+
             await interaction.response.send_message(f"Deleted feed settings for {channel.mention} successfully.")
         
         except Exception as e:
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)
             print(f"Error: {e}")
+
+    def delete_channel_data(self, channel_id):
+        """Helper function to delete all data related to a channel."""
+        channel_feed_bll = ChannelFeedBLL()
+        channel_emty_bll = ChannelEmtyBLL()
+        server_channel_bll = ServerChannelBLL()
+        channel_bll = ChannelBLL()
+        
+        channel_feed_bll.delete_channel_feed_by_id_channel(str(channel_id))
+        channel_emty_bll.delete_channel_emty_by_id_channel(str(channel_id))
+        server_channel_bll.delete_server_channel_by_id_channel(str(channel_id))
+        channel_bll.delete_channel_by_id_channel(str(channel_id))
+
             
     @nextcord.slash_command(name="test_feed", description="Test sending an RSS feed")
     async def test_feed(self, interaction: Interaction, 

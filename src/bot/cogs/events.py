@@ -29,28 +29,63 @@ class Events(commands.Cog):
         try:
             server_bll = ServerBLL() 
             channel_bll = ChannelBLL()
+            channel_feed_bll = ChannelFeedBLL()
+            channel_emty_bll = ChannelEmtyBLL()
             server_color_bll = ServerColorBLL()
             guilds = self.bot.guilds
             
             list_channel = channel_bll.get_all_channel()
+
             for guild in guilds:
                 server_dto = ServerDTO(str(guild.id), str(guild.name))
-                server_bll.insert_server(server_dto)
-                
                 color_dto = ColorDTO("blue")
                 server_color_bll.insert_server_color(ServerColorDTO(server_dto, color_dto))
                 
-                for channel in guild.channels:
-                    channel_dto = ChannelDTO(str(channel.id), channel.name)
-                    for channel_of_list_channel in list_channel:
-                        if channel_dto.get_id_channel() == channel_of_list_channel.get_id_channel() and channel_dto.get_name_channel() != channel_of_list_channel.get_name_channel():
-                            channel_bll.update_channel_by_id_channel(str(channel.id), channel_dto)
-
+                # Insert or update server
                 if not server_bll.insert_server(server_dto):
                     server_bll.update_server_by_id_server(str(guild.id), server_dto)
-                    
+
+                # Update channel names if changed
+                for channel in guild.channels:
+                    channel_dto = ChannelDTO(str(channel.id), channel.name)
+                    matching_channel = next((ch for ch in list_channel if ch.get_id_channel() == channel_dto.get_id_channel()), None)
+                    if matching_channel and matching_channel.get_name_channel() != channel_dto.get_name_channel():
+                        channel_bll.update_channel_by_id_channel(str(channel.id), channel_dto)
+
+            # Delete servers and related channels not in guilds
+            for server in server_bll.get_all_server():
+                if self.bot.get_guild(int(server.get_id_server())) is None:
+                    self.delete_server_and_related_channels(server.get_id_server())
+
+            # Delete channels not found in current guilds
+            for channel in channel_bll.get_all_channel():
+                if self.bot.get_channel(int(channel.get_id_channel())) is None:
+                    self.delete_channel_and_related_data(channel.get_id_channel())
+            
         except Exception as e:
             print(f"Error loading guilds: {e}")
+
+    def delete_server_and_related_channels(self, server_id):
+        server_bll = ServerBLL()
+        channel_bll = ChannelBLL()
+        channel_feed_bll = ChannelFeedBLL()
+        channel_emty_bll = ChannelEmtyBLL()
+        server_bll.delete_server_by_id_server(server_id)
+        server_channels = ServerChannelBLL().get_all_server_channel_by_id_server(server_id)
+
+        for server_channel in server_channels:
+            channel_id = server_channel.get_channel().get_id_channel()
+            channel_feed_bll.delete_channel_feed_by_id_channel(channel_id)
+            channel_emty_bll.delete_channel_emty_by_id_channel(channel_id)
+            channel_bll.delete_channel_by_id_channel(channel_id)
+
+    def delete_channel_and_related_data(self, channel_id):
+        channel_bll = ChannelBLL()
+        channel_feed_bll = ChannelFeedBLL()
+        channel_emty_bll = ChannelEmtyBLL()
+        channel_feed_bll.delete_channel_feed_by_id_channel(channel_id)
+        channel_emty_bll.delete_channel_emty_by_id_channel(channel_id)
+        channel_bll.delete_channel_by_id_channel(channel_id)
             
     async def load_list_feed(self):
             channel_feed_bll = ChannelFeedBLL()

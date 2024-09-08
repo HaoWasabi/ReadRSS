@@ -126,5 +126,26 @@ class ChannelEmtyDAL:
             print(f"Error fetching data from 'tbl_channel_emty': {e}")
             return []
         
+    def get_all_channel_emty_by_id_channel(self, id_channel: str) -> List[ChannelEmtyDTO]:
+        try:
+            with self.__connection:
+                self.__cursor.execute('''
+                SELECT f.id_channel, f.name_channel, 
+                       e.link_emty, e.title_emty, e.description_emty, e.image_emty, e.pubdate_emty
+                FROM tbl_channel_emty fe
+                JOIN tbl_channel f ON fe.id_channel = f.id_channel
+                JOIN tbl_emty e ON fe.link_emty = e.link_emty
+                WHERE fe.id_channel = ?
+                ''', (id_channel,))
+                rows = self.__cursor.fetchall()
+                if rows:
+                    return [ChannelEmtyDTO(ChannelDTO(row[0], row[1]), 
+                                    EmtyDTO(row[2], row[3], row[4], row[5], row[6])) for row in rows]
+                else: 
+                    return []
+        except sqlite3.Error as e:
+            print(f"Error fetching data from 'tbl_channel_emty': {e}")
+            return []
+        
     def __del__(self):
         self.__connection.close()

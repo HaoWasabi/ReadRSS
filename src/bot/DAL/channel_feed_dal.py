@@ -131,5 +131,22 @@ class ChannelFeedDAL:
             print(f"Error fetching all data from `tbl_channel_feed`: {e}")
             return []
 
+    def get_all_channel_feed_by_id_channel(self, id_channel: str) -> List[ChannelFeedDTO]:
+        try:
+            self.cursor.execute('''
+            SELECT c.id_channel, c.name_channel, 
+                f.link_feed, f.link_atom_feed, f.title_feed, f.description_feed, f.logo_feed, f.pubdate_feed
+            FROM tbl_channel_feed cf
+            JOIN tbl_channel c ON cf.id_channel = c.id_channel
+            JOIN tbl_feed f ON cf.link_atom_feed = f.link_atom_feed
+            WHERE cf.id_channel = ?
+            ''', (id_channel,))
+            rows = self.cursor.fetchall()
+            return [ChannelFeedDTO(ChannelDTO(row[0], row[1]), 
+                                   FeedDTO(row[2], row[3], row[4], row[5], row[6], row[7])) for row in rows]
+        except sqlite3.Error as e:
+            print(f"Error fetching all data from `tbl_channel_feed`: {e}")
+            return []
+        
     def __del__(self):
         self.connection.close()

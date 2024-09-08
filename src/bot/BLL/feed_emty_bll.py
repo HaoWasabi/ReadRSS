@@ -47,6 +47,20 @@ class FeedEmtyBLL:
         except Exception as e:
             print(f"Error fetching FeedEmty: {e}")
             
+    def get_all_feed_emty_by_link_atom_feed(self, link_atom_feed: str) -> List[FeedEmtyDTO]:
+        try:
+            return self.__FeedEmtyDAL.get_all_feed_emty_by_link_atom_feed(link_atom_feed)
+        except Exception as e:
+            print(f"Error fetching FeedEmty: {e}")
+            return []
+    
+    def get_all_feed_emty_by_link_feed(self, link_feed: str) -> List[FeedEmtyDTO]:
+        try:
+            return self.__FeedEmtyDAL.get_all_feed_emty_by_link_feed(link_feed)
+        except Exception as e:
+            print(f"Error fetching FeedEmty: {e}")
+            return []
+            
     def get_all_feed_emty(self) -> List[FeedEmtyDTO]:
         try:
             return self.__FeedEmtyDAL.get_all_feed_emty()

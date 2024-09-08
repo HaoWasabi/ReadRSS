@@ -46,3 +46,10 @@ class ChannelEmtyBLL:
         except Exception as e:
             print(f"Error fetchting ChannelEmty: {e}")
             return []
+        
+    def get_all_channel_emty_by_id_channel(self, id_channel: str) -> List[ChannelEmtyDTO]:
+        try:
+            return self.__channelEmtyDAL.get_all_channel_emty_by_id_channel(id_channel)
+        except Exception as e:
+            print(f"Error fetching ChannelEmty: {e}")
+            return []

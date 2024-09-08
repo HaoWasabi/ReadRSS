@@ -53,3 +53,11 @@ class ChannelFeedBLL:
         except Exception as e:
             print(f"Error fetching all ChannelFeed: {e}")
             return []
+        
+    def get_all_channel_feed_by_id_channel(self, id_channel: str) -> List[ChannelFeedDTO]:
+        try:
+            return self.__channelFeedDAL.get_all_channel_feed_by_id_channel(id_channel)
+        except Exception as e:
+            print(f"Error fetching ChannelFeed: {e}")
+            return []
+        
