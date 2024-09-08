@@ -6,10 +6,6 @@ https://discord.com/oauth2/authorize?client_id=1236720788187381760&permissions=0
 ```
 
 ```
-https://discord.com/oauth2/authorize?client_id=1236720788187381760&permissions=0&integration_type=0&scope=bot
-```
-
-```
                         -- ABOUT US --
                          
          ██████╗  ██████╗██████╗ ███████╗██╗   ██╗     Summer 2024
