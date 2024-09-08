@@ -1,5 +1,9 @@
-# ReadRSS
+# Aiko (ReadRSS)
 This is a Discord bot built with Python, Aiko brings RSS feeds to your Discord server. Receive notifications from news sources including Facebook and much more. 
+This is link to invite Aiko bot:
+```
+https://discord.com/oauth2/authorize?client_id=1236720788187381760&permissions=0&integration_type=0&scope=bot
+```
 
 ```
 https://discord.com/oauth2/authorize?client_id=1236720788187381760&permissions=0&integration_type=0&scope=bot
@@ -41,7 +45,9 @@ https://discord.com/oauth2/authorize?client_id=1236720788187381760&permissions=0
 Đồ án được xây dựng theo mô hình 3 lớp mở rộng. Trong đó:
 + dal: xử lý logic truy cập dữ liệu.
 + bll: xử lý logic các yêu cầu từ lớp trình bày.
-+ gui: Xử lý giao diện
-+ dto: Chứa các lớp dùng để chuyển dữ liệu giữa các lớp hoặc tầng khác nhau. Mỗi lớp dto chứa có chứa các thuộc tính của các thực thể và các mối quan hệ.
-+ utils: Chứa các tệp tiện ích hoặc các hàm hỗ trợ mở rộng.
-+ cogs: chứa các hàm sự kiện, lệnh bất đồng bộ tương tác với người dùng. 
++ gui: xử lý giao diện
++ dto: chứa các lớp dùng để chuyển dữ liệu giữa các lớp hoặc tầng khác nhau. Mỗi lớp dto chứa có chứa các thuộc tính của các thực thể và các mối quan hệ.
++ utils: chứa các tệp tiện ích hoặc các hàm hỗ trợ mở rộng.
++ cogs: chứa các hàm sự kiện, lệnh bất đồng bộ tương tác với người dùng.
+
+
