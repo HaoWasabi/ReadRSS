@@ -25,12 +25,16 @@ class ReadRSS:
             emty = self.__feed.entries[0]
             media_content = ""
                 
-                # Kiểm tra thuộc tính 'media_content'
+            # Kiểm tra thuộc tính 'media_content'
             if hasattr(emty, 'media_content') and emty.media_content:
-                media_content = emty.media_content[0]['url']
-                # Kiểm tra điều kiện bổ sung nếu cần thiết
-                if 'https://scontent-dus1-1.xx.fbcdn.net' not in media_content:
-                    media_content = ""
+                if  hasattr(emty, 'media_thumbnail') and emty.media_thumbnail:
+                    media_content = emty.media_thumbnail[0]['url']
+                
+                else:    
+                    media_content = emty.media_content[0]['url']
+                    # Kiểm tra điều kiện bổ sung nếu cần thiết
+                    # if 'https://scontent-dus1-1.xx.fbcdn.net' in media_content:
+                    #     media_content = ""
                 
             emty_dto = EmtyDTO(emty.link, emty.title, TextProcessor.parse_html(emty.description), media_content, emty.published) # type: ignore
             emty_bll.insert_emty(emty_dto)

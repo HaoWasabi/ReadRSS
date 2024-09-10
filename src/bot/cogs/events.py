@@ -2,7 +2,6 @@ import nextcord
 from nextcord.ext import commands
 from nextcord.ext import tasks
 
-from ..DTO.server_channel_dto import ServerChannelDTO
 from ..DTO.channel_emty_dto import ChannelEmtyDTO
 from ..DTO.server_color_dto import ServerColorDTO
 from ..DTO.channel_dto import ChannelDTO

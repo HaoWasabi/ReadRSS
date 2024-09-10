@@ -24,8 +24,8 @@ class ReadRSSWithoutSaving:
                 else:    
                     media_content = emty.media_content[0]['url']
                     # Kiểm tra điều kiện bổ sung nếu cần thiết
-                    if 'https://scontent-dus1-1.xx.fbcdn.net' in media_content:
-                        media_content = ""
+                    # if 'https://scontent-dus1-1.xx.fbcdn.net' in media_content:
+                    #     media_content = ""
             
             self.__emty_dto = EmtyDTO(emty.link, emty.title, TextProcessor.parse_html(emty.description), media_content, emty.published) # type: ignore
             self.__feed_emty_dto = FeedEmtyDTO(self.__feed_dto, self.__emty_dto)

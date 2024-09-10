@@ -9,7 +9,7 @@ from ..GUI.check_authorization import check_authorization
 
 class ButtonOfCtrlCommand(View):
     def __init__(self, user, bot: Bot):
-        super().__init__()
+        super().__init__(timeout=None)
         self.bot = bot
         self.author = user  # Store the user who initiated the interaction        
 
@@ -69,19 +69,19 @@ class ButtonOfCtrlCommand(View):
             return
         
         try:
-            if interaction.guild: 
-                guilds = self.bot.guilds; num = 0; guild_names = []
+            id_server = str(interaction.guild.id) if interaction.guild is not None else "Unknown"
+            guilds = self.bot.guilds; num = 0; guild_names = []
                 
-                for guild in guilds:
-                    guild_names.append(guild.name); num += 1
+            for guild in guilds:
+                guild_names.append(guild.name); num += 1
                 
-                embed = CustomEmbed(
-                    id_server=str(interaction.guild.id),
-                    title="Servers",
-                    description=f"The bot joined {num} guilds: **{', '.join(guild_names)}**",
-                    color=0xFFA500
-                )
-                await interaction.response.send_message(embed=embed, ephemeral=True)
+            embed = CustomEmbed(
+                id_server=id_server,
+                title="Servers",
+                description=f"The bot joined {num} guilds: **{', '.join(guild_names)}**",
+                color=0xFFA500
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
 
         except Exception as e:
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)

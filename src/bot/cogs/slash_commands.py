@@ -1,3 +1,4 @@
+import asyncio
 import nextcord
 from nextcord.ext import commands
 from nextcord import SlashOption, Interaction, TextChannel
@@ -34,33 +35,32 @@ class SlashCommands(commands.Cog):
 
     @nextcord.slash_command(name="ping", description="Check bot latency")
     async def ping(self, interaction: Interaction):
-        await interaction.response.send_message(f'Pong! {round(self.bot.latency * 1000)}ms')
+        result = f'Pong! {round(self.bot.latency * 1000)}ms'
+        await interaction.response.send_message(result)
 
-    @nextcord.slash_command(name="clear_history", description="Clear channel post history")
+    @nextcord.slash_command(name="clear", description="Clear channel post history")
     async def clear_history(self, interaction: Interaction, channel: TextChannel = SlashOption(description="The target channel"), link_atom_feed: Optional[str] = SlashOption(description="The Atom/RSS feed link")):
         try:
             channel_emty_bll = ChannelEmtyBLL()
             if link_atom_feed is None:
                 channel_emty_bll.delete_channel_emty_by_id_channel(str(channel.id))
-            
-            else :
+            else:
                 channel_feed_bll = ChannelFeedBLL()
-                channel_emty_bll = ChannelEmtyBLL()
                 feed_emty_bll = FeedEmtyBLL()
-                
                 list_channel_feed = channel_feed_bll.get_all_channel_feed()
                 list_feed_emty = feed_emty_bll.get_all_feed_emty()
-                
+
                 for channel_feed in list_channel_feed:
                     feed_of_channel_feed = channel_feed.get_feed()
-                    
+
                     for feed_emty in list_feed_emty:
                         feed_of_feed_emty = feed_emty.get_feed()
                         link_emty_of_feed_emty = feed_emty.get_emty().get_link_emty()
-                        
+
                         if feed_of_channel_feed == feed_of_feed_emty and feed_of_channel_feed.get_link_atom_feed() == link_atom_feed:
                             channel_emty_bll.delete_channel_emty_by_id_channel_and_link_emty(str(channel.id), link_emty_of_feed_emty)
-            
+
+            # Đánh dấu rằng phản hồi sẽ được gửi sau
             await interaction.response.send_message(f"Deleted the history of posts in {channel.mention} successfully.")
         except Exception as e:
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)
@@ -74,9 +74,9 @@ class SlashCommands(commands.Cog):
         try:
             channel_feed_bll = ChannelFeedBLL()
             channel_emty_bll = ChannelEmtyBLL()
+            feed_emty_bll = FeedEmtyBLL()
 
             if link_atom_feed or link_feed:
-                feed_emty_bll = FeedEmtyBLL()
                 list_channel_feed = channel_feed_bll.get_all_channel_feed_by_id_channel(str(channel.id))
                 list_feed_emty = []
 
@@ -117,8 +117,7 @@ class SlashCommands(commands.Cog):
         server_channel_bll.delete_server_channel_by_id_channel(str(channel_id))
         channel_bll.delete_channel_by_id_channel(str(channel_id))
 
-            
-    @nextcord.slash_command(name="test_feed", description="Test sending an RSS feed")
+    @nextcord.slash_command(name="test", description="Test sending an RSS feed")
     async def test_feed(self, interaction: Interaction, 
                         channel: TextChannel = SlashOption(description="The target channel"), 
                         link_atom_feed: Optional[str] = None, 
@@ -127,19 +126,20 @@ class SlashCommands(commands.Cog):
             if link_atom_feed is None and link_feed is not None:
                 get_rss = GetRSS(link_feed)
                 if get_rss.get_rss_link() is None:
-                    await interaction.response.send_message(f'link RSS feed is not found.')
+                    await interaction.response.send_message(f'Link RSS feed is not found.', ephemeral=True)
                     return
                 else: 
                     link_atom_feed = get_rss.get_rss_link()
             
             if link_atom_feed is None:
-                await interaction.response.send_message(f'link Atom feed is not found.')
+                await interaction.response.send_message(f'Link Atom feed is not found.', ephemeral=True)
                 return
             
             read_rss = ReadRSSWithoutSaving(link_atom_feed)    
             feed_emty_dto = read_rss.get_first_feed_emty()
             embed = TestEmbed(str(interaction.guild.id), feed_emty_dto).get_embed()  # type: ignore
             await channel.send(embed=embed)
+            # Đánh dấu rằng phản hồi sẽ được gửi sau
             await interaction.response.send_message(f'Sent the feed to {channel.mention} successfully.')
        
         except Exception as e:
@@ -155,13 +155,14 @@ class SlashCommands(commands.Cog):
             if link_atom_feed is None and link_feed is not None:
                 get_rss = GetRSS(link_feed)
                 if get_rss.get_rss_link() is None:
-                    await interaction.response.send_message(f'link RSS feed is not found.')
+                    await interaction.response.send_message(f'Link RSS feed is not found.')
                     return
                 else: 
                     link_atom_feed = get_rss.get_rss_link()
             
             if link_atom_feed is None:
-                await interaction.response.send_message(f'link Atom feed is not found.')
+            # Đánh dấu rằng phản hồi sẽ được gửi sau
+                await interaction.response.send_message(f'Link Atom feed is not found.')
                 return
             
             ReadRSS(link_atom_feed)
@@ -177,11 +178,13 @@ class SlashCommands(commands.Cog):
             channel_feed_dto = ChannelFeedDTO(channel_dto, feed_dto)  # type: ignore
             server_channel_dto = ServerChannelDTO(server_dto, channel_dto)
 
-            server_bll.insert_server(server_dto)
-            channel_bll.insert_channel(channel_dto)
             channel_feed_bll.insert_channel_feed(channel_feed_dto)
             server_channel_bll.insert_server_channel(server_channel_dto)
-            await interaction.response.send_message(f"Set {channel.mention} to have {link_atom_feed} feed successfully.")
+            channel_bll.insert_channel(channel_dto)
+            server_bll.insert_server(server_dto)
+
+             # Đánh dấu rằng phản hồi sẽ được gửi sau
+            await interaction.response.send_message(f'Successfully set the feed for {channel.mention}.')
         
         except Exception as e:
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)
@@ -212,6 +215,7 @@ class SlashCommands(commands.Cog):
                 description=f"Set color **{color_dto.get_name_color()}** successfully.", 
                 color=int(hex_color, 16))
             
+            # Đánh dấu rằng phản hồi sẽ được gửi sau
             await interaction.response.send_message(embed=embed)
         
         except Exception as e:
@@ -258,11 +262,12 @@ class SlashCommands(commands.Cog):
                     inline=False
                 )
             
-            await interaction.send(embed=embed)  # Sửa từ "ctx.send" thành "interaction.send"
+            # Đánh dấu rằng phản hồi sẽ được gửi sau
+            await interaction.response.send_message(embed=embed)  # Sửa từ "ctx.send" thành "interaction.send"
                 
         except Exception as e:
             # Thông báo lỗi
-            await interaction.send(f"Error: {e}", ephemeral=True)  # Gửi lỗi một cách riêng tư
+            await interaction.response.send_message(f"Error: {e}", ephemeral=True)  # Gửi lỗi một cách riêng tư
             print(f"Error: {e}")
         
     @nextcord.slash_command(name="help", description="List of commands")
@@ -290,7 +295,8 @@ command prefix `{self.bot.command_prefix}`
                     ''',
                     color=int(hex_color, 16) if hex_color else nextcord.Color(0x808080)
                 )
-                await interaction.response.send_message(embed=embed, view=ButtonOfHelpCommnad())
+            # Đánh dấu rằng phản hồi sẽ được gửi sau
+            await interaction.response.send_message(embed=embed, view=ButtonOfHelpCommnad())
         
         except Exception as e:
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)
@@ -303,8 +309,9 @@ command prefix `{self.bot.command_prefix}`
             await interaction.response.send_message(f"RSS link: {link_rss}") if link_rss else await interaction.response.send_message("No RSS link found.")
         
         except Exception as e:
+            # Đánh dấu rằng phản hồi sẽ được gửi sau
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)
             print(f"Error: {e}")
             
-async def setup(bot):
+def setup(bot):
     bot.add_cog(SlashCommands(bot))
