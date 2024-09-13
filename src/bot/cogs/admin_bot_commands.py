@@ -3,7 +3,7 @@ from nextcord import DMChannel
 from ..GUI.custom_embed import CustomEmbed
 from ..GUI.select_clear import SelectClear
 from ..GUI.button_of_ctrl_command import ButtonOfCtrlCommand
-from ..cogs.check_dm_channel import check_dm_channel
+from ..utils.check_cogs import CheckCogs
 
 class AdminBotCommands(commands.Cog):
     def __init__(self, bot):
@@ -13,7 +13,7 @@ class AdminBotCommands(commands.Cog):
     @commands.is_owner()
     async def shutdown(self, ctx):
         try:
-            channel = ctx.channel if check_dm_channel(ctx) else ctx.channel
+            channel = ctx.channel
 
             embed = CustomEmbed(
                 id_server=str(ctx.guild.id) if not isinstance(ctx.channel, DMChannel) else "DM",
@@ -31,7 +31,7 @@ class AdminBotCommands(commands.Cog):
     @commands.is_owner()
     async def ctrl_command(self, ctx):
         try:
-            channel = ctx.channel if check_dm_channel(ctx) else ctx.channel
+            channel = ctx.channel
 
             embed = CustomEmbed(
                 id_server=str(ctx.guild.id) if not isinstance(ctx.channel, DMChannel) else "DM",

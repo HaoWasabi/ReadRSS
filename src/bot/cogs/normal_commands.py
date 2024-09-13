@@ -1,7 +1,7 @@
 from nextcord.ext import commands
-from nextcord import TextChannel
+from nextcord import TextChannel, DMChannel
 from ..GUI.test_embed import TestEmbed
-from ..cogs.check_dm_channel import check_dm_channel
+from ..utils.check_cogs import CheckCogs
 from ..utils.read_rss_without_saving import ReadRSSWithoutSaving
 from ..utils.get_rss import GetRSS
 
@@ -28,28 +28,29 @@ class NormalCommands(commands.Cog):
             print(f"Error: {e}")
 
     @commands.command(name="test")
-    async def test(self, ctx, channel: TextChannel, link_feed: str):
-        if check_dm_channel(ctx):
-            return
-
+    async def test(self, ctx, link_feed: str):
         try:
+            channel = ctx.channel
             get_rss = GetRSS(link_feed)
             link_atom_feed = get_rss.get_rss_link()
-            
+
             if link_atom_feed is None:
                 await ctx.send('Link Atom feed is not found.')
                 return
-            
+
             read_rss = ReadRSSWithoutSaving(link_atom_feed)
             feed_emty_dto = read_rss.get_first_feed_emty()
-            
+
             if feed_emty_dto is None:
                 raise TypeError("link_first_entry is None")
-            
-            embed = TestEmbed(str(ctx.guild.id), feed_emty_dto).get_embed()
-            await ctx.send(f"Sending test embed to {channel.mention} successfully.")
+                
+            if CheckCogs.check_dm_channel(ctx):
+                id_server = "DM"
+            else:
+                id_server = str(ctx.guild.id)
+            embed = TestEmbed(id_server, feed_emty_dto).get_embed()
             await channel.send(embed=embed)
-       
+        
         except Exception as e:
             await ctx.send(f"Error: {e}")
             print(f"Error: {e}")

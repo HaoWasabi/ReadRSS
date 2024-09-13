@@ -167,10 +167,10 @@ def test_server_color():
            -- TEST SERVER_COLOR --
            ''')
     serverBLL = ServerBLL()
-    serverDTO = ServerDTO("b", "a")
+    serverDTO = ServerDTO("DM", "DM")
     serverBLL.insert_server(serverDTO)
     
-    colorDTO = ColorDTO("RED")
+    colorDTO = ColorDTO("blue")
     serverColorDTO = ServerColorDTO(serverDTO, colorDTO)
     print(serverDTO)
     print(colorDTO)

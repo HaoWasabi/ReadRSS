@@ -1,6 +1,9 @@
+
+import os
 import nextcord
 from nextcord.ext import commands
 from nextcord.ext import tasks
+import google.generativeai as genai
 
 from ..DTO.channel_emty_dto import ChannelEmtyDTO
 from ..DTO.server_color_dto import ServerColorDTO
@@ -18,6 +21,8 @@ from ..BLL.server_bll import ServerBLL
 
 from ..GUI.feed_embed import FeedEmbed
 from ..GUI.custom_embed import CustomEmbed
+
+from ..utils.check_cogs import CheckCogs
 from ..utils.read_rss import ReadRSS
 
 class Events(commands.Cog):
@@ -154,7 +159,68 @@ class Events(commands.Cog):
 
         if not self.push_noti.is_running():
             self.push_noti.start()
+            
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.author == self.bot.user:
+            return
 
+        if message.content.startswith('<@1236720788187381760>'):
+            # Gửi tin nhắn "Creating prompt..."
+            prompt_message = await message.channel.send('Creating prompt...')
+
+            prompt = message.content[len('<@1236720788187381760> '):]
+            print(prompt)
+
+            try:
+                server_color_bll = ServerColorBLL()
+                server_dto = ServerDTO(str(message.guild.id), message.guild.name)
+                server_color_dto = server_color_bll.get_server_color_by_id_server(server_dto.get_id_server())
+                hex_color = server_color_dto.get_color().get_hex_color() # type: ignore
+
+                # Cấu hình client Generative AI
+                genai.configure(api_key=os.getenv("GEMINI_TOKEN"))
+
+                # Sử dụng mô hình Generative AI để tạo nội dung
+                model = genai.GenerativeModel("gemini-1.5-flash")
+                
+                response = model.generate_content(f'{prompt}')
+                response_text = response.text
+                print(response_text)
+                
+                # Chia nhỏ nội dung phản hồi thành các phần nhỏ tối đa 2000 ký tự
+                chunk_size = 2000
+                chunks = [response_text[i:i + chunk_size] for i in range(0, len(response_text), chunk_size)]
+
+                # Kiểm tra nếu tin nhắn đến từ DMChannel hay không
+                if isinstance(message.channel, nextcord.DMChannel):
+                    # Sử dụng nextcord.Embed cho tin nhắn DMChannel
+                    embed_color = nextcord.Color.blue()
+                else:
+                    # Sử dụng CustomEmbed cho tin nhắn trong server
+                    embed_color = int(hex_color, 16) if hex_color else nextcord.Color(0x808080)
+
+                # Gửi phản hồi đầu tiên
+                embed = nextcord.Embed(
+                    title="Generative AI Response",
+                    description=chunks[0],
+                    color=embed_color
+                )
+                response_message = await message.channel.send(embed=embed)
+
+                # Gửi các đoạn tin nhắn tiếp theo
+                for chunk in chunks[1:]:
+                    embed_next = nextcord.Embed(
+                        description=chunk,
+                        color=embed_color
+                    )
+                    response_message = await response_message.reply(embed=embed_next)
+                    
+                # Xóa tin nhắn "Creating prompt..." sau khi gửi phản hồi
+                await prompt_message.delete()
+            except Exception as e:
+                await message.channel.send(f'Error: {e}')
+    
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.CommandNotFound):
