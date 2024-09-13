@@ -1,10 +1,17 @@
+import datetime
 import logging
+from tkinter import NO
 from nextcord.ext import commands
 from nextcord import TextChannel, Embed
 from typing import Optional
 
 from nextcord.ext.commands import Context
 
+from ..BLL.qr_pay_code_bll import QrPayCodeBLL
+
+from ..utils.datetime_format import datetime_to_string
+
+from ..DTO.qr_code_pay_dto import QrPayCodeDTO
 from ..DTO.server_dto import ServerDTO
 from ..DTO.channel_dto import ChannelDTO
 from ..DTO.color_dto import ColorDTO
@@ -239,11 +246,22 @@ class AdminServerCommands(commands.Cog):
         embed_text.add_field(name="Ngân hàng MB-Bank", value="0347402306", inline=False)
         embed_text.add_field(name="Số Tiền:", value="10k", inline=False)
 
-        embed_text.set_image(QRGenerator.generator(ctx.author.id.__str__()))
-
+        if (ctx.guild is None or ctx.channel is None):
+            await ctx.send('có gì đó lạ lắm')
+            return
+        
+        
+        qr_id = QRGenerator.generator_id(str(ctx.guild.id))
+        embed_text.add_field(name="Nội dung:", value=f"T{qr_id}T", inline=False)
+        
+        embed_text.set_image(QRGenerator.generator_qr(qr_id))
         message = await ctx.send(embed=embed_text)
-        message.id
-        await ctx.send(ctx.author.id.__str__())
+        
+        
+        qr = QrPayCodeDTO(qr_id, str(ctx.guild.id), str(ctx.channel.id), str(message.id), datetime.datetime.now())
+        
+        qr_pay_code_bll = QrPayCodeBLL()
+        qr_pay_code_bll.insert_qr_pay_code(qr)
         
         
         

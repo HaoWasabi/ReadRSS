@@ -546,6 +546,31 @@
         "documentation": {}
     },
     {
+        "label": "datetime",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "datetime",
+        "description": "datetime",
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "NO",
+        "importPath": "tkinter",
+        "description": "tkinter",
+        "isExtraImport": true,
+        "detail": "tkinter",
+        "documentation": {}
+    },
+    {
         "label": "Context",
         "importPath": "nextcord.ext.commands",
         "description": "nextcord.ext.commands",
@@ -559,6 +584,30 @@
         "description": "nextcord.ext.commands",
         "isExtraImport": true,
         "detail": "nextcord.ext.commands",
+        "documentation": {}
+    },
+    {
+        "label": "message",
+        "importPath": "email",
+        "description": "email",
+        "isExtraImport": true,
+        "detail": "email",
+        "documentation": {}
+    },
+    {
+        "label": "ChannelType",
+        "importPath": "discord",
+        "description": "discord",
+        "isExtraImport": true,
+        "detail": "discord",
+        "documentation": {}
+    },
+    {
+        "label": "TextChannel",
+        "importPath": "discord",
+        "description": "discord",
+        "isExtraImport": true,
+        "detail": "discord",
         "documentation": {}
     },
     {
@@ -580,6 +629,14 @@
         "documentation": {}
     },
     {
+        "label": "truediv",
+        "importPath": "operator",
+        "description": "operator",
+        "isExtraImport": true,
+        "detail": "operator",
+        "documentation": {}
+    },
+    {
         "label": "sqlite3",
         "kind": 6,
         "isExtraImport": true,
@@ -589,14 +646,6 @@
         "documentation": {}
     },
     {
-        "label": "QrPayCodeDTO",
-        "importPath": "src.bot.DTO.qr_code_pay_dto",
-        "description": "src.bot.DTO.qr_code_pay_dto",
-        "isExtraImport": true,
-        "detail": "src.bot.DTO.qr_code_pay_dto",
-        "documentation": {}
-    },
-    {
         "label": "NotImplementedType",
         "importPath": "types",
         "description": "types",
@@ -682,23 +731,6 @@
         "description": "types",
         "isExtraImport": true,
         "detail": "types",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "datetime",
-        "description": "datetime",
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
         "documentation": {}
     },
     {
@@ -819,15 +851,6 @@
         "description": "nextcord.ui",
         "isExtraImport": true,
         "detail": "nextcord.ui",
-        "documentation": {}
-    },
-    {
-        "label": "os",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "os",
-        "description": "os",
-        "detail": "os",
         "documentation": {}
     },
     {
@@ -1083,11 +1106,28 @@
         "documentation": {}
     },
     {
+        "label": "QrPayCodeDTO",
+        "importPath": "bot.DTO.qr_code_pay_dto",
+        "description": "bot.DTO.qr_code_pay_dto",
+        "isExtraImport": true,
+        "detail": "bot.DTO.qr_code_pay_dto",
+        "documentation": {}
+    },
+    {
         "label": "annotations",
         "importPath": "__future__",
         "description": "__future__",
         "isExtraImport": true,
         "detail": "__future__",
+        "documentation": {}
+    },
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
         "documentation": {}
     },
     {
@@ -1163,6 +1203,15 @@
         "documentation": {}
     },
     {
+        "label": "QrPayCodeBLL",
+        "kind": 6,
+        "importPath": "src.bot.BLL.qr_pay_code_bll",
+        "description": "src.bot.BLL.qr_pay_code_bll",
+        "peekOfCode": "class QrPayCodeBLL:\n    def __init__(self):\n        self.__QrPayCodeBLL = QrPayCodeDAL()\n    def get_qr_pay_code_by_qr_code(self, qr_code: str):\n        return self.__QrPayCodeBLL.get_qr_pay_code_by_qr_code(qr_code)\n    def get_all_qr_pay_code(self):\n        return self.__QrPayCodeBLL.get_all_qr_pay_code()\n    def insert_qr_pay_code(self, qr_pay: QrPayCodeDTO):\n        return self.__QrPayCodeBLL.insert_qr_pay_code(qr_pay)\n    def delete_qr_pay_by_id(self, qr_code: str):",
+        "detail": "src.bot.BLL.qr_pay_code_bll",
+        "documentation": {}
+    },
+    {
         "label": "ServerBLL",
         "kind": 6,
         "importPath": "src.bot.BLL.server_bll",
@@ -1187,6 +1236,15 @@
         "description": "src.bot.BLL.server_color_bll",
         "peekOfCode": "class ServerColorBLL:\n    def __init__(self):\n        self.__serverColorDAL = ServerColorDAL()\n    def insert_server_color(self, server_color_dto: ServerColorDTO) -> bool:\n            return self.__serverColorDAL.insert_server_color(server_color_dto)\n    def delete_server_color_by_id_server(self, id_server: str) -> bool:\n            return self.__serverColorDAL.delete_server_color_by_id_server(id_server)\n    def delete_all_server_color(self) -> bool:\n            return self.__serverColorDAL.delete_all_server_color()\n    def update_server_color_by_id_server(self, id_server: str, server_color_dto: ServerColorDTO) -> bool:",
         "detail": "src.bot.BLL.server_color_bll",
+        "documentation": {}
+    },
+    {
+        "label": "ServerPayBLL",
+        "kind": 6,
+        "importPath": "src.bot.BLL.server_pay_bll",
+        "description": "src.bot.BLL.server_pay_bll",
+        "peekOfCode": "class ServerPayBLL:\n    def __init__(self):\n        self.__ServerPayDAL = ServerPayDAL()\n    def get_all_server_pay(self):\n        return self.__ServerPayDAL.get_all_server_pay()\n    def get_server_pay_by_server_id(self, server_id: str):\n        return self.__ServerPayDAL.get_server_pay_by_server_id(server_id)\n    def insert_server_pay(self, server_pay: ServerPayDTO):\n        self.__ServerPayDAL.insert_server_pay(server_pay)\n    def update_server_pay(self, server_pay: ServerPayDTO):",
+        "detail": "src.bot.BLL.server_pay_bll",
         "documentation": {}
     },
     {
@@ -1302,7 +1360,7 @@
         "kind": 6,
         "importPath": "src.bot.DAL.base_dal",
         "description": "src.bot.DAL.base_dal",
-        "peekOfCode": "class BaseDAL:\n    def __init__(self):\n        # Sử dụng đường dẫn tuyệt đối đến tệp cơ sở dữ liệu\n        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))  # Lấy thư mục gốc của dự án\n        db_path = os.path.join(base_dir, \"db.sqlite3\")\n        self.connection = sqlite3.connect(db_path)\n        self.cursor = self.connection.cursor()\n    def create_table(self):\n        pass\n    def __del__(self):",
+        "peekOfCode": "class BaseDAL:\n    connection: sqlite3.Connection\n    cursor: sqlite3.Cursor\n    def __init__(self):\n        # Sử dụng đường dẫn tuyệt đối đến tệp cơ sở dữ liệu\n        self.connection = connection\n        self.cursor = cursor\n    def create_table(self):\n        pass",
         "detail": "src.bot.DAL.base_dal",
         "documentation": {}
     },
@@ -1311,7 +1369,43 @@
         "kind": 5,
         "importPath": "src.bot.DAL.base_dal",
         "description": "src.bot.DAL.base_dal",
-        "peekOfCode": "logger = logging.getLogger('dal')\nclass BaseDAL:\n    def __init__(self):\n        # Sử dụng đường dẫn tuyệt đối đến tệp cơ sở dữ liệu\n        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))  # Lấy thư mục gốc của dự án\n        db_path = os.path.join(base_dir, \"db.sqlite3\")\n        self.connection = sqlite3.connect(db_path)\n        self.cursor = self.connection.cursor()\n    def create_table(self):\n        pass",
+        "peekOfCode": "logger = logging.getLogger('dal')\nbase_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))  # Lấy thư mục gốc của dự án\ndb_path = os.path.join(base_dir, \"db.sqlite3\")\nconnection = sqlite3.connect(db_path)\ncursor = connection.cursor()\nclass BaseDAL:\n    connection: sqlite3.Connection\n    cursor: sqlite3.Cursor\n    def __init__(self):\n        # Sử dụng đường dẫn tuyệt đối đến tệp cơ sở dữ liệu",
+        "detail": "src.bot.DAL.base_dal",
+        "documentation": {}
+    },
+    {
+        "label": "base_dir",
+        "kind": 5,
+        "importPath": "src.bot.DAL.base_dal",
+        "description": "src.bot.DAL.base_dal",
+        "peekOfCode": "base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))  # Lấy thư mục gốc của dự án\ndb_path = os.path.join(base_dir, \"db.sqlite3\")\nconnection = sqlite3.connect(db_path)\ncursor = connection.cursor()\nclass BaseDAL:\n    connection: sqlite3.Connection\n    cursor: sqlite3.Cursor\n    def __init__(self):\n        # Sử dụng đường dẫn tuyệt đối đến tệp cơ sở dữ liệu\n        self.connection = connection",
+        "detail": "src.bot.DAL.base_dal",
+        "documentation": {}
+    },
+    {
+        "label": "db_path",
+        "kind": 5,
+        "importPath": "src.bot.DAL.base_dal",
+        "description": "src.bot.DAL.base_dal",
+        "peekOfCode": "db_path = os.path.join(base_dir, \"db.sqlite3\")\nconnection = sqlite3.connect(db_path)\ncursor = connection.cursor()\nclass BaseDAL:\n    connection: sqlite3.Connection\n    cursor: sqlite3.Cursor\n    def __init__(self):\n        # Sử dụng đường dẫn tuyệt đối đến tệp cơ sở dữ liệu\n        self.connection = connection\n        self.cursor = cursor",
+        "detail": "src.bot.DAL.base_dal",
+        "documentation": {}
+    },
+    {
+        "label": "connection",
+        "kind": 5,
+        "importPath": "src.bot.DAL.base_dal",
+        "description": "src.bot.DAL.base_dal",
+        "peekOfCode": "connection = sqlite3.connect(db_path)\ncursor = connection.cursor()\nclass BaseDAL:\n    connection: sqlite3.Connection\n    cursor: sqlite3.Cursor\n    def __init__(self):\n        # Sử dụng đường dẫn tuyệt đối đến tệp cơ sở dữ liệu\n        self.connection = connection\n        self.cursor = cursor\n    def create_table(self):",
+        "detail": "src.bot.DAL.base_dal",
+        "documentation": {}
+    },
+    {
+        "label": "cursor",
+        "kind": 5,
+        "importPath": "src.bot.DAL.base_dal",
+        "description": "src.bot.DAL.base_dal",
+        "peekOfCode": "cursor = connection.cursor()\nclass BaseDAL:\n    connection: sqlite3.Connection\n    cursor: sqlite3.Cursor\n    def __init__(self):\n        # Sử dụng đường dẫn tuyệt đối đến tệp cơ sở dữ liệu\n        self.connection = connection\n        self.cursor = cursor\n    def create_table(self):\n        pass",
         "detail": "src.bot.DAL.base_dal",
         "documentation": {}
     },
@@ -1374,7 +1468,7 @@
         "kind": 6,
         "importPath": "src.bot.DAL.qr_pay_code_dal",
         "description": "src.bot.DAL.qr_pay_code_dal",
-        "peekOfCode": "class QrPayCodeDAL(BaseDAL):\n    def __init__(self):\n        super().__init__()\n    def create_table(self):\n        try:\n            self.cursor.execute('''\n            CREATE TABLE qr_pay_code (\n                qr_code TEXT PRIMARY KEY,\n                id_server TEXT\n            )",
+        "peekOfCode": "class QrPayCodeDAL(BaseDAL):\n    def __init__(self):\n        super().__init__()\n    def create_table(self):\n        try:\n            self.cursor.execute('''\n            CREATE TABLE qr_pay_code (\n                qr_code TEXT PRIMARY KEY,\n                id_server TEXT,\n                channel_id TEXT,",
         "detail": "src.bot.DAL.qr_pay_code_dal",
         "documentation": {}
     },
@@ -1482,7 +1576,7 @@
         "kind": 6,
         "importPath": "src.bot.DTO.qr_code_pay_dto",
         "description": "src.bot.DTO.qr_code_pay_dto",
-        "peekOfCode": "class QrPayCodeDTO:\n    def __init__(self, qr_code: str, server_dto: ServerDTO, ngay_tao: datetime):\n        self.__qr_code = qr_code\n        self.__server_dto = server_dto\n        self.__ngay_tao = ngay_tao\n    def __str__(self) -> str:\n        return f\"QrPayCodeDTO(server={self.__server_dto}, qr_code={self.__qr_code})\"\n    def __eq__(self, other: object) -> bool:\n        if not isinstance(other, QrPayCodeDTO):\n            return NotImplementedType",
+        "peekOfCode": "class QrPayCodeDTO:\n    def __init__(self, qr_code: str, id_server: str, channel_id: str, message_id: str, ngay_tao: datetime):\n        self.__qr_code = qr_code\n        self.__id_server = id_server\n        self.__channel_id = channel_id\n        self.__message_id = message_id\n        self.__ngay_tao = ngay_tao\n    def __str__(self) -> str:\n        return f\"QrPayCodeDTO(qr_code={self.__qr_code} id_server={self.__id_server} channel_id={self.__channel_id} message_id={self.__message_id} ngay_tao={self.__ngay_tao})\"\n    def __eq__(self, other: object) -> bool:",
         "detail": "src.bot.DTO.qr_code_pay_dto",
         "documentation": {}
     },
@@ -1617,7 +1711,7 @@
         "kind": 6,
         "importPath": "src.bot.utils.create_qr_payment",
         "description": "src.bot.utils.create_qr_payment",
-        "peekOfCode": "class QRGenerator:\n    @staticmethod\n    def generator(user_id: str ):\n        # \"https://api.vietqr.io/image/970422-0347402306-9505cHJ.jpg?accountName=NGUYEN%20KHAC%20HIEU&amount=10000&addInfo=donnet\"\n        return f\"https://img.vietqr.io/image/MB-{os.getenv('BANK_ID')}-{os.getenv('QR_TEMPLATE')}.png?accountName=AIKO&amount=10000&addInfo=T{user_id}T\"",
+        "peekOfCode": "class QRGenerator:\n    @staticmethod\n    def generator_qr(qr_id: str ):\n        # \"https://api.vietqr.io/image/970422-0347402306-9505cHJ.jpg?accountName=NGUYEN%20KHAC%20HIEU&amount=10000&addInfo=donnet\"\n        return f\"https://img.vietqr.io/image/MB-{os.getenv('BANK_ID')}-{os.getenv('QR_TEMPLATE')}.png?accountName=AIKO&amount=10000&addInfo=T{qr_id}T\"\n    @staticmethod\n    def generator_id(user_id: str):\n        s = ''\n        for i in range(20):\n            s += str(random.randint(0, 9))",
         "detail": "src.bot.utils.create_qr_payment",
         "documentation": {}
     },
@@ -1788,7 +1882,7 @@
         "kind": 2,
         "importPath": "src.test",
         "description": "src.test",
-        "peekOfCode": "def test_qr_pay_code():\n    a = QrPayCodeDAL()\n    print(a.get_all_qr_pay_code())\ntest_qr_pay_code()\n# test_server_pay_dal()",
+        "peekOfCode": "def test_qr_pay_code():\n    a = QrPayCodeDAL()\n    print(a.get_all_qr_pay_code())\n    try:\n        print(a.insert_qr_pay_code(QrPayCodeDTO('12', '13', '12', '34', datetime.datetime.now())))\n    except:\n        pass\n    print(a.get_all_qr_pay_code())\n    print(a.delete_qr_pay_by_id('12'))\n    print(a.get_all_qr_pay_code())",
         "detail": "src.test",
         "documentation": {}
     },

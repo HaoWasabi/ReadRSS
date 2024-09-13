@@ -27,6 +27,8 @@ SELECT qr_code, id_server, channel_id, message_id, ngay_tao FROM qr_pay_code WHE
 
 INSERT INTO qr_pay_code(qr_code, id_server, channel_id, message_id, ngay_tao) VALUES (?, ?, ?, ?, ?);
 
+DELETE FROM qr_pay_code WHERE qr_code=?;
+
 -- chỉnh lại các bot tạo database
 -- thay toàn bộ print bằng logger
 -- thêm 2 table một là server_pay nhữ server đã đăng ký vip, qr_pay_code lưu nhữ mã qr còn hạng

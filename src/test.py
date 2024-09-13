@@ -1,3 +1,4 @@
+import datetime
 from bot.DTO.feed_dto import FeedDTO
 from bot.DTO.emty_dto import EmtyDTO
 from bot.DTO.color_dto import ColorDTO
@@ -23,6 +24,7 @@ from bot.utils.text_processor import TextProcessor
 from bot.DAL.server_pay_dal import ServerPayDAL
 from bot.DTO.server_pay_dto import ServerPayDTO
 from bot.DAL.qr_pay_code_dal import QrPayCodeDAL
+from bot.DTO.qr_code_pay_dto import QrPayCodeDTO
 
 def test_feed_emty():
     print ('''
@@ -228,6 +230,16 @@ def test_server_pay_dal():
 def test_qr_pay_code():
     a = QrPayCodeDAL()
     print(a.get_all_qr_pay_code())
+    try:
+        print(a.insert_qr_pay_code(QrPayCodeDTO('12', '13', '12', '34', datetime.datetime.now())))
+    except:
+        pass
+    print(a.get_all_qr_pay_code())
+    print(a.delete_qr_pay_by_id('12'))
+    print(a.get_all_qr_pay_code())
     
-test_qr_pay_code()
+    
+    
+    
+# test_qr_pay_code()
 # test_server_pay_dal()

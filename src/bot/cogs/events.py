@@ -1,6 +1,11 @@
+import datetime
+from email import message
+from discord import ChannelType, TextChannel
+import nextcord
 import nextcord, logging
 from nextcord.ext import commands
 from nextcord.ext import tasks
+
 
 
 from ..DTO.channel_emty_dto import ChannelEmtyDTO
@@ -9,6 +14,7 @@ from ..DTO.channel_dto import ChannelDTO
 from ..DTO.server_dto import ServerDTO
 from ..DTO.color_dto import ColorDTO
 
+from ..BLL.qr_pay_code_bll import QrPayCodeBLL
 from ..BLL.server_channel_bll import ServerChannelBLL
 from ..BLL.channel_feed_bll import ChannelFeedBLL
 from ..BLL.channel_emty_bll import ChannelEmtyBLL
@@ -141,14 +147,30 @@ class Events(commands.Cog):
         logger.info('run background task')
         await self.load_list_feed()
         await self.load_guilds()
-    
-    
-    
+
     @push_noti.before_loop
     async def await_bot_ready(self):
         # đợi cho bot đăng nhập xong
         await self.bot.wait_until_ready()
-        
+
+    @tasks.loop(seconds=5)
+    async def check_qr_code(self):
+        qr_pay_code_bll = QrPayCodeBLL()
+        all_qr = qr_pay_code_bll.get_all_qr_pay_code()
+        for i in all_qr:
+            denta = datetime.datetime.now() - i.get_ngay_tao()
+            if (denta > datetime.timedelta(seconds=10)):
+                qr_pay_code_bll.delete_qr_pay_by_id(i.get_qr_code())
+                channel = self.bot.get_channel(int(i.get_channel_id()))
+                
+                if (channel is None): 
+                    logger.warning('không tìm thấy channel')
+                    return
+                
+                if isinstance(channel, TextChannel):
+                    message = await channel.fetch_message(int(i.get_message_id()))
+                    await message.edit(content = 'qr đã hết hạn', embed=None)
+                
     @commands.Cog.listener()
     async def on_ready(self):
         logger.info(f"Bot {self.bot.user} is ready")
@@ -160,6 +182,9 @@ class Events(commands.Cog):
 
         if not self.push_noti.is_running():
             self.push_noti.start()
+            
+        if not self.check_qr_code.is_running():
+            self.check_qr_code.start()
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):

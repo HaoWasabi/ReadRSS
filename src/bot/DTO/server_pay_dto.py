@@ -3,6 +3,8 @@ from .server_dto import ServerDTO
 
 class ServerPayDTO:
     def __init__(self, server_dto: str, is_pay: bool):
+        
+        
         self.__server_dto = server_dto
         self.__is_pay = is_pay
     
