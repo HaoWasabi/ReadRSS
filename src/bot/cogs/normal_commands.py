@@ -1,9 +1,13 @@
+import logging
 from nextcord.ext import commands
 from nextcord import TextChannel
 from ..GUI.test_embed import TestEmbed
 from ..cogs.check_dm_channel import check_dm_channel
 from ..utils.read_rss_without_saving import ReadRSSWithoutSaving
 from ..utils.get_rss import GetRSS
+
+logger = logging.getLogger('nextcord')
+
 
 class NormalCommands(commands.Cog):
     def __init__(self, bot):
@@ -25,7 +29,7 @@ class NormalCommands(commands.Cog):
                 await channel.send("No RSS link found.")
         except Exception as e:
             await channel.send(f"Error: {e}")
-            print(f"Error: {e}")
+            logger.error(f"Error: {e}")
 
     @commands.command(name="test")
     async def test(self, ctx, channel: TextChannel, link_feed: str):
@@ -52,7 +56,7 @@ class NormalCommands(commands.Cog):
        
         except Exception as e:
             await ctx.send(f"Error: {e}")
-            print(f"Error: {e}")
+            logger.error(f"Error: {e}")
 
 async def setup(bot):
     bot.add_cog(NormalCommands(bot))

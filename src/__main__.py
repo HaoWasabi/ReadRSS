@@ -15,8 +15,8 @@ intents.message_content = True
 intents.guilds = True
 
 # Set up logging
-logging.basicConfig(level=logging.INFO, format="p%(process)s %(pathname)s:%(lineno)d %(levelname)s - %(message)s")
-logger = logging.getLogger('nextcord')
+logging.basicConfig(level=logging.NOTSET, format="%(filename)s:%(lineno)d [%(levelname)-8s] %(message)s")
+logger = logging.getLogger(__name__)
 
 # Set up bot instance
 bot = commands.Bot(command_prefix='_', intents=intents)

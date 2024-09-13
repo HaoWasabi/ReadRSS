@@ -7,49 +7,27 @@ class ChannelEmtyBLL:
         self.__channelEmtyDAL = ChannelEmtyDAL()
         
     def insert_channel_emty(self, channel_emty_dto: ChannelEmtyDTO) -> bool:
-        try:
-            return self.__channelEmtyDAL.insert_channel_emty(channel_emty_dto)
-        except Exception as e:
-            print(f"Error inserting ChannelEmty: {e}")
-            return False
+        return self.__channelEmtyDAL.insert_channel_emty(channel_emty_dto)
+
     
     def delete_channel_emty_by_id_channel(self, id_channel: str) -> bool:  
-        try:
-            return self.__channelEmtyDAL.delete_channel_emty_by_id_channel(id_channel)
-        except Exception as e:
-            print(f"Error deleting ChannelEmty: {e}")
-            return False
+        return self.__channelEmtyDAL.delete_channel_emty_by_id_channel(id_channel)
+
             
     def delete_channel_emty_by_id_channel_and_link_emty(self, id_channel: str, link_emty: str) -> bool:
-        try:
-            return self.__channelEmtyDAL.delete_channel_emty_by_id_channel_and_link_emty(id_channel, link_emty)
-        except Exception as e:
-            print(f"Error deleting ChannelEmty: {e}")
-            return False
+        return self.__channelEmtyDAL.delete_channel_emty_by_id_channel_and_link_emty(id_channel, link_emty)
+
             
     def delete_all_channel_emty(self) -> bool:
-        try:
-            return self.__channelEmtyDAL.delete_all_channel_emty()
-        except Exception as e:
-            print(f"Error deleting ChannelEmty: {e}")
-            return False
+        return self.__channelEmtyDAL.delete_all_channel_emty()
+
     
     def get_channel_emty_by_id_channel_and_link_emty(self, id_channel: str, link_emty: str) -> Optional[ChannelEmtyDTO]:
-        try:
-            return self.__channelEmtyDAL.get_channel_emty_by_id_channel_and_link_emty(id_channel, link_emty)
-        except Exception as e:
-            print(f"Error fetching ChannelEmty: {e}")
-            
+        return self.__channelEmtyDAL.get_channel_emty_by_id_channel_and_link_emty(id_channel, link_emty)
+
     def get_all_channel_emty(self) -> List[ChannelEmtyDTO]:
-        try:
-            return self.__channelEmtyDAL.get_all_channel_emty()
-        except Exception as e:
-            print(f"Error fetchting ChannelEmty: {e}")
-            return []
+        return self.__channelEmtyDAL.get_all_channel_emty()
+
         
     def get_all_channel_emty_by_id_channel(self, id_channel: str) -> List[ChannelEmtyDTO]:
-        try:
-            return self.__channelEmtyDAL.get_all_channel_emty_by_id_channel(id_channel)
-        except Exception as e:
-            print(f"Error fetching ChannelEmty: {e}")
-            return []
+        return self.__channelEmtyDAL.get_all_channel_emty_by_id_channel(id_channel)

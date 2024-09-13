@@ -3,21 +3,16 @@ from typing import List, Optional
 from ..DTO.channel_dto import ChannelDTO
 from ..DTO.feed_dto import FeedDTO
 from ..DTO.channel_feed_dto import ChannelFeedDTO
+from .base_dal import BaseDAL, logger
 
-class ChannelFeedDAL:
+class ChannelFeedDAL(BaseDAL):
     def __init__(self):
-        # Sử dụng đường dẫn tuyệt đối đến tệp cơ sở dữ liệu
-        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))  # Lấy thư mục gốc của dự án
-        db_path = os.path.join(base_dir, "db.sqlite3")
-        
-        self.connection = sqlite3.connect(db_path)
-        self.cursor = self.connection.cursor()
-        self.create_table()
+        super().__init__()
 
     def create_table(self):
         try:
             self.cursor.execute('''
-                CREATE TABLE IF NOT EXISTS tbl_channel_feed(
+                CREATE TABLE tbl_channel_feed(
                     link_atom_feed TEXT,
                     id_channel TEXT,
                     PRIMARY KEY (id_channel, link_atom_feed),
@@ -26,8 +21,11 @@ class ChannelFeedDAL:
                 )
             ''')
             self.connection.commit()
+            logger.info("Create tbl_channel_feed success")
         except sqlite3.Error as e:
-            print(f"Error creating table `tbl_channel_feed`: {e}")
+            if len(e.args) and e.args[0].count('already exists'):
+                return
+            logger.error(f"Error creating table `tbl_channel_feed`: {e}")
 
     def insert_channel_feed(self, channel_feed_dto: ChannelFeedDTO) -> bool:
         try:
@@ -39,7 +37,7 @@ class ChannelFeedDAL:
                 self.connection.commit()
                 return True
         except sqlite3.Error as e:
-            print(f"Error inserting data into `tbl_channel_feed`: {e}")
+            logger.error(f"Error inserting data into `tbl_channel_feed`: {e}")
             return False
         
     def delete_channel_feed_by_id_channel(self, id_channel: str) -> bool:
@@ -49,10 +47,10 @@ class ChannelFeedDAL:
                 DELETE FROM tbl_channel_feed WHERE id_channel = ?
                 ''', (id_channel,))
                 self.connection.commit()
-                print(f"Data deleted from 'tbl_channel_feed' successfully.")
+                logger.info(f"Data deleted from 'tbl_channel_feed' successfully.")
                 return True
         except sqlite3.Error as e:
-            print(f"Error deleting data from `tbl_channel_feed`: {e}")
+            logger.error(f"Error deleting data from `tbl_channel_feed`: {e}")
             return False
         
     def delete_channel_feed_by_id_channel_and_link_atom_feed(self, id_channel: str, link_atom_feed: str) -> bool:
@@ -62,10 +60,10 @@ class ChannelFeedDAL:
                 DELETE FROM tbl_channel_feed WHERE id_channel = ? AND link_atom_feed = ?
                 ''', (id_channel, link_atom_feed))
                 self.connection.commit()
-                print(f"Data deleted from 'tbl_channel_feed' successfully.")
+                logger.info(f"Data deleted from 'tbl_channel_feed' successfully.")
                 return True
         except sqlite3.Error as e:
-            print(f"Error deleting data from `tbl_channel_feed`: {e}")
+            logger.error(f"Error deleting data from `tbl_channel_feed`: {e}")
             return False
         
     def delete_channel_feed_by_id_channel_and_link_feed(self, id_channel: str, link_feed: str) -> bool:
@@ -78,10 +76,10 @@ class ChannelFeedDAL:
                     )
                 ''', (id_channel, link_feed))
                 self.connection.commit()
-                print(f"Data deleted from 'tbl_channel_feed' successfully.")
+                logger.info(f"Data deleted from 'tbl_channel_feed' successfully.")
                 return True
         except sqlite3.Error as e:
-            print(f"Error deleting data from `tbl_channel_feed`: {e}")
+            logger.error(f"Error deleting data from `tbl_channel_feed`: {e}")
             return False
 
     def delete_all_channel_feed(self) -> bool:
@@ -93,7 +91,7 @@ class ChannelFeedDAL:
                 self.connection.commit()
                 return True
         except sqlite3.Error as e:
-            print(f"Error deleting all data from `tbl_channel_feed`: {e}")
+            logger.error(f"Error deleting all data from `tbl_channel_feed`: {e}")
             return False
 
     def get_channel_feed_by_id_channel_and_link_atom_feed(self, id_channel: str, link_atom_feed: str) -> Optional[ChannelFeedDTO]:
@@ -112,7 +110,7 @@ class ChannelFeedDAL:
                                    FeedDTO(row[2], row[3], row[4], row[5], row[6], row[7]))
             return None
         except sqlite3.Error as e:
-            print(f"Error fetching data from `tbl_channel_feed`: {e}")
+            logger.error(f"Error fetching data from `tbl_channel_feed`: {e}")
             return None
 
     def get_all_channel_feed(self) -> List[ChannelFeedDTO]:
@@ -128,7 +126,7 @@ class ChannelFeedDAL:
             return [ChannelFeedDTO(ChannelDTO(row[0], row[1]), 
                                    FeedDTO(row[2], row[3], row[4], row[5], row[6], row[7])) for row in rows]
         except sqlite3.Error as e:
-            print(f"Error fetching all data from `tbl_channel_feed`: {e}")
+            logger.error(f"Error fetching all data from `tbl_channel_feed`: {e}")
             return []
 
     def get_all_channel_feed_by_id_channel(self, id_channel: str) -> List[ChannelFeedDTO]:
@@ -145,8 +143,7 @@ class ChannelFeedDAL:
             return [ChannelFeedDTO(ChannelDTO(row[0], row[1]), 
                                    FeedDTO(row[2], row[3], row[4], row[5], row[6], row[7])) for row in rows]
         except sqlite3.Error as e:
-            print(f"Error fetching all data from `tbl_channel_feed`: {e}")
+            logger.error(f"Error fetching all data from `tbl_channel_feed`: {e}")
             return []
         
-    def __del__(self):
-        self.connection.close()
+    

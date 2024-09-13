@@ -1,9 +1,12 @@
+import logging
 from nextcord.ext import commands
 from nextcord import DMChannel
 from ..GUI.custom_embed import CustomEmbed
 from ..GUI.select_clear import SelectClear
 from ..GUI.button_of_ctrl_command import ButtonOfCtrlCommand
 from ..cogs.check_dm_channel import check_dm_channel
+
+logger = logging.getLogger('AdminBotCommands')
 
 class AdminBotCommands(commands.Cog):
     def __init__(self, bot):
@@ -24,7 +27,7 @@ class AdminBotCommands(commands.Cog):
             await channel.send(embed=embed)
             await self.bot.close()
         except Exception as e:
-            print(f"Error: {e}")
+            logger.error(f"Error: {e}")
             await ctx.send(f"Error: {e}")
 
     @commands.command(name="ctrl")
@@ -44,7 +47,7 @@ class AdminBotCommands(commands.Cog):
             
         except Exception as e:
             await ctx.send(f"Error: {e}")
-            print(f"Error: {e}")
+            logger.error(f"Error: {e}")
         
         raise NotImplementedError("This is a placeholder for the AdminBotCommands cog. You should implement this cog before using it.")
 async def setup(bot):

@@ -20,6 +20,9 @@ from bot.BLL.server_color_bll import ServerColorBLL
 from bot.GUI.feed_embed import FeedEmbed
 from bot.utils.read_rss import ReadRSS
 from bot.utils.text_processor import TextProcessor
+from bot.DAL.server_pay_dal import ServerPayDAL
+from bot.DTO.server_pay_dto import ServerPayDTO
+from bot.DAL.qr_pay_code_dal import QrPayCodeDAL
 
 def test_feed_emty():
     print ('''
@@ -208,3 +211,23 @@ def test_text_processor():
     text = text_processor.proccess_unicode_text(text)
     print(text)
     
+def test_server_pay_dal():
+    a = ServerPayDAL()
+    print(a.get_all_server_pay())
+    try:
+        a.insert_server_pay(ServerPayDTO('1234', True))
+    except:
+        pass
+    print(a.get_all_server_pay())
+    print(a.get_server_pay_by_server_id('123456'))
+    
+    print(a.delete_server_pay_by_id_server('1234'))
+    print(a.get_all_server_pay())
+    
+    
+def test_qr_pay_code():
+    a = QrPayCodeDAL()
+    print(a.get_all_qr_pay_code())
+    
+test_qr_pay_code()
+# test_server_pay_dal()

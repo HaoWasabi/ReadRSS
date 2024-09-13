@@ -1,4 +1,4 @@
-import asyncio
+import logging
 import nextcord
 from nextcord.ext import commands
 from nextcord import SlashOption, Interaction, TextChannel
@@ -28,6 +28,8 @@ from ..GUI.button_of_ctrl_command import ButtonOfCtrlCommand
 from ..utils.read_rss_without_saving import ReadRSSWithoutSaving
 from ..utils.read_rss import ReadRSS
 from ..utils.get_rss import GetRSS
+
+logger = logging.getLogger('SlashCommands')
 
 class SlashCommands(commands.Cog):
     def __init__(self, bot):
@@ -64,7 +66,7 @@ class SlashCommands(commands.Cog):
             await interaction.response.send_message(f"Deleted the history of posts in {channel.mention} successfully.")
         except Exception as e:
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)
-            print(f"Error: {e}")
+            logger.error(f"Error: {e}")
 
     @nextcord.slash_command(name="delete_feed", description="Delete feed notification channel settings")
     async def delete_feed(self, interaction: Interaction, 
@@ -103,7 +105,7 @@ class SlashCommands(commands.Cog):
         
         except Exception as e:
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)
-            print(f"Error: {e}")
+            logger.error(f"Error: {e}")
 
     def delete_channel_data(self, channel_id):
         """Helper function to delete all data related to a channel."""
@@ -144,7 +146,7 @@ class SlashCommands(commands.Cog):
        
         except Exception as e:
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)
-            print(f"Error: {e}")
+            logger.error(f"Error: {e}")
 
     @nextcord.slash_command(name="set_feed", description="Set feed notification channel")
     async def set_feed(self, interaction: Interaction, 
@@ -188,7 +190,7 @@ class SlashCommands(commands.Cog):
         
         except Exception as e:
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)
-            print(f"Error: {e}")
+            logger.error(f"Error: {e}")
 
     @nextcord.slash_command(name="set_color", description="Set the color of all embeds that you want it would send")
     async def set_color(self, interaction: Interaction, 
@@ -220,7 +222,7 @@ class SlashCommands(commands.Cog):
         
         except Exception as e:
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)
-            print(f"Error: {e}")
+            logger.error(f"Error: {e}")
 
     @nextcord.slash_command(name="show", description="Shows a list of feeds in channels.")
     async def show(self, interaction: Interaction):
@@ -268,7 +270,7 @@ class SlashCommands(commands.Cog):
         except Exception as e:
             # Thông báo lỗi
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)  # Gửi lỗi một cách riêng tư
-            print(f"Error: {e}")
+            logger.error(f"Error: {e}")
         
     @nextcord.slash_command(name="help", description="List of commands")
     async def help(self, interaction: Interaction):
@@ -300,7 +302,7 @@ command prefix `{self.bot.command_prefix}`
         
         except Exception as e:
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)
-            print(f"Error: {e}")
+            logger.error(f"Error: {e}")
 
     @nextcord.slash_command(name="get_rss", description="Get the RSS link of a website")
     async def get_rss(self, interaction: Interaction, url: str = SlashOption(description="The website URL")):
@@ -311,7 +313,7 @@ command prefix `{self.bot.command_prefix}`
         except Exception as e:
             # Đánh dấu rằng phản hồi sẽ được gửi sau
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)
-            print(f"Error: {e}")
+            logger.error(f"Error: {e}")
             
 def setup(bot):
     bot.add_cog(SlashCommands(bot))

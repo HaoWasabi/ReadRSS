@@ -1,6 +1,6 @@
 import sys, os, sqlite3, logging
 
-logging.basicConfig(level=logging.INFO, format="p%(process)s %(pathname)s:%(lineno)d %(levelname)s - %(message)s")
+logging.basicConfig(level=logging.INFO, format="%(levelname)-8s [%(filename)s:%(lineno)d] %(message)s")
 logger = logging.getLogger('DataBase')
 
 class Database:

@@ -6,7 +6,7 @@ class FeedEmbed:
     def __init__(self, id_server: str, linkAtom_feed: str, link_emty: str):
         feed_emty_bll = FeedEmtyBLL()
         feed_emty_dto = feed_emty_bll.get_feed_emty_by_link_atom_feed_and_link_emty(linkAtom_feed, link_emty)
-        print(f"feed_emty_dto: {feed_emty_dto}")
+        # print(f"feed_emty_dto: {feed_emty_dto}")
         
         if feed_emty_dto is None:
             return

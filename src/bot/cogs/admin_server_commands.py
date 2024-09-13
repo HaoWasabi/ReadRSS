@@ -1,6 +1,9 @@
+import logging
 from nextcord.ext import commands
-from nextcord import TextChannel
+from nextcord import TextChannel, Embed
 from typing import Optional
+
+from nextcord.ext.commands import Context
 
 from ..DTO.server_dto import ServerDTO
 from ..DTO.channel_dto import ChannelDTO
@@ -21,6 +24,10 @@ from ..BLL.server_channel_bll import ServerChannelBLL
 from ..GUI.custom_embed import CustomEmbed
 from ..cogs.check_dm_channel import check_dm_channel
 from ..utils.read_rss import ReadRSS
+from ..utils.create_qr_payment import QRGenerator
+
+logger = logging.getLogger('AdminServerCommands')
+
 
 class AdminServerCommands(commands.Cog):
     def __init__(self, bot):
@@ -68,7 +75,7 @@ class AdminServerCommands(commands.Cog):
             await ctx.send(f"Deleted the history of posts in {channel.mention} successfully.")
         except Exception as e:
             await ctx.send(f"Error: {e}")
-            print(f"Error: {e}")
+            logger.error(f"Error: {e}")
 
     @commands.command(name="delete_feed")
     async def delete_feed(self, ctx, channel: TextChannel, link_atom_feed: Optional[str] = None):
@@ -111,7 +118,7 @@ class AdminServerCommands(commands.Cog):
             await ctx.send(f"Deleted feed settings for {channel.mention} successfully.")
         except Exception as e:
             await ctx.send(f"Error: {e}")
-            print(f"Error: {e}")
+            logger.error(f"Error: {e}")
 
     @commands.command(name="set_feed")
     async def set_feed(self, ctx, channel: TextChannel, link_atom_feed: str):
@@ -146,7 +153,7 @@ class AdminServerCommands(commands.Cog):
             await ctx.send(f"Set {channel.mention} to have {link_atom_feed} feed successfully.")
         except Exception as e:
             await ctx.send(f"Error: {e}")
-            print(f"Error: {e}")
+            logger.error(f"Error: {e}")
 
     @commands.command(name="set_color")
     async def set_color(self, ctx, color: str):
@@ -178,7 +185,7 @@ class AdminServerCommands(commands.Cog):
             await ctx.send(embed=embed)
         except Exception as e:
             await ctx.send(f"Error: {e}")
-            print(f"Error: {e}")
+            logger.error(f"Error: {e}")
 
     @commands.command(name="show_feeds")
     async def show_feeds(self, ctx):
@@ -215,7 +222,30 @@ class AdminServerCommands(commands.Cog):
             await ctx.send(embed=embed)
         except Exception as e:
             await ctx.send(f"Error: {e}")
-            print(f"Error: {e}")
+            logger.error(f"Error: {e}")
 
+    @commands.command(name="pay")
+    async def pay(self, ctx: Context):
+        if check_dm_channel(ctx):
+            return
+
+        if not await self.cog_check(ctx): return
+
+        if not self.is_server_owner(ctx):
+            await ctx.send("You need to be the server owner to use this command.")
+            return
+        #
+        embed_text = Embed(title="Thanh toán đi bạn trẻ")
+        embed_text.add_field(name="Ngân hàng MB-Bank", value="0347402306", inline=False)
+        embed_text.add_field(name="Số Tiền:", value="10k", inline=False)
+
+        embed_text.set_image(QRGenerator.generator(ctx.author.id.__str__()))
+
+        message = await ctx.send(embed=embed_text)
+        message.id
+        await ctx.send(ctx.author.id.__str__())
+        
+        
+        
 async def setup(bot):
     bot.add_cog(AdminServerCommands(bot))

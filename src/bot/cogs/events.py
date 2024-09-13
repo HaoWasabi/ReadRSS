@@ -1,6 +1,7 @@
-import nextcord
+import nextcord, logging
 from nextcord.ext import commands
 from nextcord.ext import tasks
+
 
 from ..DTO.channel_emty_dto import ChannelEmtyDTO
 from ..DTO.server_color_dto import ServerColorDTO
@@ -20,6 +21,8 @@ from ..GUI.feed_embed import FeedEmbed
 from ..GUI.custom_embed import CustomEmbed
 from ..utils.read_rss import ReadRSS
 
+logger = logging.getLogger('events')
+
 class Events(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -38,11 +41,14 @@ class Events(commands.Cog):
             for guild in guilds:
                 server_dto = ServerDTO(str(guild.id), str(guild.name))
                 color_dto = ColorDTO("blue")
-                server_color_bll.insert_server_color(ServerColorDTO(server_dto, color_dto))
                 
-                # Insert or update server
-                if not server_bll.insert_server(server_dto):
-                    server_bll.update_server_by_id_server(str(guild.id), server_dto)
+                # check if server exit
+                if server_bll.get_server_by_id_server(str(guild.id)) is None:                
+                    server_color_bll.insert_server_color(ServerColorDTO(server_dto, color_dto))
+                
+                    # Insert or update server
+                    if not server_bll.insert_server(server_dto):
+                        server_bll.update_server_by_id_server(str(guild.id), server_dto)
 
                 # Update channel names if changed
                 for channel in guild.channels:
@@ -62,7 +68,7 @@ class Events(commands.Cog):
                     self.delete_channel_and_related_data(channel.get_id_channel())
             
         except Exception as e:
-            print(f"Error loading guilds: {e}")
+            logger.error(f"Error loading guilds: {e}")
 
     def delete_server_and_related_channels(self, server_id):
         server_bll = ServerBLL()
@@ -118,7 +124,7 @@ class Events(commands.Cog):
                                 return
                             if channel_to_send and channel_id_of_channel_feed == channel_id_of_channel_emty:
                                 try:
-                                    print(f"Sending message to {channel_to_send}")
+                                    logger.info(f"Sending message to {channel_to_send}")
                                     # NOTE: Lỗi chưa tự gửi đươc embed
                                     # ERROR id server không phải là channel_id
                                     server_id = str(channel_to_send.guild.id) # type: ignore
@@ -127,30 +133,30 @@ class Events(commands.Cog):
                                     await channel_to_send.send(embed=feed_embed.get_embed()) # type: ignore
                                     # await channel_to_send.send(f"{link_emty}") #type: ignore
                                 except TypeError as e:
-                                    print(f"Error loading list feed: {e}")
+                                    logger.error(f"Error loading list feed: {e}")
 
             
     @tasks.loop(seconds=10)
     async def push_noti(self):
-        print('run background task')
+        logger.info('run background task')
         await self.load_list_feed()
         await self.load_guilds()
-        
+    
+    
+    
     @push_noti.before_loop
     async def await_bot_ready(self):
         # đợi cho bot đăng nhập xong
-        print('waiting...')
         await self.bot.wait_until_ready()
-        print('start')
         
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f"Bot {self.bot.user} is ready")
-        print("Current commands:", [command.name for command in self.bot.commands])
-        print("Current slash commands:", [command.name for command in self.bot.get_application_commands()])
+        logger.info(f"Bot {self.bot.user} is ready")
+        logger.info("Current commands: %s", str([command.name for command in self.bot.commands]))
+        logger.info("Current slash commands: %s", str([command.name for command in self.bot.get_application_commands()]))
         
         await self.bot.sync_all_application_commands()
-        print(f'Bot {self.bot.user} is ready and commands are synced.')
+        logger.info(f'Bot {self.bot.user} is ready and commands are synced.')
 
         if not self.push_noti.is_running():
             self.push_noti.start()
