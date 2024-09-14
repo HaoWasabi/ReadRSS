@@ -124,7 +124,7 @@ class Paying(commands.Cog):
             return
         
         embed_text = Embed(title="Thanh toán đi bạn trẻ")
-        embed_text.add_field(name="Ngân hàng MB-Bank", value="0347402306", inline=False)
+        embed_text.add_field(name="Ngân hàng MB-Bank", value=os.getenv('BANK_USER_NAME'), inline=False)
         embed_text.add_field(name="Số Tiền:", value="10k", inline=False)
 
         if (ctx.guild is None or ctx.channel is None):
