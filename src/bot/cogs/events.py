@@ -1,7 +1,4 @@
-import datetime
-from email import message
-from discord import ChannelType, TextChannel
-import nextcord
+import nextcord, os
 import nextcord, logging
 from nextcord.ext import commands
 from nextcord.ext import tasks
@@ -184,6 +181,8 @@ class Events(commands.Cog):
                 server_dto = ServerDTO(str(message.guild.id), message.guild.name)
                 server_color_dto = server_color_bll.get_server_color_by_id_server(server_dto.get_id_server())
                 hex_color = server_color_dto.get_color().get_hex_color() # type: ignore
+
+                
 
                 # Cấu hình client Generative AI
                 genai.configure(api_key=os.getenv("GEMINI_TOKEN"))
