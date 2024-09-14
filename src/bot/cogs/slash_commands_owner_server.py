@@ -1,4 +1,4 @@
-import asyncio
+import logging
 import nextcord
 from nextcord.ext import commands
 from nextcord import SlashOption, Interaction, TextChannel
@@ -31,14 +31,11 @@ from ..utils.check_cogs import CheckCogs
 from ..utils.read_rss import ReadRSS
 from ..utils.get_rss import GetRSS
 
+logger = logging.getLogger('SlashCommands')
+
 class SlashCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
-    @nextcord.slash_command(name="ping", description="Check bot latency")
-    async def ping(self, interaction: Interaction):
-        result = f'Pong! {round(self.bot.latency * 1000)}ms'
-        await interaction.response.send_message(result)
 
     @nextcord.slash_command(name="clear", description="Clear channel post history")
     async def clear_history(self, interaction: Interaction, channel: TextChannel = SlashOption(description="The target channel"), link_atom_feed: Optional[str] = SlashOption(description="The Atom/RSS feed link")):
@@ -66,7 +63,7 @@ class SlashCommands(commands.Cog):
             await interaction.response.send_message(f"Deleted the history of posts in {channel.mention} successfully.")
         except Exception as e:
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)
-            print(f"Error: {e}")
+            logger.error(f"Error: {e}")
 
     @nextcord.slash_command(name="delete_feed", description="Delete feed notification channel settings")
     async def delete_feed(self, interaction: Interaction, 
@@ -105,7 +102,7 @@ class SlashCommands(commands.Cog):
         
         except Exception as e:
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)
-            print(f"Error: {e}")
+            logger.error(f"Error: {e}")
 
     def delete_channel_data(self, channel_id):
         """Helper function to delete all data related to a channel."""
@@ -118,55 +115,6 @@ class SlashCommands(commands.Cog):
         channel_emty_bll.delete_channel_emty_by_id_channel(str(channel_id))
         server_channel_bll.delete_server_channel_by_id_channel(str(channel_id))
         channel_bll.delete_channel_by_id_channel(str(channel_id))
-
-    @nextcord.slash_command(name="test", description="Test sending an RSS feed")
-    async def test_feed(self, interaction: nextcord.Interaction,  
-                        channel: Optional[TextChannel] = SlashOption(description="The target channel"),
-                        link_atom_feed: Optional[str] = None, 
-                        link_feed: Optional[str] = None):
-        try:
-            # Kiểm tra nếu chỉ có link_feed, lấy link_atom_feed từ RSS
-            if link_atom_feed is None and link_feed is not None:
-                get_rss = GetRSS(link_feed)
-                link_atom_feed = get_rss.get_rss_link()
-                
-                if link_atom_feed is None:
-                    await interaction.response.send_message('Link RSS feed is not found.', ephemeral=True)
-                    return
-
-            # Kiểm tra nếu link_atom_feed không tồn tại
-            if link_atom_feed is None:
-                await interaction.response.send_message('Link Atom feed is not found.', ephemeral=True)
-                return
-            
-            # Đọc RSS feed và lấy entry đầu tiên
-            read_rss = ReadRSSWithoutSaving(link_atom_feed)    
-            feed_emty_dto = read_rss.get_first_feed_emty()
-
-            if feed_emty_dto is None:
-                raise TypeError("link_first_entry is None")
-            
-            # Kiểm tra nếu tin nhắn đến từ DMChannel
-            if CheckCogs.check_dm_channel(interaction):
-                id_server = "DM"
-                embed = EmbedTest(id_server, feed_emty_dto)
-                await interaction.response.send_message(embed=embed)
-            
-            elif channel is not None:
-                id_server = str(interaction.guild.id)  # type: ignore # Sử dụng interaction.guild.id nếu không phải là DM          
-                embed = EmbedTest(id_server, feed_emty_dto)
-                await interaction.response.send_message(f"Test sent to {channel.mention}.")
-                await channel.send(embed=embed)
-            
-            elif channel is None:
-                id_server = str(interaction.guild.id)   # type: ignore # Sử dụng interaction.guild.id nếu không phải là D              
-                embed = EmbedTest(id_server, feed_emty_dto)
-                await interaction.response.send_message(embed=embed)
-            
-        except Exception as e:
-            # Gửi thông báo lỗi nếu xảy ra ngoại lệ
-            await interaction.response.send_message(f"Error: {e}", ephemeral=True)
-            print(f"Error: {e}")
 
     @nextcord.slash_command(name="set_feed", description="Set feed notification channel")
     async def set_feed(self, interaction: Interaction, 
@@ -210,7 +158,7 @@ class SlashCommands(commands.Cog):
         
         except Exception as e:
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)
-            print(f"Error: {e}")
+            logger.error(f"Error: {e}")
 
     @nextcord.slash_command(name="set_color", description="Set the color of all embeds that you want it would send")
     async def set_color(self, interaction: Interaction, 
@@ -242,7 +190,7 @@ class SlashCommands(commands.Cog):
         
         except Exception as e:
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)
-            print(f"Error: {e}")
+            logger.error(f"Error: {e}")
 
     @nextcord.slash_command(name="show", description="Shows a list of feeds in channels.")
     async def show(self, interaction: Interaction):
@@ -290,50 +238,7 @@ class SlashCommands(commands.Cog):
         except Exception as e:
             # Thông báo lỗi
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)  # Gửi lỗi một cách riêng tư
-            print(f"Error: {e}")
-        
-    @nextcord.slash_command(name="help", description="List of commands")
-    async def help(self, interaction: Interaction):
-        try:
-            available_commands = [command.name for command in self.bot.commands]
-            available_slash_commands = [command.name for command in self.bot.get_application_commands()]
-            
-            command_list_1 = ", ".join(available_commands)
-            command_list_2 = ", ".join(available_slash_commands)  # type: ignore
-            
-            if interaction.guild is not None:
-                server_color_bll = ServerColorBLL()
-                server_dto = ServerDTO(str(interaction.guild.id), interaction.guild.name)
-                server_color_dto = server_color_bll.get_server_color_by_id_server(server_dto.get_id_server())
-                hex_color = server_color_dto.get_color().get_hex_color()  # type: ignore
-                
-                embed = CustomEmbed(
-                    id_server=str(interaction.guild.id), 
-                    title="List of commands",
-                    description=f'''
-command prefix `{self.bot.command_prefix}`
-- The current commands have: {command_list_1}
-- The current slash commands have: {command_list_2}
-                    ''',
-                    color=int(hex_color, 16) if hex_color else nextcord.Color(0x808080)
-                )
-            # Đánh dấu rằng phản hồi sẽ được gửi sau
-            await interaction.response.send_message(embed=embed, view=ButtonOfHelpCommnad())
-        
-        except Exception as e:
-            await interaction.response.send_message(f"Error: {e}", ephemeral=True)
-            print(f"Error: {e}")
-
-    @nextcord.slash_command(name="get_rss", description="Get the RSS link of a website")
-    async def get_rss(self, interaction: Interaction, url: str = SlashOption(description="The website URL")):
-        try:
-            link_rss = GetRSS(url).get_rss_link()
-            await interaction.response.send_message(f"RSS link: {link_rss}") if link_rss else await interaction.response.send_message("No RSS link found.")
-        
-        except Exception as e:
-            # Đánh dấu rằng phản hồi sẽ được gửi sau
-            await interaction.response.send_message(f"Error: {e}", ephemeral=True)
-            print(f"Error: {e}")
-            
+            logger.error(f"Error: {e}")
+    
 def setup(bot):
     bot.add_cog(SlashCommands(bot))
