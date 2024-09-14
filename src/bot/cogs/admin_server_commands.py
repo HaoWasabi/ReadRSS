@@ -29,7 +29,7 @@ from ..BLL.channel_feed_bll import ChannelFeedBLL
 from ..BLL.server_channel_bll import ServerChannelBLL
 
 from ..GUI.custom_embed import CustomEmbed
-from ..cogs.check_dm_channel import check_dm_channel
+from ..utils.check_cogs import CheckCogs
 from ..utils.read_rss import ReadRSS
 from ..utils.create_qr_payment import QRGenerator
 
@@ -39,22 +39,14 @@ logger = logging.getLogger('AdminServerCommands')
 class AdminServerCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
-    async def cog_check(self, ctx):
-        if check_dm_channel(ctx):
-            await ctx.send("You can't use this command in DM.")
-            return False
-        return True
-
+        
     def is_server_owner(self, ctx):
         return ctx.author.id == ctx.guild.owner_id
 
     @commands.command(name="clear")
     async def clear_history(self, ctx, channel: TextChannel, link_atom_feed: Optional[str] = None):
-        if check_dm_channel(ctx):
+        if CheckCogs.check_dm_channel(ctx): 
             return
-
-        if not await self.cog_check(ctx): return
 
         if not self.is_server_owner(ctx):
             await ctx.send("You need to be the server owner to use this command.")
@@ -86,10 +78,8 @@ class AdminServerCommands(commands.Cog):
 
     @commands.command(name="delete_feed")
     async def delete_feed(self, ctx, channel: TextChannel, link_atom_feed: Optional[str] = None):
-        if check_dm_channel(ctx):
+        if CheckCogs.check_dm_channel(ctx):
             return
-
-        if not await self.cog_check(ctx): return
 
         if not self.is_server_owner(ctx):
             await ctx.send("You need to be the server owner to use this command.")
@@ -129,10 +119,8 @@ class AdminServerCommands(commands.Cog):
 
     @commands.command(name="set_feed")
     async def set_feed(self, ctx, channel: TextChannel, link_atom_feed: str):
-        if check_dm_channel(ctx):
+        if CheckCogs.check_dm_channel(ctx):
             return
-
-        if not await self.cog_check(ctx): return
 
         if not self.is_server_owner(ctx):
             await ctx.send("You need to be the server owner to use this command.")
@@ -164,10 +152,8 @@ class AdminServerCommands(commands.Cog):
 
     @commands.command(name="set_color")
     async def set_color(self, ctx, color: str):
-        if check_dm_channel(ctx):
+        if CheckCogs.check_dm_channel(ctx):
             return
-
-        if not await self.cog_check(ctx): return
 
         if not self.is_server_owner(ctx):
             await ctx.send("You need to be the server owner to use this command.")
@@ -196,10 +182,8 @@ class AdminServerCommands(commands.Cog):
 
     @commands.command(name="show_feeds")
     async def show_feeds(self, ctx):
-        if check_dm_channel(ctx):
+        if CheckCogs.check_dm_channel(ctx):
             return
-
-        if not await self.cog_check(ctx): return
 
         if not self.is_server_owner(ctx):
             await ctx.send("You need to be the server owner to use this command.")
