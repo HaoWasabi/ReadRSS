@@ -45,26 +45,26 @@ class Events(commands.Cog):
                 color_dto = ColorDTO("blue")
                 server_color_bll.insert_server_color(ServerColorDTO(server_dto, color_dto))
                 
-                # Insert or update server
-                if not server_bll.insert_server(server_dto):
-                    server_bll.update_server_by_id_server(str(guild.id), server_dto)
+            #     # Insert or update server
+            #     if not server_bll.insert_server(server_dto):
+            #         server_bll.update_server_by_id_server(str(guild.id), server_dto)
 
-                # Update channel names if changed
-                for channel in guild.channels:
-                    channel_dto = ChannelDTO(str(channel.id), channel.name)
-                    matching_channel = next((ch for ch in list_channel if ch.get_id_channel() == channel_dto.get_id_channel()), None)
-                    if matching_channel and matching_channel.get_name_channel() != channel_dto.get_name_channel():
-                        channel_bll.update_channel_by_id_channel(str(channel.id), channel_dto)
+            #     # Update channel names if changed
+            #     for channel in guild.channels:
+            #         channel_dto = ChannelDTO(str(channel.id), channel.name)
+            #         matching_channel = next((ch for ch in list_channel if ch.get_id_channel() == channel_dto.get_id_channel()), None)
+            #         if matching_channel and matching_channel.get_name_channel() != channel_dto.get_name_channel():
+            #             channel_bll.update_channel_by_id_channel(str(channel.id), channel_dto)
 
-            # Delete servers and related channels not in guilds
-            for server in server_bll.get_all_server():
-                if self.bot.get_guild(int(server.get_id_server())) is None:
-                    self.delete_server_and_related_channels(server.get_id_server())
+            # # Delete servers and related channels not in guilds
+            # for server in server_bll.get_all_server():
+            #     if self.bot.get_guild(int(server.get_id_server())) is None:
+            #         self.delete_server_and_related_channels(server.get_id_server())
 
-            # Delete channels not found in current guilds
-            for channel in channel_bll.get_all_channel():
-                if self.bot.get_channel(int(channel.get_id_channel())) is None:
-                    self.delete_channel_and_related_data(channel.get_id_channel())
+            # # Delete channels not found in current guilds
+            # for channel in channel_bll.get_all_channel():
+            #     if self.bot.get_channel(int(channel.get_id_channel())) is None:
+            #         self.delete_channel_and_related_data(channel.get_id_channel())
             
         except Exception as e:
             print(f"Error loading guilds: {e}")
@@ -174,7 +174,13 @@ class Events(commands.Cog):
 
             try:
                 server_color_bll = ServerColorBLL()
-                server_dto = ServerDTO(str(message.guild.id), message.guild.name)
+                
+                # Kiểm tra nếu tin nhắn đến từ DMChannel hay không
+                if isinstance(message.channel, nextcord.DMChannel):
+                    # Sử dụng nextcord.Embed cho tin nhắn DMChannel
+                    server_dto = ServerDTO("DM", "DM")
+                else:   
+                    server_dto = ServerDTO(str(message.guild.id), message.guild.name)
                 server_color_dto = server_color_bll.get_server_color_by_id_server(server_dto.get_id_server())
                 hex_color = server_color_dto.get_color().get_hex_color() # type: ignore
 
@@ -191,14 +197,9 @@ class Events(commands.Cog):
                 # Chia nhỏ nội dung phản hồi thành các phần nhỏ tối đa 2000 ký tự
                 chunk_size = 2000
                 chunks = [response_text[i:i + chunk_size] for i in range(0, len(response_text), chunk_size)]
-
-                # Kiểm tra nếu tin nhắn đến từ DMChannel hay không
-                if isinstance(message.channel, nextcord.DMChannel):
-                    # Sử dụng nextcord.Embed cho tin nhắn DMChannel
-                    embed_color = nextcord.Color.blue()
-                else:
-                    # Sử dụng CustomEmbed cho tin nhắn trong server
-                    embed_color = int(hex_color, 16) if hex_color else nextcord.Color(0x808080)
+                
+                # Sử dụng CustomEmbed cho tin nhắn trong server
+                embed_color = int(hex_color, 16) if hex_color else nextcord.Color(0x808080)
 
                 # Gửi phản hồi đầu tiên
                 embed = nextcord.Embed(

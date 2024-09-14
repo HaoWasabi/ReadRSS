@@ -1,6 +1,6 @@
 from nextcord.ext import commands
 from nextcord import TextChannel, DMChannel
-from ..GUI.test_embed import TestEmbed
+from ..GUI.embed_test import EmbedTest
 from ..utils.check_cogs import CheckCogs
 from ..utils.read_rss_without_saving import ReadRSSWithoutSaving
 from ..utils.get_rss import GetRSS
@@ -48,7 +48,7 @@ class NormalCommands(commands.Cog):
                 id_server = "DM"
             else:
                 id_server = str(ctx.guild.id)
-            embed = TestEmbed(id_server, feed_emty_dto).get_embed()
+            embed = EmbedTest(id_server, feed_emty_dto)
             await channel.send(embed=embed)
         
         except Exception as e:
