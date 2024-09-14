@@ -86,19 +86,21 @@ class Paying(commands.Cog):
                     qr = qr_pay_code_dal.get_qr_pay_code_by_qr_code(j.replace("T", ""))
                     if qr is None:
                         continue
-                    
-                    
                     server_pay.insert_server_pay(ServerPayDTO(qr.get_id_server(), True))
-                    channel = self.bot.get_channel(int(qr.get_channel_id()))
-
-                    if (channel is None): 
-                        logger.warning('không tìm thấy channel')
-                        return
                     
-                    if isinstance(channel, TextChannel):
-                        message = await channel.fetch_message(int(qr.get_message_id()))
-                        await message.edit(content = 'Thanh toán thành công', embed=None)
-                        
+                    await self.pay_success(qr)
+    
+    async def pay_success(self, qr: QrPayCodeDTO):
+        channel = self.bot.get_channel(int(qr.get_channel_id()))
+
+        if (channel is None): 
+            logger.warning('không tìm thấy channel')
+            return
+        
+        if isinstance(channel, TextChannel):
+            message = await channel.fetch_message(int(qr.get_message_id()))
+            await message.edit(content = 'Thanh toán thành công', embed=None)
+                         
     @tasks.loop(seconds=30)
     async def start_listener_bank_history(self):
         # thời gian lấy lịch sử
