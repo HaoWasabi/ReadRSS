@@ -230,40 +230,6 @@ class AdminServerCommands(commands.Cog):
         except Exception as e:
             await ctx.send(f"Error: {e}")
             logger.error(f"Error: {e}")
-
-    @commands.command(name="pay")
-    async def pay(self, ctx: Context):
-        if check_dm_channel(ctx):
-            return
-
-        if not await self.cog_check(ctx): return
-
-        if not self.is_server_owner(ctx):
-            await ctx.send("You need to be the server owner to use this command.")
-            return
-        #
-        embed_text = Embed(title="Thanh toán đi bạn trẻ")
-        embed_text.add_field(name="Ngân hàng MB-Bank", value="0347402306", inline=False)
-        embed_text.add_field(name="Số Tiền:", value="10k", inline=False)
-
-        if (ctx.guild is None or ctx.channel is None):
-            await ctx.send('có gì đó lạ lắm')
-            return
-        
-        
-        qr_id = QRGenerator.generator_id(str(ctx.guild.id))
-        embed_text.add_field(name="Nội dung:", value=f"T{qr_id}T", inline=False)
-        
-        embed_text.set_image(QRGenerator.generator_qr(qr_id))
-        message = await ctx.send(embed=embed_text)
-        
-        
-        qr = QrPayCodeDTO(qr_id, str(ctx.guild.id), str(ctx.channel.id), str(message.id), datetime.datetime.now())
-        
-        qr_pay_code_bll = QrPayCodeBLL()
-        qr_pay_code_bll.insert_qr_pay_code(qr)
-        
-        
         
 async def setup(bot):
     bot.add_cog(AdminServerCommands(bot))

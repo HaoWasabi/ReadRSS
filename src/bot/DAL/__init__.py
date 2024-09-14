@@ -10,6 +10,7 @@ from .server_color_dal import *
 from .server_dal import *
 from .server_pay_dal import *
 from .qr_pay_code_dal import *
+from .transaction_history_dal import *
 
 # một hàm nào đó tôi tìm được trên mạng
 # lấy toàn bộ các supclass

@@ -25,6 +25,8 @@ from bot.DAL.server_pay_dal import ServerPayDAL
 from bot.DTO.server_pay_dto import ServerPayDTO
 from bot.DAL.qr_pay_code_dal import QrPayCodeDAL
 from bot.DTO.qr_code_pay_dto import QrPayCodeDTO
+from bot.DTO.transaction_history_dto import TransactionHistoryDTO
+from bot.DAL.transaction_history_dal import TransactionHistoryDAL
 
 def test_feed_emty():
     print ('''
@@ -238,8 +240,15 @@ def test_qr_pay_code():
     print(a.delete_qr_pay_by_id('12'))
     print(a.get_all_qr_pay_code())
     
+def test_():
+    a = TransactionHistoryDAL()
     
     
+    a.insert_transaction_history(TransactionHistoryDTO('1', datetime.datetime.now(), '', 1, ''))
+    print(a.get_transaction_history_by_id('1'))
+
+
+test_()
     
 # test_qr_pay_code()
 # test_server_pay_dal()

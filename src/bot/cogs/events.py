@@ -144,7 +144,7 @@ class Events(commands.Cog):
             
     @tasks.loop(seconds=10)
     async def push_noti(self):
-        logger.info('run background task')
+        logger.debug('run background task')
         await self.load_list_feed()
         await self.load_guilds()
 
@@ -153,24 +153,6 @@ class Events(commands.Cog):
         # đợi cho bot đăng nhập xong
         await self.bot.wait_until_ready()
 
-    @tasks.loop(seconds=5)
-    async def check_qr_code(self):
-        qr_pay_code_bll = QrPayCodeBLL()
-        all_qr = qr_pay_code_bll.get_all_qr_pay_code()
-        for i in all_qr:
-            denta = datetime.datetime.now() - i.get_ngay_tao()
-            if (denta > datetime.timedelta(seconds=10)):
-                qr_pay_code_bll.delete_qr_pay_by_id(i.get_qr_code())
-                channel = self.bot.get_channel(int(i.get_channel_id()))
-                
-                if (channel is None): 
-                    logger.warning('không tìm thấy channel')
-                    return
-                
-                if isinstance(channel, TextChannel):
-                    message = await channel.fetch_message(int(i.get_message_id()))
-                    await message.edit(content = 'qr đã hết hạn', embed=None)
-                
     @commands.Cog.listener()
     async def on_ready(self):
         logger.info(f"Bot {self.bot.user} is ready")
@@ -180,11 +162,9 @@ class Events(commands.Cog):
         await self.bot.sync_all_application_commands()
         logger.info(f'Bot {self.bot.user} is ready and commands are synced.')
 
+        logger.info('check notify start')
         if not self.push_noti.is_running():
             self.push_noti.start()
-            
-        if not self.check_qr_code.is_running():
-            self.check_qr_code.start()
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):

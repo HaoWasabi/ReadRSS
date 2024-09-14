@@ -393,6 +393,22 @@
         "documentation": {}
     },
     {
+        "label": "tasks",
+        "importPath": "nextcord.ext",
+        "description": "nextcord.ext",
+        "isExtraImport": true,
+        "detail": "nextcord.ext",
+        "documentation": {}
+    },
+    {
+        "label": "commands",
+        "importPath": "nextcord.ext",
+        "description": "nextcord.ext",
+        "isExtraImport": true,
+        "detail": "nextcord.ext",
+        "documentation": {}
+    },
+    {
         "label": "commands",
         "importPath": "nextcord.ext",
         "description": "nextcord.ext",
@@ -563,11 +579,27 @@
         "documentation": {}
     },
     {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
         "label": "NO",
         "importPath": "tkinter",
         "description": "tkinter",
         "isExtraImport": true,
         "detail": "tkinter",
+        "documentation": {}
+    },
+    {
+        "label": "Context",
+        "importPath": "nextcord.ext.commands",
+        "description": "nextcord.ext.commands",
+        "isExtraImport": true,
+        "detail": "nextcord.ext.commands",
         "documentation": {}
     },
     {
@@ -611,12 +643,63 @@
         "documentation": {}
     },
     {
+        "label": "ChannelType",
+        "importPath": "discord",
+        "description": "discord",
+        "isExtraImport": true,
+        "detail": "discord",
+        "documentation": {}
+    },
+    {
+        "label": "Embed",
+        "importPath": "discord",
+        "description": "discord",
+        "isExtraImport": true,
+        "detail": "discord",
+        "documentation": {}
+    },
+    {
+        "label": "TextChannel",
+        "importPath": "discord",
+        "description": "discord",
+        "isExtraImport": true,
+        "detail": "discord",
+        "documentation": {}
+    },
+    {
         "label": "nextcord,",
         "kind": 6,
         "isExtraImport": true,
         "importPath": "nextcord.",
         "description": "nextcord.",
         "detail": "nextcord.",
+        "documentation": {}
+    },
+    {
+        "label": "sys",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sys",
+        "description": "sys",
+        "detail": "sys",
+        "documentation": {}
+    },
+    {
+        "label": "re",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "re",
+        "description": "re",
+        "detail": "re",
+        "documentation": {}
+    },
+    {
+        "label": "logging,",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "logging.",
+        "description": "logging.",
+        "detail": "logging.",
         "documentation": {}
     },
     {
@@ -643,6 +726,14 @@
         "importPath": "sqlite3",
         "description": "sqlite3",
         "detail": "sqlite3",
+        "documentation": {}
+    },
+    {
+        "label": "NotImplementedType",
+        "importPath": "types",
+        "description": "types",
+        "isExtraImport": true,
+        "detail": "types",
         "documentation": {}
     },
     {
@@ -897,15 +988,6 @@
         "documentation": {}
     },
     {
-        "label": "re",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "re",
-        "description": "re",
-        "detail": "re",
-        "documentation": {}
-    },
-    {
         "label": "FeedDTO",
         "importPath": "bot.DTO.feed_dto",
         "description": "bot.DTO.feed_dto",
@@ -1114,6 +1196,22 @@
         "documentation": {}
     },
     {
+        "label": "TransactionHistoryDTO",
+        "importPath": "bot.DTO.transaction_history_dto",
+        "description": "bot.DTO.transaction_history_dto",
+        "isExtraImport": true,
+        "detail": "bot.DTO.transaction_history_dto",
+        "documentation": {}
+    },
+    {
+        "label": "TransactionHistoryDAL",
+        "importPath": "bot.DAL.transaction_history_dal",
+        "description": "bot.DAL.transaction_history_dal",
+        "isExtraImport": true,
+        "detail": "bot.DAL.transaction_history_dal",
+        "documentation": {}
+    },
+    {
         "label": "annotations",
         "importPath": "__future__",
         "description": "__future__",
@@ -1137,15 +1235,6 @@
         "importPath": "site",
         "description": "site",
         "detail": "site",
-        "documentation": {}
-    },
-    {
-        "label": "sys",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "sys",
-        "description": "sys",
-        "detail": "sys",
         "documentation": {}
     },
     {
@@ -1329,6 +1418,24 @@
         "documentation": {}
     },
     {
+        "label": "Paying",
+        "kind": 6,
+        "importPath": "src.bot.cogs.pay_handel",
+        "description": "src.bot.cogs.pay_handel",
+        "peekOfCode": "class Paying(commands.Cog):\n    def __init__(self, bot: commands.Bot):\n        self.bot = bot\n        self.mb = mbbank.MBBankAsync( username=os.getenv('BANK_USER_NAME'), password=os.getenv('BANK_PASSWORD'))\n        self.start_time: datetime.datetime = datetime.datetime.now()\n    async def cog_check(self, ctx):\n        if check_dm_channel(ctx):\n            await ctx.send(\"You can't use this command in DM.\")\n            return False\n        return True",
+        "detail": "src.bot.cogs.pay_handel",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "src.bot.cogs.pay_handel",
+        "description": "src.bot.cogs.pay_handel",
+        "peekOfCode": "logger = logging.getLogger('paying')\nclass Paying(commands.Cog):\n    def __init__(self, bot: commands.Bot):\n        self.bot = bot\n        self.mb = mbbank.MBBankAsync( username=os.getenv('BANK_USER_NAME'), password=os.getenv('BANK_PASSWORD'))\n        self.start_time: datetime.datetime = datetime.datetime.now()\n    async def cog_check(self, ctx):\n        if check_dm_channel(ctx):\n            await ctx.send(\"You can't use this command in DM.\")\n            return False",
+        "detail": "src.bot.cogs.pay_handel",
+        "documentation": {}
+    },
+    {
         "label": "SlashCommands",
         "kind": 6,
         "importPath": "src.bot.cogs.slash_commands",
@@ -1509,6 +1616,15 @@
         "documentation": {}
     },
     {
+        "label": "TransactionHistoryDAL",
+        "kind": 6,
+        "importPath": "src.bot.DAL.transaction_history_dal",
+        "description": "src.bot.DAL.transaction_history_dal",
+        "peekOfCode": "class TransactionHistoryDAL(BaseDAL):\n    def __init__(self):\n        super().__init__()\n    def create_table(self):\n        try:\n            self.cursor.execute(\"\"\"\n                CREATE TABLE transaction_history (\n                    transaction_id TEXT PRIMARY KEY,\n                    `time` datetime,\n                    `content` TEXT,",
+        "detail": "src.bot.DAL.transaction_history_dal",
+        "documentation": {}
+    },
+    {
         "label": "ChannelDTO",
         "kind": 6,
         "importPath": "src.bot.DTO.channel_dto",
@@ -1614,6 +1730,15 @@
         "description": "src.bot.DTO.server_pay_dto",
         "peekOfCode": "class ServerPayDTO:\n    def __init__(self, server_dto: str, is_pay: bool):\n        self.__server_dto = server_dto\n        self.__is_pay = is_pay\n    def __str__(self) -> str:\n        return f\"ChannelPayDTO(server={self.__server_dto}, is_pay={self.__is_pay})\"\n    def __eq__(self, other: object) -> bool:\n        if not isinstance(other, ServerPayDTO):\n            return NotImplementedType\n        return self.__server_dto == other.__server_dto and self.__is_pay == other.__is_pay",
         "detail": "src.bot.DTO.server_pay_dto",
+        "documentation": {}
+    },
+    {
+        "label": "TransactionHistoryDTO",
+        "kind": 6,
+        "importPath": "src.bot.DTO.transaction_history_dto",
+        "description": "src.bot.DTO.transaction_history_dto",
+        "peekOfCode": "class TransactionHistoryDTO:\n    def __init__(self, transaction_id:str, created: datetime, content:str, credit_amount:int, currency:str) -> None:\n        self.__transaction_id = transaction_id\n        self.__created = created\n        self.__content = content\n        self.__credit_amount = credit_amount\n        self.__currency = currency\n    def __str__(self) -> str:\n        return f\"TransactionHistoryDTO(transaction_id={self.__transaction_id} created={self.__created} content={self.__content} credit_amount={self.__credit_amount} currency={self.__currency})\"\n    def __eq__(self, other: object) -> bool:",
+        "detail": "src.bot.DTO.transaction_history_dto",
         "documentation": {}
     },
     {
@@ -1883,6 +2008,15 @@
         "importPath": "src.test",
         "description": "src.test",
         "peekOfCode": "def test_qr_pay_code():\n    a = QrPayCodeDAL()\n    print(a.get_all_qr_pay_code())\n    try:\n        print(a.insert_qr_pay_code(QrPayCodeDTO('12', '13', '12', '34', datetime.datetime.now())))\n    except:\n        pass\n    print(a.get_all_qr_pay_code())\n    print(a.delete_qr_pay_by_id('12'))\n    print(a.get_all_qr_pay_code())",
+        "detail": "src.test",
+        "documentation": {}
+    },
+    {
+        "label": "test_",
+        "kind": 2,
+        "importPath": "src.test",
+        "description": "src.test",
+        "peekOfCode": "def test_():\n    a = TransactionHistoryDAL()\n    a.insert_transaction_history(TransactionHistoryDTO('1', datetime.datetime.now(), '', 1, ''))\n    print(a.get_transaction_history_by_id('1'))\ntest_()\n# test_qr_pay_code()\n# test_server_pay_dal()",
         "detail": "src.test",
         "documentation": {}
     },

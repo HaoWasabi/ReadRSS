@@ -29,6 +29,21 @@ INSERT INTO qr_pay_code(qr_code, id_server, channel_id, message_id, ngay_tao) VA
 
 DELETE FROM qr_pay_code WHERE qr_code=?;
 
+
+CREATE TABLE transaction_history (
+    transaction_id TEXT PRIMARY KEY,
+    `time` datetime,
+    `content` TEXT,
+    credit_amount INT,
+    `currency` TEXT
+)
+
+SELECT transaction_id , `time`, `content`, credit_amount , `currency` FROM transaction_history WHERE transaction_id=?;
+
+INSERT INTO transaction_history(transaction_id , `time`, `content`, credit_amount , `currency`) VALUES (?, ?, ?, ?, ?)
+
+
+
 -- chỉnh lại các bot tạo database
 -- thay toàn bộ print bằng logger
 -- thêm 2 table một là server_pay nhữ server đã đăng ký vip, qr_pay_code lưu nhữ mã qr còn hạng
