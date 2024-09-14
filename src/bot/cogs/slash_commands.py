@@ -20,12 +20,14 @@ from ..BLL.channel_feed_bll import ChannelFeedBLL
 from ..BLL.server_channel_bll import ServerChannelBLL
 from ..BLL.server_color_bll import ServerColorBLL
 
-from ..GUI.test_embed import TestEmbed
+from ..GUI.embed_test import EmbedTest
 from ..GUI.custom_embed import CustomEmbed
 from ..GUI.select_clear import SelectClear
 from ..GUI.button_of_help_command import ButtonOfHelpCommnad
 from ..GUI.button_of_ctrl_command import ButtonOfCtrlCommand
+
 from ..utils.read_rss_without_saving import ReadRSSWithoutSaving
+from ..utils.check_cogs import CheckCogs
 from ..utils.read_rss import ReadRSS
 from ..utils.get_rss import GetRSS
 
@@ -120,31 +122,51 @@ class SlashCommands(commands.Cog):
         channel_bll.delete_channel_by_id_channel(str(channel_id))
 
     @nextcord.slash_command(name="test", description="Test sending an RSS feed")
-    async def test_feed(self, interaction: Interaction, 
-                        channel: TextChannel = SlashOption(description="The target channel"), 
+    async def test_feed(self, interaction: nextcord.Interaction,  
+                        channel: Optional[TextChannel] = SlashOption(description="The target channel"),
                         link_atom_feed: Optional[str] = None, 
                         link_feed: Optional[str] = None):
         try:
+            # Kiểm tra nếu chỉ có link_feed, lấy link_atom_feed từ RSS
             if link_atom_feed is None and link_feed is not None:
                 get_rss = GetRSS(link_feed)
-                if get_rss.get_rss_link() is None:
-                    await interaction.response.send_message(f'Link RSS feed is not found.', ephemeral=True)
+                link_atom_feed = get_rss.get_rss_link()
+                
+                if link_atom_feed is None:
+                    await interaction.response.send_message('Link RSS feed is not found.', ephemeral=True)
                     return
-                else: 
-                    link_atom_feed = get_rss.get_rss_link()
-            
+
+            # Kiểm tra nếu link_atom_feed không tồn tại
             if link_atom_feed is None:
-                await interaction.response.send_message(f'Link Atom feed is not found.', ephemeral=True)
+                await interaction.response.send_message('Link Atom feed is not found.', ephemeral=True)
                 return
             
+            # Đọc RSS feed và lấy entry đầu tiên
             read_rss = ReadRSSWithoutSaving(link_atom_feed)    
             feed_emty_dto = read_rss.get_first_feed_emty()
-            embed = TestEmbed(str(interaction.guild.id), feed_emty_dto).get_embed()  # type: ignore
-            await channel.send(embed=embed)
-            # Đánh dấu rằng phản hồi sẽ được gửi sau
-            await interaction.response.send_message(f'Sent the feed to {channel.mention} successfully.')
-       
+
+            if feed_emty_dto is None:
+                raise TypeError("link_first_entry is None")
+            
+            # Kiểm tra nếu tin nhắn đến từ DMChannel
+            if CheckCogs.check_dm_channel(interaction):
+                id_server = "DM"
+                embed = EmbedTest(id_server, feed_emty_dto)
+                await interaction.response.send_message(embed=embed)
+            
+            elif channel is not None:
+                id_server = str(interaction.guild.id)  # type: ignore # Sử dụng interaction.guild.id nếu không phải là DM          
+                embed = EmbedTest(id_server, feed_emty_dto)
+                await interaction.response.send_message(f"Test sent to {channel.mention}.")
+                await channel.send(embed=embed)
+            
+            elif channel is None:
+                id_server = str(interaction.guild.id)   # type: ignore # Sử dụng interaction.guild.id nếu không phải là D              
+                embed = EmbedTest(id_server, feed_emty_dto)
+                await interaction.response.send_message(embed=embed)
+            
         except Exception as e:
+            # Gửi thông báo lỗi nếu xảy ra ngoại lệ
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)
             logger.error(f"Error: {e}")
 

@@ -248,7 +248,7 @@ def test_():
     print(a.get_transaction_history_by_id('1'))
 
 
-test_()
+# test_()
     
 # test_qr_pay_code()
 # test_server_pay_dal()

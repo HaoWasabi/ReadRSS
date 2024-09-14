@@ -6,8 +6,8 @@ class FeedEmbed(CustomEmbed):  # Kế thừa từ CustomEmbed
     def __init__(self, id_server: str, link_atom_feed: str, link_emty: str, **kwargs):
         # Sử dụng FeedEmtyBLL để lấy FeedEmtyDTO dựa trên link_atom_feed và link_emty
         feed_emty_bll = FeedEmtyBLL()
-        feed_emty_dto = feed_emty_bll.get_feed_emty_by_link_atom_feed_and_link_emty(linkAtom_feed, link_emty)
-        # print(f"feed_emty_dto: {feed_emty_dto}")
+        feed_emty_dto = feed_emty_bll.get_feed_emty_by_link_atom_feed_and_link_emty(link_atom_feed, link_emty)
+        print(f"feed_emty_dto: {feed_emty_dto}")
         
         # Kiểm tra nếu feed_emty_dto không tồn tại
         if feed_emty_dto is None:
@@ -19,20 +19,21 @@ class FeedEmbed(CustomEmbed):  # Kế thừa từ CustomEmbed
         self.__logo = feed_emty_dto.get_feed().get_logo_feed()
         self.__footer_text = feed_emty_dto.get_feed().get_description_feed()
         self.__title = feed_emty_dto.get_feed().get_title_feed()
-        self.__description = f'''
+
+        # Mô tả bài viết
+        description = f'''
             [**Xem bài viết**]({feed_emty_dto.get_emty().get_link_emty()})
             {feed_emty_dto.get_emty().get_description_emty()}
         '''
-        # Làm sạch nội dung mô tả
-        self.__description = TextProcessor.clean_feed_text(self.__description)
+        description = TextProcessor.clean_feed_text(description)  # Làm sạch nội dung
 
-        # Kiểm tra nếu có ảnh, nếu không thì để trống
+        # Ảnh (nếu có)
         self.__image = feed_emty_dto.get_emty().get_image_emty() if feed_emty_dto.get_emty().get_image_emty() else ""
 
         # Gọi constructor của lớp CustomEmbed với các tham số thích hợp
         super().__init__(
             id_server=self.__id_server,
-            description=self.__description,
+            description=description,  # Đặt description ở đây
             **kwargs  # Truyền các đối số bổ sung nếu có
         )
 
@@ -45,3 +46,4 @@ class FeedEmbed(CustomEmbed):  # Kế thừa từ CustomEmbed
 
         # Đặt footer
         self.set_footer(text=self.__footer_text)
+

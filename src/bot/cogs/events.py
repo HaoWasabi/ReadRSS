@@ -1,7 +1,10 @@
-import nextcord, os
-import nextcord, logging
+from operator import le
+import nextcord, os, logging
+
 from nextcord.ext import commands
 from nextcord.ext import tasks
+from nextcord.message import Message
+
 import google.generativeai as genai
 
 from ..DTO.channel_emty_dto import ChannelEmtyDTO
@@ -9,6 +12,7 @@ from ..DTO.server_color_dto import ServerColorDTO
 from ..DTO.channel_dto import ChannelDTO
 from ..DTO.server_dto import ServerDTO
 from ..DTO.color_dto import ColorDTO
+
 
 from ..BLL.qr_pay_code_bll import QrPayCodeBLL
 from ..BLL.server_channel_bll import ServerChannelBLL
@@ -46,13 +50,11 @@ class Events(commands.Cog):
                 server_dto = ServerDTO(str(guild.id), str(guild.name))
                 color_dto = ColorDTO("blue")
                 
-                # check if server exit
+                 # check if server exit
                 if server_bll.get_server_by_id_server(str(guild.id)) is None:                
                     server_color_bll.insert_server_color(ServerColorDTO(server_dto, color_dto))
-                
-                    # Insert or update server
-                    if not server_bll.insert_server(server_dto):
-                        server_bll.update_server_by_id_server(str(guild.id), server_dto)
+                    server_bll.insert_server(server_dto)
+
 
                 # Update channel names if changed
                 for channel in guild.channels:
@@ -61,15 +63,15 @@ class Events(commands.Cog):
                     if matching_channel and matching_channel.get_name_channel() != channel_dto.get_name_channel():
                         channel_bll.update_channel_by_id_channel(str(channel.id), channel_dto)
 
-            # Delete servers and related channels not in guilds
-            for server in server_bll.get_all_server():
-                if self.bot.get_guild(int(server.get_id_server())) is None:
-                    self.delete_server_and_related_channels(server.get_id_server())
+            # # Delete servers and related channels not in guilds
+            # for server in server_bll.get_all_server():
+            #     if self.bot.get_guild(int(server.get_id_server())) is None:
+            #         self.delete_server_and_related_channels(server.get_id_server())
 
-            # Delete channels not found in current guilds
-            for channel in channel_bll.get_all_channel():
-                if self.bot.get_channel(int(channel.get_id_channel())) is None:
-                    self.delete_channel_and_related_data(channel.get_id_channel())
+            # # Delete channels not found in current guilds
+            # for channel in channel_bll.get_all_channel():
+            #     if self.bot.get_channel(int(channel.get_id_channel())) is None:
+            #         self.delete_channel_and_related_data(channel.get_id_channel())
             
         except Exception as e:
             logger.error(f"Error loading guilds: {e}")
@@ -165,62 +167,85 @@ class Events(commands.Cog):
             self.push_noti.start()
             
     @commands.Cog.listener()
-    async def on_message(self, message):
+    async def on_message(self, message: Message):
         if message.author == self.bot.user:
             return
 
-        if message.content.startswith('<@1236720788187381760>'):
-            # Gửi tin nhắn "Creating prompt..."
-            prompt_message = await message.channel.send('Creating prompt...')
+        if self.bot.user is None:
+            await message.channel.send('wtf')
+            return
+        
+    
+        if message.content.startswith(f'<@{self.bot.user.id.__str__()}>'):
 
-            prompt = message.content[len('<@1236720788187381760> '):]
+            prompt = message.content[len(f'<@{self.bot.user.id.__str__()}> '):]
             print(prompt)
 
             try:
                 server_color_bll = ServerColorBLL()
-                server_dto = ServerDTO(str(message.guild.id), message.guild.name)
+                
+                # Kiểm tra nếu tin nhắn đến từ DMChannel hay không
+                if isinstance(message.channel, nextcord.DMChannel):
+                    # Sử dụng nextcord.Embed cho tin nhắn DMChannel
+                    server_dto = ServerDTO("DM", "DM")
+                else:
+                    server_dto = ServerDTO(str(message.guild.id), message.guild.name) # type: ignore
                 server_color_dto = server_color_bll.get_server_color_by_id_server(server_dto.get_id_server())
                 hex_color = server_color_dto.get_color().get_hex_color() # type: ignore
 
+                history = []
                 
+                async for message1 in message.channel.history(limit=20):
+                    if message1.author.id != self.bot.user.id:
+                        prompt1 = message1.content
+                        
+                        if (prompt1.startswith(f'<@{self.bot.user.id.__str__()}> ')):
+                            prompt1 = prompt1[len(f'<@{self.bot.user.id.__str__()}> '):]
+                        
+                        if len(prompt1) == 0: continue
+                            
+                        history.append({"role": "user", "parts": f'{message1.author.name}: "{prompt1}"'})
+                    else:
+                        history.append({"role": "model", "parts": message1.content})
 
+                # Gửi tin nhắn "Creating prompt..."
+                prompt_message = await message.channel.send('Creating prompt...')
+                
                 # Cấu hình client Generative AI
                 genai.configure(api_key=os.getenv("GEMINI_TOKEN"))
 
                 # Sử dụng mô hình Generative AI để tạo nội dung
                 model = genai.GenerativeModel("gemini-1.5-flash")
                 
-                response = model.generate_content(f'{prompt}')
+                chat = model.start_chat(history=history[::-1])
+                response = chat.send_message(f'{message.author.name}: "{prompt}"')
                 response_text = response.text
                 print(response_text)
                 
                 # Chia nhỏ nội dung phản hồi thành các phần nhỏ tối đa 2000 ký tự
                 chunk_size = 2000
                 chunks = [response_text[i:i + chunk_size] for i in range(0, len(response_text), chunk_size)]
-
-                # Kiểm tra nếu tin nhắn đến từ DMChannel hay không
-                if isinstance(message.channel, nextcord.DMChannel):
-                    # Sử dụng nextcord.Embed cho tin nhắn DMChannel
-                    embed_color = nextcord.Color.blue()
-                else:
-                    # Sử dụng CustomEmbed cho tin nhắn trong server
-                    embed_color = int(hex_color, 16) if hex_color else nextcord.Color(0x808080)
+                
+                # Sử dụng CustomEmbed cho tin nhắn trong server
+                embed_color = int(hex_color, 16) if hex_color else nextcord.Color(0x808080)
 
                 # Gửi phản hồi đầu tiên
-                embed = nextcord.Embed(
-                    title="Generative AI Response",
-                    description=chunks[0],
-                    color=embed_color
-                )
-                response_message = await message.channel.send(embed=embed)
+                # embed = nextcord.Embed(
+                #     title="Generative AI Response",
+                #     description=chunks[0],
+                #     color=embed_color
+                # )
+                # response_message = await message.channel.send(embed=embed)
+                response_message = await message.channel.send(chunks[0])
 
                 # Gửi các đoạn tin nhắn tiếp theo
                 for chunk in chunks[1:]:
-                    embed_next = nextcord.Embed(
-                        description=chunk,
-                        color=embed_color
-                    )
-                    response_message = await response_message.reply(embed=embed_next)
+                    # embed_next = nextcord.Embed(
+                    #     description=chunk,
+                    #     color=embed_color
+                    # )
+                    # response_message = await response_message.reply(embed=embed_next)
+                    response_message = await response_message.reply(chunk)
                     
                 # Xóa tin nhắn "Creating prompt..." sau khi gửi phản hồi
                 await prompt_message.delete()

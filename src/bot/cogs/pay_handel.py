@@ -15,7 +15,7 @@ from ..DAL.transaction_history_dal import TransactionHistoryDAL
 from ..DTO.qr_code_pay_dto import QrPayCodeDTO
 from ..utils.create_qr_payment import QRGenerator
 
-from .check_dm_channel import check_dm_channel
+from ..utils.check_cogs import CheckCogs
 from ..BLL.qr_pay_code_bll import QrPayCodeBLL
 
 # file này chỉ chuyên sử lý qr code và chuyển khoản mà thôi
@@ -29,7 +29,7 @@ class Paying(commands.Cog):
         self.start_time: datetime.datetime = datetime.datetime.now()
         
     async def cog_check(self, ctx):
-        if check_dm_channel(ctx):
+        if CheckCogs.check_dm_channel(ctx):
             await ctx.send("You can't use this command in DM.")
             return False
         return True

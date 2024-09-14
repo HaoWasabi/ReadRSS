@@ -49,6 +49,10 @@ SELECT transaction_id , `time`, `content`, credit_amount , `currency` FROM trans
 INSERT INTO transaction_history(transaction_id , `time`, `content`, credit_amount , `currency`) VALUES (?, ?, ?, ?, ?)
 
 
+SELECT s.id_server, s.name_server, sc.name_color
+            FROM tbl_server_color sc
+            JOIN tbl_server s ON sc.id_server = s.id_server
+            WHERE sc.id_server='1017422160182136832';
 
 -- chỉnh lại các bot tạo database
 -- thay toàn bộ print bằng logger
