@@ -13,6 +13,10 @@ INSERT INTO server_pay(id_server, is_pay) VALUES (?, ?);
 
 DELETE FROM server_pay WHERE id_server=?;
 
+INSERT INTO server_pay(id_server, is_pay) VALUES (?, ?) 
+ON CONFLICT(id_server) DO UPDATE SET is_pay = excluded.is_pay;
+
+
 DROP TABLE qr_pay_code;
 CREATE TABLE qr_pay_code (
     qr_code TEXT PRIMARY KEY,
@@ -28,6 +32,8 @@ SELECT qr_code, id_server, channel_id, message_id, ngay_tao FROM qr_pay_code WHE
 INSERT INTO qr_pay_code(qr_code, id_server, channel_id, message_id, ngay_tao) VALUES (?, ?, ?, ?, ?);
 
 DELETE FROM qr_pay_code WHERE qr_code=?;
+
+
 
 
 CREATE TABLE transaction_history (

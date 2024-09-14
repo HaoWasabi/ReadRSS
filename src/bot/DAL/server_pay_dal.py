@@ -23,7 +23,15 @@ class ServerPayDAL(BaseDAL):
     
     
     def insert_server_pay(self, server_pay: ServerPayDTO):
-        self.cursor.execute("INSERT INTO server_pay(id_server, is_pay) VALUES (?, ?);", (server_pay.get_server(), server_pay.get_pay()))
+        self.cursor.execute("""
+                INSERT INTO server_pay(id_server, is_pay) VALUES (?, ?) 
+                ON CONFLICT(id_server) DO UPDATE SET is_pay = excluded.is_pay;
+            """, 
+            (
+                server_pay.get_server(), 
+                server_pay.get_pay()
+            )
+        )
         self.connection.commit()
         return True
 
