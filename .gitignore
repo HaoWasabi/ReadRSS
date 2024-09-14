@@ -166,4 +166,4 @@ cython_debug/
 .env.local
 .env.staging
 
-.sqlite3
+db.sqlite3

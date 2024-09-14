@@ -48,10 +48,7 @@ class NormalCommands(commands.Cog):
             if feed_emty_dto is None:
                 raise TypeError("link_first_entry is None")
                 
-            if CheckCogs.check_dm_channel(ctx):
-                id_server = "DM"
-            else:
-                id_server = str(ctx.guild.id)
+            id_server = str(ctx.guild.id) if ctx.guild else "DM"
             embed = EmbedTest(id_server, feed_emty_dto)
             await channel.send(embed=embed)
         

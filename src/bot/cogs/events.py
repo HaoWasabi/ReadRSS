@@ -26,7 +26,6 @@ from ..BLL.server_bll import ServerBLL
 from ..GUI.feed_embed import FeedEmbed
 from ..GUI.custom_embed import CustomEmbed
 
-from ..utils.check_cogs import CheckCogs
 from ..utils.read_rss import ReadRSS
 
 logger = logging.getLogger('events')
@@ -188,11 +187,13 @@ class Events(commands.Cog):
                 if isinstance(message.channel, nextcord.DMChannel):
                     # Sử dụng nextcord.Embed cho tin nhắn DMChannel
                     server_dto = ServerDTO("DM", "DM")
-                else:
+                else:   
                     server_dto = ServerDTO(str(message.guild.id), message.guild.name) # type: ignore
+                    
+                # TODO tôi tạm xóa gửi em
                 server_color_dto = server_color_bll.get_server_color_by_id_server(server_dto.get_id_server())
                 hex_color = server_color_dto.get_color().get_hex_color() # type: ignore
-
+                
                 history = []
                 
                 async for message1 in message.channel.history(limit=20):
@@ -211,12 +212,12 @@ class Events(commands.Cog):
                 # Gửi tin nhắn "Creating prompt..."
                 prompt_message = await message.channel.send('Creating prompt...')
                 
+
                 # Cấu hình client Generative AI
                 genai.configure(api_key=os.getenv("GEMINI_TOKEN"))
 
                 # Sử dụng mô hình Generative AI để tạo nội dung
                 model = genai.GenerativeModel("gemini-1.5-flash")
-                
                 chat = model.start_chat(history=history[::-1])
                 response = chat.send_message(f'{message.author.name}: "{prompt}"')
                 response_text = response.text
@@ -225,9 +226,6 @@ class Events(commands.Cog):
                 # Chia nhỏ nội dung phản hồi thành các phần nhỏ tối đa 2000 ký tự
                 chunk_size = 2000
                 chunks = [response_text[i:i + chunk_size] for i in range(0, len(response_text), chunk_size)]
-                
-                # Sử dụng CustomEmbed cho tin nhắn trong server
-                embed_color = int(hex_color, 16) if hex_color else nextcord.Color(0x808080)
 
                 # Gửi phản hồi đầu tiên
                 # embed = nextcord.Embed(
@@ -238,6 +236,7 @@ class Events(commands.Cog):
                 # response_message = await message.channel.send(embed=embed)
                 response_message = await message.channel.send(chunks[0])
 
+                
                 # Gửi các đoạn tin nhắn tiếp theo
                 for chunk in chunks[1:]:
                     # embed_next = nextcord.Embed(
@@ -261,20 +260,15 @@ class Events(commands.Cog):
             command_list_1 = ", ".join(available_commands)
             command_list_2 = ", ".join(available_slash_commands) # type: ignore
             
-            server_color_bll = ServerColorBLL()
-            server_dto = ServerDTO(str(ctx.guild.id), ctx.guild.name)
-            server_color_dto = server_color_bll.get_server_color_by_id_server(server_dto.get_id_server())
-            hex_color = server_color_dto.get_color().get_hex_color() # type: ignore
-            
+            id_server = str(ctx.guild.id) if ctx.guild else "DM"
             embed = CustomEmbed(
-                id_server=str(ctx.guild.id),
+                id_server=id_server,
                 title=f"Command **{ctx.invoked_with}** is invalid",
                 description=f'''
 command prefix: `{ctx.prefix}`
 - The current commands have: {command_list_1}
 - The current slash commands have: {command_list_2}
-                ''',
-                color = int(hex_color, 16) if hex_color else nextcord.Color(0x808080)
+                '''
             )
             await ctx.send(embed=embed)
         else:
@@ -287,14 +281,10 @@ command prefix: `{ctx.prefix}`
         command_list_1 = ", ".join(available_commands)
         command_list_2 = ", ".join(available_slash_commands) # type: ignore
         
-        server_color_bll = ServerColorBLL()
-        server_dto = ServerDTO(str(guild.id), guild.name)
-        server_color_dto = server_color_bll.get_server_color_by_id_server(server_dto.get_id_server())
-        hex_color = server_color_dto.get_color().get_hex_color() # type: ignore
-            
+        id_server = str(guild.id)
         if guild.system_channel:
             embed = CustomEmbed(
-                id_server=str(guild.id),
+                id_server=id_server,
                 title=f"**Aloha {guild.name}!**",
                 description=f'''
 I am ** {self.bot.user} **, bot helps you receive a new post from Facebook and other applications for free. Instead of paying other bots, use me. Contribute ideas or need support, participate in ** [GreenCode](https://discord.com/invite/Q7NXBFpZeM)** server!
@@ -303,7 +293,7 @@ command prefix: `{self.bot.command_prefix}`
 - The current commands have: {command_list_1}
 - The current slash commands have: {command_list_2}
                 ''',
-                color = int(hex_color, 16) if hex_color else nextcord.Color(0x808080)
+                color = nextcord.Color(0x3498DB)
             )
             embed.set_thumbnail(url="https://cdn-longterm.mee6.xyz/plugins/welcome/images/911798642518663208/d7a41040adf3036620000c397fbfa21a487c9e5bb1db698fd3081ed541f4b5c1.gif")
             await guild.system_channel.send(embed=embed)
