@@ -25,7 +25,7 @@ class SlashCommandsNormal(commands.Cog):
         await interaction.response.defer()
         try:
             link_rss = GetRSS(url).get_rss_link()
-            await interaction.followup.send(f"RSS link: {link_rss}") if link_rss else await interaction.followup.send("No RSS link found.")
+            await interaction.followup.send(f'''RSS link:```{link_rss}```''') if link_rss else await interaction.followup.send("No RSS link found.")
         
         except Exception as e:
             # Đánh dấu rằng phản hồi sẽ được gửi sau

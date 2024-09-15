@@ -108,7 +108,7 @@ def test_server_channel():
     serverBLL = ServerBLL()
     channelBLL = ChannelBLL()
     
-    serverDTO = ServerDTO("a", "a")
+    serverDTO = ServerDTO("DM", "DM")
     serverBLL.insert_server(serverDTO)
     
     channelDTO = ChannelDTO("a", "a")
@@ -252,3 +252,4 @@ def test_():
     
 # test_qr_pay_code()
 # test_server_pay_dal()
+# test_server_color()

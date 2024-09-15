@@ -8,7 +8,6 @@ class ServerPayBLL:
     def __init__(self):
         self.__ServerPayDAL = ServerPayDAL()
     
-    
     def get_all_server_pay(self):
         return self.__ServerPayDAL.get_all_server_pay()
     def get_server_pay_by_server_id(self, server_id: str):

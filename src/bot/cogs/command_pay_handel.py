@@ -1,41 +1,49 @@
 import datetime
 import sys
 import re
-from discord import ChannelType, Embed, TextChannel
+from nextcord import ChannelType, Embed, TextChannel
 import logging, mbbank, os
 from nextcord.ext import commands
 from nextcord.ext import tasks
 from nextcord.ext.commands import Context
 
-from ..BLL.server_pay_bll import ServerPayBLL
 from ..DTO.server_pay_dto import ServerPayDTO
-
 from ..DTO.transaction_history_dto import TransactionHistoryDTO
-from ..DAL.transaction_history_dal import TransactionHistoryDAL
 from ..DTO.qr_code_pay_dto import QrPayCodeDTO
-from ..utils.create_qr_payment import QRGenerator
 
-from ..utils.check_cogs import CheckCogs
+from ..DAL.transaction_history_dal import TransactionHistoryDAL
+
+from ..BLL.server_pay_bll import ServerPayBLL
 from ..BLL.qr_pay_code_bll import QrPayCodeBLL
+
+from ..GUI.custom_embed import CustomEmbed
+
+from ..utils.create_qr_payment import QRGenerator
+from ..utils.check_cogs import CheckCogs
 
 # file này chỉ chuyên sử lý qr code và chuyển khoản mà thôi
 
 logger = logging.getLogger('paying')
 
-class Paying(commands.Cog):
+class CommandPaying(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.mb = mbbank.MBBankAsync( username=os.getenv('BANK_USER_NAME'), password=os.getenv('BANK_PASSWORD'))
         self.start_time: datetime.datetime = datetime.datetime.now()
         
-    async def cog_check(self, ctx):
-        if CheckCogs.check_dm_channel(ctx):
-            await ctx.send("You can't use this command in DM.")
+    async def is_dm_channel(self, ctx: Context):
+        if await CheckCogs.is_dm_channel(ctx):
+            await ctx.send("Can not send DMChannels")
+            return True
+        else: 
             return False
-        return True
-
-    def is_server_owner(self, ctx):
-        return ctx.author.id == ctx.guild.owner_id
+    
+    async def is_owner_server(self, ctx: Context):
+        if await CheckCogs.is_server_owner(ctx=ctx):
+            return True
+        else:
+            await ctx.send("You need to be the server owner to use this command.")
+            return False
         
     @tasks.loop(seconds=5)
     async def check_qr_code(self):
@@ -120,12 +128,16 @@ class Paying(commands.Cog):
               
     @commands.command(name="pay")
     async def pay(self, ctx: Context):
-        if not await self.cog_check(ctx): return
-        if not self.is_server_owner(ctx):
-            await ctx.send("You need to be the server owner to use this command.")
+        if await self.is_dm_channel(ctx): 
             return
         
-        embed_text = Embed(title="Thanh toán đi bạn trẻ")
+        if not await self.is_owner_server(ctx=ctx):
+            return
+        
+        embed_text = CustomEmbed(
+            id_server=str(ctx.guild.id) if ctx.guild else "DM",
+            title="Nạp để mở gói premium",
+            description="Gói premium mang đến nhiều tính năng hơn")
         embed_text.add_field(name="Ngân hàng MB-Bank", value=os.getenv('BANK_USER_NAME'), inline=False)
         embed_text.add_field(name="Số Tiền:", value="10k", inline=False)
 
@@ -151,4 +163,4 @@ class Paying(commands.Cog):
             
 async def setup(bot: commands.Bot):
     # NOTE: add_cog là một funstion bình thường không phải là async funstion
-    bot.add_cog(Paying(bot))
+    bot.add_cog(CommandPaying(bot))

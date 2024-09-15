@@ -23,7 +23,7 @@ from ..BLL.server_color_bll import ServerColorBLL
 from ..BLL.channel_bll import ChannelBLL
 from ..BLL.server_bll import ServerBLL
 
-from ..GUI.feed_embed import FeedEmbed
+from ..GUI.embed_feed import EmbedFeed
 from ..GUI.custom_embed import CustomEmbed
 
 from ..utils.read_rss import ReadRSS
@@ -42,18 +42,20 @@ class Events(commands.Cog):
             channel_emty_bll = ChannelEmtyBLL()
             server_color_bll = ServerColorBLL()
             guilds = self.bot.guilds
-            
             list_channel = channel_bll.get_all_channel()
 
+            dm_dto = ServerDTO("DM", "DM")
+            color_dto = ColorDTO("blue")
+            server_bll.insert_server(dm_dto)
+            server_color_bll.insert_server_color(ServerColorDTO(dm_dto, color_dto))
+            
             for guild in guilds:
                 server_dto = ServerDTO(str(guild.id), str(guild.name))
                 color_dto = ColorDTO("blue")
                 
                  # check if server exit
-                if server_bll.get_server_by_id_server(str(guild.id)) is None:                
-                    server_color_bll.insert_server_color(ServerColorDTO(server_dto, color_dto))
-                    server_bll.insert_server(server_dto)
-
+                server_bll.insert_server(server_dto)
+                server_color_bll.insert_server_color(ServerColorDTO(server_dto, color_dto))
 
                 # Update channel names if changed
                 for channel in guild.channels:
@@ -134,8 +136,8 @@ class Events(commands.Cog):
                                     # ERROR id server không phải là channel_id
                                     server_id = str(channel_to_send.guild.id) # type: ignore
                                     link_atom = feed_of_feed_emty.get_link_atom_feed()
-                                    feed_embed = FeedEmbed(server_id, link_atom, link_emty)
-                                    await channel_to_send.send(embed=feed_embed.get_embed()) # type: ignore
+                                    feed_embed = EmbedFeed(server_id, link_atom, link_emty)
+                                    await channel_to_send.send(embed=feed_embed) # type: ignore
                                     # await channel_to_send.send(f"{link_emty}") #type: ignore
                                 except TypeError as e:
                                     logger.error(f"Error loading list feed: {e}")
@@ -180,20 +182,7 @@ class Events(commands.Cog):
             prompt = message.content[len(f'<@{self.bot.user.id.__str__()}> '):]
             print(prompt)
 
-            try:
-                server_color_bll = ServerColorBLL()
-                
-                # Kiểm tra nếu tin nhắn đến từ DMChannel hay không
-                if isinstance(message.channel, nextcord.DMChannel):
-                    # Sử dụng nextcord.Embed cho tin nhắn DMChannel
-                    server_dto = ServerDTO("DM", "DM")
-                else:   
-                    server_dto = ServerDTO(str(message.guild.id), message.guild.name) # type: ignore
-                    
-                # TODO tôi tạm xóa gửi em
-                server_color_dto = server_color_bll.get_server_color_by_id_server(server_dto.get_id_server())
-                hex_color = server_color_dto.get_color().get_hex_color() # type: ignore
-                
+            try:  
                 history = []
                 
                 async for message1 in message.channel.history(limit=20):
@@ -226,24 +215,10 @@ class Events(commands.Cog):
                 # Chia nhỏ nội dung phản hồi thành các phần nhỏ tối đa 2000 ký tự
                 chunk_size = 2000
                 chunks = [response_text[i:i + chunk_size] for i in range(0, len(response_text), chunk_size)]
+                response_message = await message.reply(chunks[0])
 
-                # Gửi phản hồi đầu tiên
-                # embed = nextcord.Embed(
-                #     title="Generative AI Response",
-                #     description=chunks[0],
-                #     color=embed_color
-                # )
-                # response_message = await message.channel.send(embed=embed)
-                response_message = await message.channel.send(chunks[0])
-
-                
                 # Gửi các đoạn tin nhắn tiếp theo
                 for chunk in chunks[1:]:
-                    # embed_next = nextcord.Embed(
-                    #     description=chunk,
-                    #     color=embed_color
-                    # )
-                    # response_message = await response_message.reply(embed=embed_next)
                     response_message = await response_message.reply(chunk)
                     
                 # Xóa tin nhắn "Creating prompt..." sau khi gửi phản hồi

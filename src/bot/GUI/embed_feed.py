@@ -2,7 +2,7 @@ from ..BLL.feed_emty_bll import FeedEmtyBLL
 from ..GUI.custom_embed import CustomEmbed
 from ..utils.text_processor import TextProcessor
 
-class FeedEmbed(CustomEmbed):  # Kế thừa từ CustomEmbed
+class EmbedFeed(CustomEmbed):  # Kế thừa từ CustomEmbed
     def __init__(self, id_server: str, link_atom_feed: str, link_emty: str, **kwargs):
         # Sử dụng FeedEmtyBLL để lấy FeedEmtyDTO dựa trên link_atom_feed và link_emty
         feed_emty_bll = FeedEmtyBLL()

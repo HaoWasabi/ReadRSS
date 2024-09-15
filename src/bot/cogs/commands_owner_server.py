@@ -40,16 +40,26 @@ class AdminServerCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         
-    def is_server_owner(self, ctx):
-        return ctx.author.id == ctx.guild.owner_id
+    async def is_dm_channel(self, ctx):
+        if await CheckCogs.is_dm_channel(ctx):
+            await ctx.send("Can not send DMChannels")
+            return True
+        else: 
+            return False
+        
+    async def is_onwer_server(self, ctx):
+        if await CheckCogs.is_server_owner(ctx=ctx):
+            return True
+        else:
+            await ctx.send("You need to be the server owner to use this command.")
+            return False
 
     @commands.command(name="clear")
     async def clear_history(self, ctx, channel: TextChannel, link_atom_feed: Optional[str] = None):
-        if CheckCogs.check_dm_channel(ctx): 
+        if await self.is_dm_channel(ctx): 
             return
 
-        if not self.is_server_owner(ctx):
-            await ctx.send("You need to be the server owner to use this command.")
+        if not await self.is_onwer_server(ctx):
             return
 
         try:
@@ -78,11 +88,10 @@ class AdminServerCommands(commands.Cog):
 
     @commands.command(name="delete_feed")
     async def delete_feed(self, ctx, channel: TextChannel, link_atom_feed: Optional[str] = None):
-        if CheckCogs.check_dm_channel(ctx):
+        if await self.is_dm_channel(ctx):
             return
 
-        if not self.is_server_owner(ctx):
-            await ctx.send("You need to be the server owner to use this command.")
+        if not await self.is_onwer_server(ctx):
             return
 
         try:
@@ -119,11 +128,10 @@ class AdminServerCommands(commands.Cog):
 
     @commands.command(name="set_feed")
     async def set_feed(self, ctx, channel: TextChannel, link_atom_feed: str):
-        if CheckCogs.check_dm_channel(ctx):
+        if await self.is_dm_channel(ctx):
             return
 
-        if not self.is_server_owner(ctx):
-            await ctx.send("You need to be the server owner to use this command.")
+        if not await self.is_onwer_server(ctx):
             return
 
         try:
@@ -152,13 +160,12 @@ class AdminServerCommands(commands.Cog):
 
     @commands.command(name="set_color")
     async def set_color(self, ctx, color: str):
-        if CheckCogs.check_dm_channel(ctx):
+        if await self.is_dm_channel(ctx):
             return
 
-        if not self.is_server_owner(ctx):
-            await ctx.send("You need to be the server owner to use this command.")
+        if not await self.is_onwer_server(ctx):
             return
-
+        
         try:
             color_dto = ColorDTO(color)
             server_dto = ServerDTO(str(ctx.guild.id), ctx.guild.name)
@@ -180,13 +187,12 @@ class AdminServerCommands(commands.Cog):
             await ctx.send(f"Error: {e}")
             logger.error(f"Error: {e}")
 
-    @commands.command(name="show_feeds")
+    @commands.command(name="show")
     async def show_feeds(self, ctx):
-        if CheckCogs.check_dm_channel(ctx):
+        if await self.is_dm_channel(ctx):
             return
 
-        if not self.is_server_owner(ctx):
-            await ctx.send("You need to be the server owner to use this command.")
+        if not await self.is_onwer_server(ctx):
             return
 
         try:

@@ -7,14 +7,14 @@ https://discord.com/oauth2/authorize?client_id=1236720788187381760&permissions=0
 
 ```
                         -- ABOUT US --
-                         
-         ██████╗  ██████╗██████╗ ███████╗██╗   ██╗     Summer 2024
-        ██╔════╝ ██╔════╝██╔══██╗██╔════╝██║   ██║     + HaoWasabi
-        ██║  ███╗██║     ██║  ██║█████╗  ██║   ██║     + nguyluky
-        ██║   ██║██║     ██║  ██║██╔══╝  ╚██╗ ██╔╝     + NaelTuhline
-        ╚██████╔╝╚██████╗██████╔╝███████╗ ╚████╔╝      + tivibin789
-        ╚═════╝  ╚═════╝╚═════╝ ╚══════╝  ╚═══╝        
-```
+                                                       Summer 2024
+         ██████╗  ██████╗██████╗ ███████╗██╗   ██╗     + HaoWasabi
+        ██╔════╝ ██╔════╝██╔══██╗██╔════╝██║   ██║     + nguyluky
+        ██║  ███╗██║     ██║  ██║█████╗  ██║   ██║     + NaelTuhline
+        ██║   ██║██║     ██║  ██║██╔══╝  ╚██╗ ██╔╝     + tivibin789
+        ╚██████╔╝╚██████╗██████╔╝███████╗ ╚████╔╝      + phusomnia
+        ╚═════╝  ╚═════╝╚═════╝ ╚══════╝  ╚═══╝        + camdao
+``` 
 ## Installation
 1. Clone the repository
 2. Create a virtual environment and activate it
@@ -32,10 +32,14 @@ https://discord.com/oauth2/authorize?client_id=1236720788187381760&permissions=0
 + `/set_color` # Set the color of all embeds that you want it would send
 + `/show_feeds` # Show list of feeds in channels in your server
 + `/test_feed` # Test sending an RSS feed
++ `/premium` # Upgrade to use advanced packages
 
 ## Admin commands
 + `_shutdown` # Shut down the bot
 + `_ctrl` # show the control panel to to control the bot
+
+## Gemini commands
++ `@Aiko` # answer your question. Ask as when you use Gemini.
 
 ## Other information
 Đồ án được xây dựng theo mô hình 3 lớp mở rộng. Trong đó:

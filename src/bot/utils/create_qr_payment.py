@@ -11,5 +11,5 @@ class QRGenerator:
         s = ''
         for i in range(20):
             s += str(random.randint(0, 9))
-            
+        
         return s
