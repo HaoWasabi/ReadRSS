@@ -43,9 +43,10 @@ class CheckCogs:
             if isinstance(ctx, Interaction):
                 if await CheckCogs.is_server_owner(interaction=ctx):
                     return await fun(self, ctx, *args, **kwargs)
-                await ctx.followup.send("You need to be the server owner to use this command.")
                 
-            
+                # await ctx.followup.send_message("You need to be the server owner to use this command.")
+                await ctx.response.send_message("You need to be the server owner to use this command.")
+                
         return check_is_onwer_server
     
     @staticmethod
@@ -59,7 +60,6 @@ class CheckCogs:
                     await ctx.send("Can not send DMChannels")
                 if isinstance(ctx, Interaction):
                     await ctx.response.send_message("Cannot send DMChannels", ephemeral=True)
-
                 return True
         
             await fun(self, ctx, *args, **kwargs) # type: ignore

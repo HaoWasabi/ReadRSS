@@ -37,16 +37,17 @@ class PayHandle(commands.Cog):
     '''
 
     def __init__(self, bot: commands.Bot) -> None:
-        self.bot = bot;
+        self.bot = bot
         
         if (os.getenv('BANK_USER_NAME') is None or os.getenv('BANK_PASSWORD') is None):
-            logger.error('thiếu tên đăng nhập và mật khẩu Mbank')
+            logger.error('thiếu tên đăng nhập hoặc mật khẩu Mbank')
             exit(0)
         self.mb = mbbank.MBBankAsync( username=os.getenv('BANK_USER_NAME'), password=os.getenv('BANK_PASSWORD'))
         self.start_time: datetime.datetime = datetime.datetime.now()
         self.payment_success_callback = []
         self.qr_time_out_callback = []
-               
+
+    
     @tasks.loop(seconds=5)
     async def check_qr_code(self):
         qr_pay_code_bll = QrPayCodeBLL()
