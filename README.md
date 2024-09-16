@@ -19,7 +19,15 @@ https://discord.com/oauth2/authorize?client_id=1236720788187381760&permissions=0
 1. Clone the repository
 2. Create a virtual environment and activate it
 3. Install the dependencies: `pip install -r requirements.txt`
-4. Create a `.env` file and add your Discord bot token: `DISCORD_TOKEN=your_token_here`
+4. Create a `.env` file
+ ```properties
+   DISCORD_TOKEN=<DISCORD_TOKEN>
+   BANK_ID=<BANK_ID>
+   QR_TEMPLATE=<QR_TEMPLATE>
+   GEMINI_TOKEN=<GEMINI_TOKEN>
+   BANK_USER_NAME=<BANK_USER_NAME>
+   BANK_PASSWORD=<BANK_PASSWORD>
+ ```
 5. Run the bot: `python main.py`
 
 ## Basic slash_commands
@@ -49,5 +57,6 @@ https://discord.com/oauth2/authorize?client_id=1236720788187381760&permissions=0
 + dto: chứa các lớp dùng để chuyển dữ liệu giữa các lớp hoặc tầng khác nhau. Mỗi lớp dto chứa có chứa các thuộc tính của các thực thể và các mối quan hệ.
 + utils: chứa các tệp tiện ích hoặc các hàm hỗ trợ mở rộng.
 + cogs: chứa các hàm sự kiện, lệnh bất đồng bộ tương tác với người dùng.
+
 
 
