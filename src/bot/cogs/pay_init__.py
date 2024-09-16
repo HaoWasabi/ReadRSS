@@ -21,11 +21,9 @@ from ..GUI.custom_embed import CustomEmbed
 from ..utils.create_qr_payment import QRGenerator
 from ..utils.check_cogs import CheckCogs
 
-# file này chỉ chuyên sử lý qr code và chuyển khoản mà thôi
-
 logger = logging.getLogger('paying')
 
-class CommandPaying(commands.Cog):
+class BasePaying(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.mb = mbbank.MBBankAsync( username=os.getenv('BANK_USER_NAME'), password=os.getenv('BANK_PASSWORD'))
@@ -44,26 +42,6 @@ class CommandPaying(commands.Cog):
         else:
             await ctx.send("You need to be the server owner to use this command.")
             return False
-        
-    @tasks.loop(seconds=5)
-    async def check_qr_code(self):
-        qr_pay_code_bll = QrPayCodeBLL()
-        all_qr = qr_pay_code_bll.get_all_qr_pay_code()
-        for i in all_qr:
-            denta = datetime.datetime.now() - i.get_ngay_tao()
-            # kiểm tra hết hạng của mã qr
-            # ở đây tôi để 3p
-            if (denta > datetime.timedelta(minutes=3)):
-                qr_pay_code_bll.delete_qr_pay_by_id(i.get_qr_code())
-                channel = self.bot.get_channel(int(i.get_channel_id()))
-                
-                if (channel is None): 
-                    logger.warning('không tìm thấy channel')
-                    return
-                
-                if isinstance(channel, TextChannel):
-                    message = await channel.fetch_message(int(i.get_message_id()))
-                    await message.edit(content = 'qr đã hết hạn', embed=None)
     
     async def get_bank_history(self):
         from_day = datetime.datetime.now()
@@ -119,12 +97,7 @@ class CommandPaying(commands.Cog):
         
         # print('aaaaaaaaaaaaa')
         await self.get_bank_history() 
-
-    @commands.Cog.listener()
-    async def on_ready(self):
-        logger.info('check qr code start')
-        if not self.check_qr_code.is_running():
-            self.check_qr_code.start()
+  
               
     @commands.command(name="pay")
     async def pay(self, ctx: Context):
@@ -134,6 +107,11 @@ class CommandPaying(commands.Cog):
         if not await self.is_owner_server(ctx=ctx):
             return
         
+        
+        if (ctx.guild is None or ctx.channel is None):
+            await ctx.send('có gì đó lạ lắm')
+            return
+        
         embed_text = CustomEmbed(
             id_server=str(ctx.guild.id) if ctx.guild else "DM",
             title="Nạp để mở gói premium",
@@ -141,10 +119,6 @@ class CommandPaying(commands.Cog):
         embed_text.add_field(name="Ngân hàng MB-Bank", value=os.getenv('BANK_USER_NAME'), inline=False)
         embed_text.add_field(name="Số Tiền:", value="10k", inline=False)
 
-        if (ctx.guild is None or ctx.channel is None):
-            await ctx.send('có gì đó lạ lắm')
-            return
-        
         
         qr_id = QRGenerator.generator_id(str(ctx.guild.id))
         embed_text.add_field(name="Nội dung:", value=f"T{qr_id}T", inline=False)
@@ -160,7 +134,3 @@ class CommandPaying(commands.Cog):
         if not self.start_listener_bank_history.is_running():
             self.start_listener_bank_history.start()
         self.start_time: datetime.datetime = datetime.datetime.now()
-            
-async def setup(bot: commands.Bot):
-    # NOTE: add_cog là một funstion bình thường không phải là async funstion
-    bot.add_cog(CommandPaying(bot))

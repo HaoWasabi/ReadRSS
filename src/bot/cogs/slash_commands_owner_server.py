@@ -1,8 +1,12 @@
-import logging
-import nextcord
+import logging, os ,nextcord, datetime
 from nextcord.ext import commands
 from nextcord import SlashOption, Interaction, TextChannel, DMChannel
 from typing import Optional
+
+from ..DTO.qr_code_pay_dto import QrPayCodeDTO
+
+from .pay_hander import PayHandle
+from ..utils.create_qr_payment import QRGenerator
 
 from ..DTO.server_dto import ServerDTO
 from ..DTO.channel_dto import ChannelDTO
@@ -11,6 +15,7 @@ from ..DTO.channel_feed_dto import ChannelFeedDTO
 from ..DTO.server_channel_dto import ServerChannelDTO
 from ..DTO.server_color_dto import ServerColorDTO
 
+from ..BLL.qr_pay_code_bll import QrPayCodeBLL
 from ..BLL.feed_bll import FeedBLL
 from ..BLL.server_bll import ServerBLL
 from ..BLL.channel_bll import ChannelBLL
@@ -37,28 +42,17 @@ class SlashCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         
-    async def is_dm_channel(self, interaction: Interaction):
-        if await CheckCogs.is_dm_channel(interaction):
-            await interaction.response.send_message("Cannot send DMChannels", ephemeral=True)
-            return True
-        return False
-        
-    async def is_owner_server(self, interaction: Interaction):
-        if await CheckCogs.is_server_owner(interaction=interaction):
-            return True
-        else:
-            await interaction.followup.send("You need to be the server owner to use this command.")
-            return False
-
     @nextcord.slash_command(name="clear", description="Clear channel post history")
+    @CheckCogs.is_dm_channel_w
+    @CheckCogs.is_onwer_server_w
     async def clear_history(self, interaction: Interaction, channel: TextChannel = SlashOption(description="The target channel"), link_atom_feed: Optional[str] = SlashOption(description="The Atom/RSS feed link")):
         await interaction.response.defer()
         try:
-            if await self.is_dm_channel(interaction): 
-                return
+            # if await self.is_dm_channel(interaction): 
+            #     return
             
-            if not await self.is_owner_server(interaction): 
-                return
+            # if not await self.is_owner_server(interaction): 
+            #     return
             
             channel_emty_bll = ChannelEmtyBLL()
             if link_atom_feed is None:
@@ -86,18 +80,14 @@ class SlashCommands(commands.Cog):
             logger.error(f"Error: {e}")
 
     @nextcord.slash_command(name="delete_feed", description="Delete feed notification channel settings")
+    @CheckCogs.is_dm_channel_w
+    @CheckCogs.is_onwer_server_w
     async def delete_feed(self, interaction: Interaction, 
                         channel: TextChannel = SlashOption(description="The target channel"), 
                         link_atom_feed: Optional[str] = SlashOption(description="The Atom/RSS feed link"), 
                         link_feed: Optional[str] = SlashOption(description="The feed link")):
         await interaction.response.defer()
         try:
-            if await self.is_dm_channel(interaction): 
-                return
-            
-            if not await self.is_owner_server(interaction): 
-                return
-            
             channel_feed_bll = ChannelFeedBLL()
             channel_emty_bll = ChannelEmtyBLL()
             feed_emty_bll = FeedEmtyBLL()
@@ -144,17 +134,19 @@ class SlashCommands(commands.Cog):
         channel_bll.delete_channel_by_id_channel(str(channel_id))
 
     @nextcord.slash_command(name="set_feed", description="Set feed notification channel")
+    @CheckCogs.is_dm_channel_w
+    @CheckCogs.is_onwer_server_w
     async def set_feed(self, interaction: Interaction, 
                        channel: TextChannel = SlashOption(description="The target channel"), 
                        link_atom_feed: Optional[str] = None, 
                        link_feed: Optional[str] = None):
         await interaction.response.defer()
         try:
-            if await self.is_dm_channel(interaction): 
-                return
+            # if await self.is_dm_channel(interaction): 
+            #     return
             
-            if not await self.is_owner_server(interaction): 
-                return
+            # if not await self.is_owner_server(interaction): 
+            #     return
             
             if link_atom_feed is None and link_feed is not None:
                 get_rss = GetRSS(link_feed)
@@ -195,6 +187,8 @@ class SlashCommands(commands.Cog):
             logger.error(f"Error: {e}")
 
     @nextcord.slash_command(name="set_color", description="Set the color of all embeds that you want it would send")
+    @CheckCogs.is_dm_channel_w
+    @CheckCogs.is_onwer_server_w
     async def set_color(self, interaction: Interaction, 
                         color: str = SlashOption(
                             name="color",
@@ -205,11 +199,11 @@ class SlashCommands(commands.Cog):
                         )):
         await interaction.response.defer()
         try:
-            if await self.is_dm_channel(interaction): 
-                return
+            # if await self.is_dm_channel(interaction): 
+            #     return
             
-            if not await self.is_owner_server(interaction): 
-                return
+            # if not await self.is_owner_server(interaction): 
+            #     return
             
             color_dto = ColorDTO(color)
             server_dto = ServerDTO(str(interaction.guild.id), interaction.guild.name)  # type: ignore
@@ -234,14 +228,16 @@ class SlashCommands(commands.Cog):
             logger.error(f"Error: {e}")
 
     @nextcord.slash_command(name="show", description="Shows a list of feeds in channels.")
+    @CheckCogs.is_dm_channel_w
+    @CheckCogs.is_onwer_server_w
     async def show(self, interaction: Interaction):
         await interaction.response.defer()
         try:
-            if await self.is_dm_channel(interaction): 
-                return
+            # if await self.is_dm_channel(interaction): 
+            #     return
             
-            if not await self.is_owner_server(interaction): 
-                return
+            # if not await self.is_owner_server(interaction): 
+            #     return
             
             num = 0
             channel_feed_bll = ChannelFeedBLL()
@@ -287,6 +283,36 @@ class SlashCommands(commands.Cog):
             # Thông báo lỗi
             await interaction.followup.send(f"Error: {e}", ephemeral=True)  # Gửi lỗi một cách riêng tư
             logger.error(f"Error: {e}")
+            
+    @nextcord.slash_command(name="premium", description="Upgrade to use advanced packages")
+    @CheckCogs.is_dm_channel_w
+    @CheckCogs.is_onwer_server_w
+    async def pay(self, interaction: Interaction):
+        await interaction.response.defer()
+        embed_text = CustomEmbed(
+            id_server=str(interaction.guild.id) if interaction.guild else "DM",
+            title="Nạp mở để gói premium",
+            description="Gói premium mang đến nhiều tính năng hơn.",)
+        embed_text.add_field(name="Ngân hàng MB-Bank", value=os.getenv('BANK_USER_NAME'), inline=False)
+        embed_text.add_field(name="Số Tiền:", value="10k", inline=False)
+
+        if (interaction.guild is None or interaction.channel is None):
+            await interaction.followup.send('có gì đó lạ lắm', ephemeral=True)
+            return
+        
+        qr_id = QRGenerator.generator_id(str(interaction.guild.id))
+        embed_text.add_field(name="Nội dung:", value=f"T{qr_id}T", inline=False)
+        
+        embed_text.set_image(QRGenerator.generator_qr(qr_id))
+        message = await interaction.followup.send(embed=embed_text, ephemeral=True)
+        
+        qr = QrPayCodeDTO(qr_id, str(interaction.guild.id), str(interaction.channel.id), str(message.id), datetime.datetime.now()) # type: ignore
+        
+        qr_pay_code_bll = QrPayCodeBLL()
+        qr_pay_code_bll.insert_qr_pay_code(qr)
+        PayHandle.start_listener_bank_history(self.bot)
+            
+
     
 def setup(bot):
     bot.add_cog(SlashCommands(bot))

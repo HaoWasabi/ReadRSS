@@ -30,3 +30,13 @@ def inheritors(klass):
 for i in inheritors(BaseDAL):
     baseDAL: BaseDAL = i()
     baseDAL.create_table()
+    
+
+dm_dto = ServerDTO("DM", "DM")
+color_dto = ColorDTO("blue")
+server_bll = ServerDAL()
+server_color_bll = ServerColorDAL()
+
+if (server_bll.get_server_by_id_server(dm_dto.get_id_server()) is None):
+    server_bll.insert_server(dm_dto)
+    server_color_bll.insert_server_color(ServerColorDTO(dm_dto, color_dto))

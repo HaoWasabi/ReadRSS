@@ -1,4 +1,5 @@
-from operator import le
+import datetime
+from discord import TextChannel
 import nextcord, os, logging
 
 from nextcord.ext import commands
@@ -6,6 +7,8 @@ from nextcord.ext import tasks
 from nextcord.message import Message
 
 import google.generativeai as genai
+
+from ..DTO.qr_code_pay_dto import QrPayCodeDTO
 
 from ..DTO.channel_emty_dto import ChannelEmtyDTO
 from ..DTO.server_color_dto import ServerColorDTO
@@ -38,24 +41,25 @@ class Events(commands.Cog):
         try:
             server_bll = ServerBLL() 
             channel_bll = ChannelBLL()
-            channel_feed_bll = ChannelFeedBLL()
-            channel_emty_bll = ChannelEmtyBLL()
             server_color_bll = ServerColorBLL()
             guilds = self.bot.guilds
             list_channel = channel_bll.get_all_channel()
 
-            dm_dto = ServerDTO("DM", "DM")
-            color_dto = ColorDTO("blue")
-            server_bll.insert_server(dm_dto)
-            server_color_bll.insert_server_color(ServerColorDTO(dm_dto, color_dto))
+            
+            # chuyển qua DAL/__init__.py
+            # dm_dto = ServerDTO("DM", "DM")
+            # color_dto = ColorDTO("blue")
+            # server_bll.insert_server(dm_dto)
+            # server_color_bll.insert_server_color(ServerColorDTO(dm_dto, color_dto))
             
             for guild in guilds:
                 server_dto = ServerDTO(str(guild.id), str(guild.name))
                 color_dto = ColorDTO("blue")
                 
-                 # check if server exit
-                server_bll.insert_server(server_dto)
-                server_color_bll.insert_server_color(ServerColorDTO(server_dto, color_dto))
+                # check if server exit
+                if server_bll.get_server_by_id_server(str(guild.id)) is None:
+                    server_bll.insert_server(server_dto)
+                    server_color_bll.insert_server_color(ServerColorDTO(server_dto, color_dto))
 
                 # Update channel names if changed
                 for channel in guild.channels:
@@ -141,18 +145,37 @@ class Events(commands.Cog):
                                     # await channel_to_send.send(f"{link_emty}") #type: ignore
                                 except TypeError as e:
                                     logger.error(f"Error loading list feed: {e}")
-
-            
+    
     @tasks.loop(seconds=10)
     async def push_noti(self):
         logger.debug('run background task')
         await self.load_list_feed()
         await self.load_guilds()
+        
+    # NOTE custome event ở file pay_hander.py
+    @commands.Cog.listener()
+    async def on_qr_time_out(self, qr: QrPayCodeDTO):
+        channel = self.bot.get_channel(int(qr.get_channel_id()))
+                
+        if (channel is None): 
+            logger.warning('không tìm thấy channel')
+            return
+        
+        if isinstance(channel, TextChannel):
+            message = await channel.fetch_message(int(qr.get_message_id()))
+            await message.edit(content = 'qr đã hết hạn', embed=None)
+    
+    @commands.Cog.listener()
+    async def on_payment_success(self, qr: QrPayCodeDTO):
+        channel = self.bot.get_channel(int(qr.get_channel_id()))
 
-    @push_noti.before_loop
-    async def await_bot_ready(self):
-        # đợi cho bot đăng nhập xong
-        await self.bot.wait_until_ready()
+        if (channel is None): 
+            logger.warning('không tìm thấy channel')
+            return
+        
+        if isinstance(channel, TextChannel):
+            message = await channel.fetch_message(int(qr.get_message_id()))
+            await message.edit(content = 'Thanh toán thành công', embed=None)
 
     @commands.Cog.listener()
     async def on_ready(self):

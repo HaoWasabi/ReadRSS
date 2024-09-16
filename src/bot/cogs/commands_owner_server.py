@@ -1,40 +1,37 @@
-import datetime
-import logging
-from tkinter import NO
+import datetime, logging, os
 from nextcord.ext import commands
-from nextcord import TextChannel, Embed
+from nextcord import TextChannel
 from typing import Optional
 
 from nextcord.ext.commands import Context
 
-from ..BLL.qr_pay_code_bll import QrPayCodeBLL
+from .pay_hander import PayHandle
 
-from ..utils.datetime_format import datetime_to_string
-
-from ..DTO.qr_code_pay_dto import QrPayCodeDTO
-from ..DTO.server_dto import ServerDTO
 from ..DTO.channel_dto import ChannelDTO
-from ..DTO.color_dto import ColorDTO
 from ..DTO.channel_feed_dto import ChannelFeedDTO
+from ..DTO.color_dto import ColorDTO
+from ..DTO.qr_code_pay_dto import QrPayCodeDTO
 from ..DTO.server_channel_dto import ServerChannelDTO
 from ..DTO.server_color_dto import ServerColorDTO
+from ..DTO.server_dto import ServerDTO
 
-from ..BLL.server_color_bll import ServerColorBLL
-from ..BLL.feed_bll import FeedBLL
-from ..BLL.server_bll import ServerBLL
 from ..BLL.channel_bll import ChannelBLL
-from ..BLL.feed_emty_bll import FeedEmtyBLL
 from ..BLL.channel_emty_bll import ChannelEmtyBLL
 from ..BLL.channel_feed_bll import ChannelFeedBLL
+from ..BLL.feed_bll import FeedBLL
+from ..BLL.feed_emty_bll import FeedEmtyBLL
+from ..BLL.qr_pay_code_bll import QrPayCodeBLL
+from ..BLL.server_bll import ServerBLL
 from ..BLL.server_channel_bll import ServerChannelBLL
+from ..BLL.server_color_bll import ServerColorBLL
 
 from ..GUI.custom_embed import CustomEmbed
+
 from ..utils.check_cogs import CheckCogs
 from ..utils.read_rss import ReadRSS
 from ..utils.create_qr_payment import QRGenerator
 
 logger = logging.getLogger('AdminServerCommands')
-
 
 class AdminServerCommands(commands.Cog):
     def __init__(self, bot):
@@ -47,20 +44,10 @@ class AdminServerCommands(commands.Cog):
         else: 
             return False
         
-    async def is_onwer_server(self, ctx):
-        if await CheckCogs.is_server_owner(ctx=ctx):
-            return True
-        else:
-            await ctx.send("You need to be the server owner to use this command.")
-            return False
-
     @commands.command(name="clear")
+    @CheckCogs.is_onwer_server_w
+    @CheckCogs.is_dm_channel_w
     async def clear_history(self, ctx, channel: TextChannel, link_atom_feed: Optional[str] = None):
-        if await self.is_dm_channel(ctx): 
-            return
-
-        if not await self.is_onwer_server(ctx):
-            return
 
         try:
             channel_emty_bll = ChannelEmtyBLL()
@@ -87,12 +74,9 @@ class AdminServerCommands(commands.Cog):
             logger.error(f"Error: {e}")
 
     @commands.command(name="delete_feed")
+    @CheckCogs.is_onwer_server_w
+    @CheckCogs.is_dm_channel_w
     async def delete_feed(self, ctx, channel: TextChannel, link_atom_feed: Optional[str] = None):
-        if await self.is_dm_channel(ctx):
-            return
-
-        if not await self.is_onwer_server(ctx):
-            return
 
         try:
             channel_feed_bll = ChannelFeedBLL()
@@ -127,12 +111,9 @@ class AdminServerCommands(commands.Cog):
             logger.error(f"Error: {e}")
 
     @commands.command(name="set_feed")
+    @CheckCogs.is_onwer_server_w
+    @CheckCogs.is_dm_channel_w
     async def set_feed(self, ctx, channel: TextChannel, link_atom_feed: str):
-        if await self.is_dm_channel(ctx):
-            return
-
-        if not await self.is_onwer_server(ctx):
-            return
 
         try:
             ReadRSS(link_atom_feed)
@@ -159,12 +140,9 @@ class AdminServerCommands(commands.Cog):
             logger.error(f"Error: {e}")
 
     @commands.command(name="set_color")
+    @CheckCogs.is_onwer_server_w
+    @CheckCogs.is_dm_channel_w
     async def set_color(self, ctx, color: str):
-        if await self.is_dm_channel(ctx):
-            return
-
-        if not await self.is_onwer_server(ctx):
-            return
         
         try:
             color_dto = ColorDTO(color)
@@ -188,13 +166,10 @@ class AdminServerCommands(commands.Cog):
             logger.error(f"Error: {e}")
 
     @commands.command(name="show")
+    @CheckCogs.is_onwer_server_w
+    @CheckCogs.is_dm_channel_w
     async def show_feeds(self, ctx):
-        if await self.is_dm_channel(ctx):
-            return
-
-        if not await self.is_onwer_server(ctx):
-            return
-
+        
         try:
             channel_feed_bll = ChannelFeedBLL()
             server_data = {}
@@ -220,6 +195,38 @@ class AdminServerCommands(commands.Cog):
         except Exception as e:
             await ctx.send(f"Error: {e}")
             logger.error(f"Error: {e}")
+            
+              
+    @commands.command(name="pay")
+    @CheckCogs.is_dm_channel_w
+    @CheckCogs.is_onwer_server_w
+    async def pay(self, ctx: Context):
+        
+        embed_text = CustomEmbed(
+            id_server=str(ctx.guild.id) if ctx.guild else "DM",
+            title="Nạp để mở gói premium",
+            description="Gói premium mang đến nhiều tính năng hơn")
+        embed_text.add_field(name="Ngân hàng MB-Bank", value=os.getenv('BANK_USER_NAME'), inline=False)
+        embed_text.add_field(name="Số Tiền:", value="10k", inline=False)
+
+        if (ctx.guild is None or ctx.channel is None):
+            await ctx.send('có gì đó lạ lắm')
+            return
+        
+        
+        qr_id = QRGenerator.generator_id(str(ctx.guild.id))
+        embed_text.add_field(name="Nội dung:", value=f"T{qr_id}T", inline=False)
+        
+        embed_text.set_image(QRGenerator.generator_qr(qr_id))
+        message = await ctx.send(embed=embed_text)
+        
+        
+        qr = QrPayCodeDTO(qr_id, str(ctx.guild.id), str(ctx.channel.id), str(message.id), datetime.datetime.now())
+        
+        qr_pay_code_bll = QrPayCodeBLL()
+        qr_pay_code_bll.insert_qr_pay_code(qr)
+        PayHandle.start_listener_bank_history(self.bot)
+    
         
 async def setup(bot):
     bot.add_cog(AdminServerCommands(bot))

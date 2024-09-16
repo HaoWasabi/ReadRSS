@@ -18,7 +18,7 @@ from bot.BLL.channel_emty_bll import ChannelEmtyBLL
 from bot.BLL.channel_feed_bll import ChannelFeedBLL
 from bot.BLL.server_channel_bll import ServerChannelBLL
 from bot.BLL.server_color_bll import ServerColorBLL
-from bot.GUI.feed_embed import FeedEmbed
+# from bot.GUI.feed_embed import FeedEmbed
 from bot.utils.read_rss import ReadRSS
 from bot.utils.text_processor import TextProcessor
 from bot.DAL.server_pay_dal import ServerPayDAL
