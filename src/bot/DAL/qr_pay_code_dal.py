@@ -13,6 +13,7 @@ class QrPayCodeDAL(BaseDAL):
         
     
     def create_table(self):
+        self.open_connection()
         try:
             self.cursor.execute('''
             CREATE TABLE qr_pay_code (
@@ -29,12 +30,15 @@ class QrPayCodeDAL(BaseDAL):
             if len(e.args) and e.args[0].count('already exists'):
                 return
             logger.error(f"Error creating table 'tbl_server': {e}")
+        finally:
+            self.close_connection()
             
     
     def get_qr_pay_code_by_qr_code(self, qr_code: str):
+        self.open_connection()
         self.cursor.execute("SELECT qr_code, id_server, channel_id, message_id, ngay_tao FROM qr_pay_code WHERE qr_code=?; ", (qr_code,))
         rows=self.cursor.fetchone()
-        
+        self.close_connection()
         if rows:
             return QrPayCodeDTO(rows[0], rows[1], rows[2], rows[3], datetime_from_string(rows[4]))
         
@@ -42,11 +46,14 @@ class QrPayCodeDAL(BaseDAL):
         
     
     def get_all_qr_pay_code(self):
+        self.open_connection()
         self.cursor.execute("SELECT qr_code, id_server, channel_id, message_id, ngay_tao FROM qr_pay_code;")
         rows = self.cursor.fetchall()
+        self.close_connection()
         return [QrPayCodeDTO(qr_code, id_server, channel_id, message_id, datetime_from_string(ngay_tao)) for qr_code, id_server, channel_id, message_id, ngay_tao in rows]
     
     def insert_qr_pay_code(self, qr_pay: QrPayCodeDTO):
+        self.open_connection()
         self.cursor.execute("INSERT INTO qr_pay_code(qr_code, id_server, channel_id, message_id, ngay_tao) VALUES (?, ?, ?, ?, ?);", 
                             [
                                 qr_pay.get_qr_code(),
@@ -56,10 +63,13 @@ class QrPayCodeDAL(BaseDAL):
                                 datetime_to_string(qr_pay.get_ngay_tao())
                             ])
         self.connection.commit()
+        self.close_connection()
         return True
     
     def delete_qr_pay_by_id(self, qr_code: str):
+        self.open_connection()
         self.cursor.execute('DELETE FROM qr_pay_code WHERE qr_code=?;', (qr_code,))
         self.connection.commit()
+        self.close_connection()
         return True
     

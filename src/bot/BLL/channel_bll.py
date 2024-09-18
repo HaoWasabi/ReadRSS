@@ -1,10 +1,13 @@
+from ..BLL.Singleton import Singleton
 from ..DAL.channel_dal import ChannelDAL
 from ..DTO.channel_dto import ChannelDTO
 from typing import Optional, List
 
-class ChannelBLL:
+class ChannelBLL(Singleton):
     def __init__(self):
-        self.__channelDAL = ChannelDAL()
+        if not hasattr(self, '_initialized'):
+            self.__channelDAL = ChannelDAL()
+            self._initialized = True
     
     def insert_channel(self, channel_dto: ChannelDTO) -> bool:
         return self.__channelDAL.insert_channel(channel_dto)
@@ -15,11 +18,12 @@ class ChannelBLL:
     def delete_all_channel(self) -> bool:
         return self.__channelDAL.delete_all_channel()
 
-    def update_channel_by_id_channel(self, channel_link: str, Channel_dto: ChannelDTO) -> bool:
-        return self.__channelDAL.update_channel_by_id_channel(channel_link, Channel_dto)
+    def update_channel(self, Channel_dto: ChannelDTO) -> bool:
+        return self.__channelDAL.update_channel(Channel_dto)
             
-    def get_channel_by_id_channel(self, channel_link: str) -> Optional[ChannelDTO]:
-        return self.__channelDAL.get_channel_by_id_channel(channel_link)
+    def get_channel_by_id_channel(self, id_channel: str) -> Optional[ChannelDTO]:
+        return self.__channelDAL.get_channel_by_id_channel(id_channel)
+
     def get_all_channel(self) -> List[ChannelDTO]:
         return self.__channelDAL.get_all_channel()
     

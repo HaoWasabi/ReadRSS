@@ -11,6 +11,7 @@ class TransactionHistoryDAL(BaseDAL):
         super().__init__()
         
     def create_table(self):
+        self.open_connection()
         try:
         
             self.cursor.execute("""
@@ -28,16 +29,21 @@ class TransactionHistoryDAL(BaseDAL):
             if len(e.args) and e.args[0].count('already exists'):
                 return
             logger.error(f"Error creating table 'tbl_server': {e}")
+        finally:
+            self.close_connection()
         
     def get_transaction_history_by_id(self, transaction_id: str):
+        self.open_connection()
         self.cursor.execute('SELECT transaction_id , `time`, `content`, credit_amount , `currency` FROM transaction_history WHERE transaction_id=?;', (transaction_id,))
         c = self.cursor.fetchone()
+        self.close_connection()
         if c:
             return TransactionHistoryDTO(c[0], datetime_from_string(c[1]), c[2], c[3], c[4])
     
         return None
     
     def insert_transaction_history(self, transaction: TransactionHistoryDTO):
+        self.open_connection()
         self.cursor.execute('INSERT INTO transaction_history(transaction_id , `time`, `content`, credit_amount , `currency`) VALUES (?, ?, ?, ?, ?)', 
                             (
                                 transaction.get_transaction_id(),
@@ -48,4 +54,4 @@ class TransactionHistoryDAL(BaseDAL):
                             ))
         
         self.connection.commit()
-        
+        self.close_connection()
