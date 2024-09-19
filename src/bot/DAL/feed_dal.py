@@ -17,7 +17,7 @@ class FeedDAL(BaseDAL):
                 title_feed TEXT,
                 description_feed TEXT,
                 logo_feed TEXT,
-                pubdate_feed TEXT,
+                pubdate_feed DATETIME,
                 PRIMARY KEY (link_feed, link_atom_feed)
             )
             ''')

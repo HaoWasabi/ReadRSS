@@ -18,7 +18,7 @@ class UserPremiumDAL(BaseDAL):
             CREATE TABLE IF NOT EXISTS tbl_user_premium(
                 user_id TEXT,
                 premium_id TEXT,
-                date_registered TEXT,
+                date_registered DATETIME,
                 PRIMARY KEY (user_id, premium_id, date_registered)
             )
             ''')
@@ -53,7 +53,7 @@ class UserPremiumDAL(BaseDAL):
             with self.connection:
                 self.cursor.execute('''
                 SELECT u.user_id, u.user_name,
-                    p.premium_id, p.price, p.date_created, p.duration, p.is_active,
+                    p.premium_id, p.name, p.description, p.price, p.date_created, p.duration, p.is_active,
                     up.date_registered
                 FROM tbl_user_premium up
                 JOIN tbl_user u on u.user_id = up.user_id
@@ -62,7 +62,7 @@ class UserPremiumDAL(BaseDAL):
                 rows = self.cursor.fetchall()
                 if rows:
                     return [UserPremiumDTO(UserDTO(row[0], row[1]),
-                            PremiumDTO(row[2], row[3], row[4], row[5], row[6]),
+                            PremiumDTO(row[2], row[3], row[4], row[5], row[6], row[7], row[8]),
                                 row[7]) for row in rows]
                 else:
                     return []
@@ -78,7 +78,7 @@ class UserPremiumDAL(BaseDAL):
             with self.connection:
                 self.cursor.execute('''
                 SELECT u.user_id, u.user_name,
-                    p.premium_id, p.price, p.date_created, p.duration, p.is_active,
+                    p.premium_id, p.name, p.description, p.price, p.date_created, p.duration, p.is_active,
                     up.date_registered
                 FROM tbl_user_premium up
                 JOIN tbl_user u on u.user_id = up.user_id
@@ -88,7 +88,7 @@ class UserPremiumDAL(BaseDAL):
                 rows = self.cursor.fetchall()
                 if rows:
                     return [UserPremiumDTO(UserDTO(row[0], row[1]),
-                            PremiumDTO(row[2], row[3], row[4], row[5], row[6]),
+                            PremiumDTO(row[2], row[3], row[4], row[5], row[6], row[7], row[8]),
                                 row[7]) for row in rows]
                 else:
                     return []

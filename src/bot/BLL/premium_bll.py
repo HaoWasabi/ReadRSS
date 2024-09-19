@@ -13,10 +13,10 @@ class PremiumBLL(Singleton):
     def insert_premium(self, premium: PremiumDTO) -> bool:
         return self.__premiumDAL.insert_premium(premium)
     
-    def delete_premium_by_id(self, premium_id) -> bool:
+    def delete_premium_by_id(self, premium_id: str) -> bool:
         return self.__premiumDAL.delete_premium_by_id(premium_id)
     
-    def get_premium_by_id(self, premium_id) -> Optional[PremiumDTO]:
+    def get_premium_by_id(self, premium_id: str) -> Optional[PremiumDTO]:
         return self.__premiumDAL.get_premium_by_id(premium_id)
     
     def get_all_premiums(self):

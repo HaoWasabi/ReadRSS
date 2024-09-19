@@ -12,8 +12,8 @@ class ServerDAL(BaseDAL):
         try:
             self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS tbl_server(
-                id_server TEXT PRIMARY KEY,
-                name_server TEXT,
+                server_id TEXT PRIMARY KEY,
+                server_name TEXT,
                 is_active INTERGER DEFAULT 1
             )
             ''')
@@ -29,14 +29,14 @@ class ServerDAL(BaseDAL):
         try:
             with self.connection:
                 self.cursor.execute('''
-                    INSERT INTO tbl_server (id_server, name_server)
+                    INSERT INTO tbl_server (server_id, server_name)
                     VALUES (?, ?)
-                    ''', (server_dto.get_id_server(), server_dto.get_name_server()))
+                    ''', (server_dto.get_server_id(), server_dto.get_server_name()))
                 self.connection.commit()
                 logger.info(f"Data inserted successfully into 'tbl_server'.")
                 return True
         except sqlite3.IntegrityError as e:
-            logger.error(f"Server with id_server={server_dto.get_id_server()} already exists in 'tbl_server'")
+            logger.error(f"Server with server_id={server_dto.get_server_id()} already exists in 'tbl_server'")
             return False
         except sqlite3.Error as e:
             logger.error(f"Error inserting data into 'tbl_server': {e}")
@@ -44,15 +44,15 @@ class ServerDAL(BaseDAL):
         finally:
             self.close_connection()
             
-    def delete_server_by_id_server(self, id_server: str) -> bool:
+    def delete_server_by_server_id(self, server_id: str) -> bool:
         self.open_connection()
         try:
             with self.connection:
                 self.cursor.execute('''
                 UPDATE tbl_server
                 SET is_active = 0
-                WHERE id_server = ?
-                ''', (id_server,))
+                WHERE server_id = ?
+                ''', (server_id,))
                 self.connection.commit()
                 logger.info(f"Data deleted successfully from 'tbl_server'.")
                 return True
@@ -85,32 +85,32 @@ class ServerDAL(BaseDAL):
             with self.connection:
                 self.cursor.execute('''
                 UPDATE tbl_server
-                SET name_server = ?, is_active = ?
-                WHERE id_server = ?
-                ''', (server_dto.get_name_server(), server_dto.get_state(), server_dto.get_id_server()))
+                SET server_name = ?, is_active = ?
+                WHERE server_id = ?
+                ''', (server_dto.get_server_name(), server_dto.get_state(), server_dto.get_server_id()))
                 self.connection.commit()
                 logger.info(f"ALl data updated successfully in 'tbl_server'.")
                 return True
         except sqlite3.Error as e:
-            logger.error(f"Error updating data by id_server in 'tbl_server': {e}")
+            logger.error(f"Error updating data by server_id in 'tbl_server': {e}")
             return False
         finally:
             self.close_connection()
             
-    def get_server_by_id_server(self, id_server: str) -> Optional[ServerDTO]:
+    def get_server_by_server_id(self, server_id: str) -> Optional[ServerDTO]:
         self.open_connection()
         try:
             self.cursor.execute('''
             SELECT * FROM tbl_server
-            WHERE id_server = ?
-            ''', (id_server,))
+            WHERE server_id = ?
+            ''', (server_id,))
             row = self.cursor.fetchone()
             if row:
                 return ServerDTO(row[0], row[1], bool(row[2]))
             else:
                 return None
         except sqlite3.Error as e:
-            logger.error(f"Error fetching data by id_server from 'tbl_server': {e}")
+            logger.error(f"Error fetching data by server_id from 'tbl_server': {e}")
             return None
         finally:
             self.close_connection()

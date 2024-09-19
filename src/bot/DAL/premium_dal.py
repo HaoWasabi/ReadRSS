@@ -15,8 +15,10 @@ class PremiumDAL(BaseDAL):
             self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS tbl_premium(
                 premium_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT,
+                description TEXT,
                 price REAL,
-                date_created TEXT,
+                date_created DATETIME,
                 duration INTEGER,
                 is_active INTEGER DEFAULT 1
             )
@@ -33,9 +35,9 @@ class PremiumDAL(BaseDAL):
         try:
             with self.connection:
                 self.cursor.execute('''
-                    INSERT INTO tbl_premium (price, date_created, duration)
-                    VALUES (?, ?, ?)
-                    ''', (premium.get_price(), premium.get_date_created(), premium.get_duration()))
+                    INSERT INTO tbl_premium (name, description, price, date_created, duration)
+                    VALUES (?, ?, ?, ?, ?)
+                    ''', (premium.get_premium_name(), premium.get_description(),premium.get_price(), premium.get_date_created(), premium.get_duration()))
                 self.connection.commit()
                 logger.info(f"Data inserted into 'tbl_premium' successfully.")
                 return True
@@ -71,7 +73,7 @@ class PremiumDAL(BaseDAL):
             ''', (premium_id,))
             row = self.cursor.fetchone()
             if row:
-                return PremiumDTO(row[0], row[1], row[2], row[3], bool(row[4]))
+                return PremiumDTO(row[0], row[1], row[2], row[3], row[4] ,row[5], bool(row[6]))
             else:
                 return None
         except sqlite3.Error as e:
@@ -93,7 +95,7 @@ class PremiumDAL(BaseDAL):
                 ''', (is_active,))
             rows = self.cursor.fetchall()
             if rows:
-                return [PremiumDTO(row[0], row[1], row[2], row[3], bool(row[4])) for row in rows]
+                return [PremiumDTO(row[0], row[1], row[2], row[3], row[4] ,row[5], bool(row[6])) for row in rows]
             else:
                 return []
         except sqlite3.Error as e:

@@ -13,12 +13,12 @@ class ChannelDAL(BaseDAL):
         try:
             self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS tbl_channel (
-                id_channel TEXT PRIMARY KEY,
-                id_server TEXT,
-                name_channel TEXT,
+                channel_id TEXT PRIMARY KEY,
+                server_id TEXT,
+                channel_name TEXT,
                 hex_color TEXT,
                 is_active INTEGER DEFAULT 1,
-                FOREIGN KEY (id_server) REFERENCES tbl_server (id_server)
+                FOREIGN KEY (server_id) REFERENCES tbl_server (server_id)
             )
             ''')
             self.connection.commit()
@@ -33,14 +33,14 @@ class ChannelDAL(BaseDAL):
         try:
             with self.connection:
                 self.cursor.execute('''
-                    INSERT INTO tbl_channel (id_channel, id_server, name_channel, hex_color)
+                    INSERT INTO tbl_channel (channel_id, server_id, channel_name, hex_color)
                     VALUES (?, ?, ?, ?)
-                    ''', (channel_dto.get_id_channel(), channel_dto.get_id_server(), channel_dto.get_name_channel(), channel_dto.get_hex_color()))
+                    ''', (channel_dto.get_channel_id(), channel_dto.get_server_id(), channel_dto.get_channel_name(), channel_dto.get_hex_color()))
                 self.connection.commit()
                 logger.info(f"Data inserted into 'tbl_channel' successfully.")
                 return True
         except sqlite3.IntegrityError as e:
-            logger.error(f"Channel with id_channel={channel_dto.get_id_channel()} already exists in 'tbl_channel'")
+            logger.error(f"Channel with channel_id={channel_dto.get_channel_id()} already exists in 'tbl_channel'")
             return False
         except sqlite3.Error as e:
             logger.error(f"Error inserting data into 'tbl_channel': {e}")
@@ -48,15 +48,15 @@ class ChannelDAL(BaseDAL):
         finally:
             self.close_connection()
 
-    def delete_channel_by_id_channel(self, id_channel: str) -> bool:
+    def delete_channel_by_channel_id(self, channel_id: str) -> bool:
         self.open_connection()
         try:
             with self.connection:
                 self.cursor.execute('''
                 UPDATE tbl_channel
-                SET ís_active = 0
-                WHERE id_channel = ?
-                ''', (id_channel,))
+                SET is_active = 0
+                WHERE channel_id = ?
+                ''', (channel_id,))
                 self.connection.commit()
                 logger.info(f"Data deleted from 'tbl_channel' successfully.")
                 return True
@@ -89,9 +89,9 @@ class ChannelDAL(BaseDAL):
             with self.connection:
                 self.cursor.execute('''
                 UPDATE tbl_channel
-                SET name_channel = ? , hex_color = ?, is_active = ?
-                WHERE id_channel = ?
-                ''', (channel_dto.get_name_channel(), channel_dto.get_hex_color(), channel_dto.get_state(), channel_dto.get_id_server()))
+                SET channel_name = ? , hex_color = ?, is_active = ?
+                WHERE channel_id = ?
+                ''', (channel_dto.get_channel_name(), channel_dto.get_hex_color(), channel_dto.get_state(), channel_dto.get_server_id()))
                 self.connection.commit()
                 logger.info(f"Data updated in 'tbl_channel' successfully.")
                 return True
@@ -101,12 +101,12 @@ class ChannelDAL(BaseDAL):
         finally:
             self.close_connection()
             
-    def get_channel_by_id_channel(self, id_channel: str) -> Optional[ChannelDTO]:
+    def get_channel_by_channel_id(self, channel_id: str) -> Optional[ChannelDTO]:
         self.open_connection()
         try:
             self.cursor.execute('''
-            SELECT * FROM tbl_channel WHERE id_channel = ?
-            ''', (id_channel,))
+            SELECT * FROM tbl_channel WHERE channel_id = ?
+            ''', (channel_id,))
             row = self.cursor.fetchone()
             if row:
                 return ChannelDTO(row[0], row[1], row[2], row[3], bool(row[4]))

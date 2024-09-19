@@ -1,7 +1,8 @@
+from datetime import datetime
 from types import NotImplementedType
 
 class EmtyDTO:
-    def __init__(self, link_emty: str, link_feed: str, link_atom_feed: str, title_emty: str, description_emty: str, image_emty: str, pubdate_emty: str):
+    def __init__(self, link_emty: str, link_feed: str, link_atom_feed: str, title_emty: str, description_emty: str, image_emty: str, pubdate_emty: datetime):
         self.__link_emty = link_emty
         self.__link_feed = link_feed
         self.__link_atom_feed = link_atom_feed
@@ -36,7 +37,7 @@ class EmtyDTO:
     def set_image_emty(self, image_emty: str) -> None:
         self.__image_emty = image_emty
     
-    def set_pubdate_emty(self, pubdate_emty: str) -> None:
+    def set_pubdate_emty(self, pubdate_emty: datetime) -> None:
         self.__pubdate_emty = pubdate_emty
     
     def get_link_emty(self) -> str:
@@ -57,5 +58,5 @@ class EmtyDTO:
     def get_image_emty(self) -> str:
         return self.__image_emty
     
-    def get_pubdate_emty(self) -> str:
+    def get_pubdate_emty(self) -> datetime:
         return self.__pubdate_emty

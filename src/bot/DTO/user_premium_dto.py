@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from ..DTO.premium_dto import PremiumDTO
 from ..DTO.user_dto import UserDTO
@@ -6,7 +6,7 @@ from ..utils.datetime_format import datetime_from_string, datetime_to_string
 
 
 class UserPremiumDTO:
-    def __init__(self, user: UserDTO, premium: PremiumDTO, date_registered: str):
+    def __init__(self, user: UserDTO, premium: PremiumDTO, date_registered: datetime):
         self.__user = user
         self.__premium = premium
         self.__date_registered = date_registered
@@ -20,8 +20,8 @@ class UserPremiumDTO:
     def get_premium(self) -> PremiumDTO:
         return self.__premium
     
-    def get_date_registered(self) -> str:
+    def get_date_registered(self) -> datetime:
         return self.__date_registered
     
-    def get_date_expired(self) -> str:
-        return datetime_to_string((datetime_from_string(self.__date_registered) + timedelta(days=self.__premium.get_duration())))
+    def get_date_expired(self) -> datetime:
+        return self.__date_registered + timedelta(days=self.__premium.get_duration())

@@ -3,29 +3,29 @@ from types import NotImplementedType
 from ..DTO.color_dto import ColorDTO
 
 class ChannelDTO:
-    def __init__(self, id_channel: str, id_server: str, name__channel: str, hex_color: str, is_active=True):
-        self.__id_channel = id_channel
-        self.__id_server = id_server
-        self.__name_channel = name__channel
+    def __init__(self, channel_id: str, server_id: str, channel_name: str, hex_color: str, is_active=True):
+        self.__channel_id = channel_id
+        self.__server_id = server_id
+        self.__channel_name = channel_name
         self.__hex_color = hex_color
         self.__is_active = is_active
         
     def __str__(self) -> str:
-        return f"ChannelDTO(id_channel={self.__id_channel}, id_server={self.__id_server}, name_channel={self.__name_channel}, hex_color={self.__hex_color}, is_active={self.__is_active})"
+        return f"ChannelDTO(channel_id={self.__channel_id}, server_id={self.__server_id}, channel_name={self.__channel_name}, hex_color={self.__hex_color}, is_active={self.__is_active})"
     
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, ChannelDTO):
             return NotImplementedType
-        return self.__id_channel == other.__id_channel and self.__name_channel == other.__name_channel
+        return self.__channel_id == other.__channel_id and self.__channel_name == other.__channel_name
     
-    def set_id_channel(self, id_channel: str) -> None:
-        self.__id_channel = id_channel
+    def set_channel_id(self, channel_id: str) -> None:
+        self.__channel_id = channel_id
     
-    def set_id_server(self, id_server: str) -> None:
-        self.__id_server = id_server
+    def set_server_id(self, server_id: str) -> None:
+        self.__server_id = server_id
         
-    def set_name_channel(self, name_channel: str) -> None:
-        self.__name_channel = name_channel
+    def set_channel_name(self, channel_name: str) -> None:
+        self.__channel_name = channel_name
     
     def set_hex_color(self, hex_color: str) -> None:
         self.__hex_color = hex_color
@@ -33,14 +33,14 @@ class ChannelDTO:
     def set_state(self, is_active: bool) -> None:
         self.__is_active = is_active
         
-    def get_id_channel(self) -> str:
-        return self.__id_channel
+    def get_channel_id(self) -> str:
+        return self.__channel_id
     
-    def get_id_server(self) -> str:
-        return self.__id_server
+    def get_server_id(self) -> str:
+        return self.__server_id
     
-    def get_name_channel(self) -> str:
-        return self.__name_channel
+    def get_channel_name(self) -> str:
+        return self.__channel_name
     
     def get_hex_color(self) -> str:
         return self.__hex_color

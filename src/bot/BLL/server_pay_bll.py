@@ -1,12 +1,15 @@
 
 
+from ..BLL.singleton import Singleton
 from ..DTO.server_pay_dto import ServerPayDTO
 from ..DAL.server_pay_dal import ServerPayDAL
 
 
-class ServerPayBLL:
+class ServerPayBLL(Singleton):
     def __init__(self):
-        self.__ServerPayDAL = ServerPayDAL()
+        if not hasattr(self, '_initialized'):
+            self.__ServerPayDAL = ServerPayDAL()
+            self._initialized = True
     
     def get_all_server_pay(self):
         return self.__ServerPayDAL.get_all_server_pay()
@@ -19,5 +22,5 @@ class ServerPayBLL:
     def update_server_pay(self, server_pay: ServerPayDTO):
         self.__ServerPayDAL.update_server_pay(server_pay)
     
-    def delete_server_pay_by_id_server(self, server_id: str):
-        self.__ServerPayDAL.delete_server_pay_by_id_server(server_id)
+    def delete_server_pay_by_server_id(self, server_id: str):
+        self.__ServerPayDAL.delete_server_pay_by_server_id(server_id)

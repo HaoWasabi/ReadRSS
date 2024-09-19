@@ -20,7 +20,7 @@ class EmtyDAL(BaseDAL):
                     title_emty TEXT,
                     description_emty TEXT,
                     image_emty TEXT,
-                    pubdate_emty TEXT,
+                    pubdate_emty DATETIME,
                     FOREIGN KEY (link_feed) REFERENCES tbl_feed(link_feed),
                     FOREIGN KEY (link_atom_feed) REFERENCES tbl_feed(link_atom_feed)
                 )
@@ -93,7 +93,7 @@ class EmtyDAL(BaseDAL):
                 SET link_emty = ?, link_feed = ?, link_atom_feed = ?,  title_emty = ?, description_emty = ?, image_emty = ?, pubdate_emty = ?
                 WHERE link_emty = ?
                 ''', (emty_dto.get_link_emty(), emty_dto.get_link_feed(), emty_dto.get_link_atom_feed(), emty_dto.get_title_emty(),
-                        emty_dto.get_description_emty(), emty_dto.get_image_emty(), emty_dto.get_pubdate_emty()))
+                        emty_dto.get_description_emty(), emty_dto.get_image_emty(), emty_dto.get_pubdate_emty(), emty_link))
                 self.connection.commit()
                 logger.info(f"Data updated in 'tbl_emty' successfully.")
                 return True

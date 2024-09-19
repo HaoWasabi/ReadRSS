@@ -18,7 +18,7 @@ class QrPayCodeDAL(BaseDAL):
             self.cursor.execute('''
             CREATE TABLE qr_pay_code (
                 qr_code TEXT PRIMARY KEY,
-                id_server TEXT,
+                server_id TEXT,
                 channel_id TEXT,
                 message_id TEXT,
                 ngay_tao DATETIME
@@ -36,7 +36,7 @@ class QrPayCodeDAL(BaseDAL):
     
     def get_qr_pay_code_by_qr_code(self, qr_code: str):
         self.open_connection()
-        self.cursor.execute("SELECT qr_code, id_server, channel_id, message_id, ngay_tao FROM qr_pay_code WHERE qr_code=?; ", (qr_code,))
+        self.cursor.execute("SELECT qr_code, server_id, channel_id, message_id, ngay_tao FROM qr_pay_code WHERE qr_code=?; ", (qr_code,))
         rows=self.cursor.fetchone()
         self.close_connection()
         if rows:
@@ -47,17 +47,17 @@ class QrPayCodeDAL(BaseDAL):
     
     def get_all_qr_pay_code(self):
         self.open_connection()
-        self.cursor.execute("SELECT qr_code, id_server, channel_id, message_id, ngay_tao FROM qr_pay_code;")
+        self.cursor.execute("SELECT qr_code, server_id, channel_id, message_id, ngay_tao FROM qr_pay_code;")
         rows = self.cursor.fetchall()
         self.close_connection()
-        return [QrPayCodeDTO(qr_code, id_server, channel_id, message_id, datetime_from_string(ngay_tao)) for qr_code, id_server, channel_id, message_id, ngay_tao in rows]
+        return [QrPayCodeDTO(qr_code, server_id, channel_id, message_id, datetime_from_string(ngay_tao)) for qr_code, server_id, channel_id, message_id, ngay_tao in rows]
     
     def insert_qr_pay_code(self, qr_pay: QrPayCodeDTO):
         self.open_connection()
-        self.cursor.execute("INSERT INTO qr_pay_code(qr_code, id_server, channel_id, message_id, ngay_tao) VALUES (?, ?, ?, ?, ?);", 
+        self.cursor.execute("INSERT INTO qr_pay_code(qr_code, server_id, channel_id, message_id, ngay_tao) VALUES (?, ?, ?, ?, ?);", 
                             [
                                 qr_pay.get_qr_code(),
-                                qr_pay.get_id_server(),
+                                qr_pay.get_server_id(),
                                 qr_pay.get_channel_id(),
                                 qr_pay.get_message_id(),
                                 datetime_to_string(qr_pay.get_ngay_tao())

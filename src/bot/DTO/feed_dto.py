@@ -1,7 +1,8 @@
+from datetime import datetime
 from types import NotImplementedType
 
 class FeedDTO:
-    def __init__(self, link_feed: str, link_atom_feed: str, title_feed: str, description_feed: str, logo_feed: str, pubDate_feed: str):
+    def __init__(self, link_feed: str, link_atom_feed: str, title_feed: str, description_feed: str, logo_feed: str, pubDate_feed: datetime):
         self.__link_feed = link_feed
         self.__link_atom_feed = link_atom_feed
         self.__title_feed = title_feed
@@ -32,7 +33,7 @@ class FeedDTO:
     def set_logo_feed(self, logo_feed: str) -> None:
         self.__logo_feed = logo_feed
     
-    def set_pubdate_feed(self, pubdate_feed: str) -> None:
+    def set_pubdate_feed(self, pubdate_feed: datetime) -> None:
         self.__pubdate_feed = pubdate_feed
     
     def get_link_feed(self) -> str:
@@ -50,6 +51,6 @@ class FeedDTO:
     def get_logo_feed(self) -> str:
         return self.__logo_feed
     
-    def get_pubdate_feed(self) -> str:
+    def get_pubdate_feed(self) -> datetime:
         return self.__pubdate_feed
     
