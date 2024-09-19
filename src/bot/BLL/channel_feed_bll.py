@@ -1,5 +1,5 @@
 
-from ..BLL.Singleton import Singleton
+from ..BLL.singleton import Singleton
 from ..DTO.channel_feed_dto import ChannelFeedDTO
 from ..DAL.channel_feed_dal import ChannelFeedDAL
 from typing import Optional, List

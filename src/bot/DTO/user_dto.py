@@ -1,6 +1,6 @@
 class UserDTO:
-    def __init__(self, id_user: str, name_user: str):
-        self.__user_id = id_user
+    def __init__(self, user_id: str, name_user: str):
+        self.__user_id = user_id
         self.__user_name = name_user
         
     def __str__(self) -> str:

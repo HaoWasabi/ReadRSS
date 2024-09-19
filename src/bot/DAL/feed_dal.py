@@ -11,7 +11,7 @@ class FeedDAL(BaseDAL):
         self.open_connection()
         try:
             self.cursor.execute('''
-            CREATE TABLE tbl_feed(
+            CREATE TABLE IF NOT EXISTS tbl_feed(
                 link_feed TEXT,
                 link_atom_feed TEXT,
                 title_feed TEXT,
@@ -24,10 +24,7 @@ class FeedDAL(BaseDAL):
             self.connection.commit()
             logger.info(f"Table 'tbl_feed' created successfully.")
         except sqlite3.Error as e:
-            if len(e.args) and e.args[0].count('already exists'):
-                logger.error(f"Table 'tbl_feed' already exists")
-            else:
-                logger.error(f"Error creating table 'tbl_feed': {e}")
+            logger.error(f"Error creating table 'tbl_feed': {e}")
         finally:
             self.close_connection()
             

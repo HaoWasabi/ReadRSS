@@ -13,8 +13,8 @@ class PremiumDAL(BaseDAL):
         self.open_connection()
         try:
             self.cursor.execute('''
-            CREATE TABLE tbl_premium(
-                id_premium INTEGER PRIMARY KEY AUTOINCREMENT,
+            CREATE TABLE IF NOT EXISTS tbl_premium(
+                premium_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 price REAL,
                 date_created TEXT,
                 duration INTEGER,
@@ -24,10 +24,7 @@ class PremiumDAL(BaseDAL):
             self.connection.commit()
             logger.info("Table 'tbl_premium' created successfully.")
         except sqlite3.Error as e:
-            if "already exists" in str(e):
-                logger.error(f"Table 'tbl_premium' already exists")
-            else:
-                logger.error(f"Error creating table 'tbl_premium': {e}")
+            logger.error(f"Error creating table 'tbl_premium': {e}")
         finally:
             self.close_connection()
             
@@ -48,14 +45,14 @@ class PremiumDAL(BaseDAL):
         finally:
             self.close_connection()
         
-    def delete_premium_by_id(self, premium_id) -> bool:
+    def delete_premium_by_id(self, premium_id: str) -> bool:
         self.open_connection()
         try:
             with self.connection:
                 self.cursor.execute('''
                 UPDATE tbl_premium
                 SET is_active = 0
-                WHERE id_premium = ?
+                WHERE premium_id = ?
                 ''', (premium_id,))
                 self.connection.commit()
                 logger.info(f"Data deleted from 'tbl_premium' successfully.")
@@ -66,11 +63,11 @@ class PremiumDAL(BaseDAL):
         finally:
             self.close_connection()
             
-    def get_premium_by_id(self, premium_id) -> Optional[PremiumDTO]:
+    def get_premium_by_id(self, premium_id: str) -> Optional[PremiumDTO]:
         self.open_connection()
         try:
             self.cursor.execute('''
-            SELECT * FROM tbl_premium WHERE id_premium = ?
+            SELECT * FROM tbl_premium WHERE premium_id = ?
             ''', (premium_id,))
             row = self.cursor.fetchone()
             if row:
@@ -105,4 +102,3 @@ class PremiumDAL(BaseDAL):
         finally:
             self.close_connection()
         
-            

@@ -24,10 +24,7 @@ class ChannelDAL(BaseDAL):
             self.connection.commit()
             logger.info(f"Table 'tbl_channel' created successfully.")
         except sqlite3.Error as e:
-            if "already exists" in str(e):
-                logger.error(f"Table 'tbl_channel' already exists")
-            else:
-                logger.error(f"Error creating table 'tbl_channel': {e}")
+            logger.error(f"Error creating table 'tbl_channel': {e}")
         finally:
             self.close_connection()
             
@@ -94,7 +91,7 @@ class ChannelDAL(BaseDAL):
                 UPDATE tbl_channel
                 SET name_channel = ? , hex_color = ?, is_active = ?
                 WHERE id_channel = ?
-                ''', (channel_dto.get_name_channel, channel_dto.get_hex_color, channel_dto.get_state, channel_dto.get_id_server))
+                ''', (channel_dto.get_name_channel(), channel_dto.get_hex_color(), channel_dto.get_state(), channel_dto.get_id_server()))
                 self.connection.commit()
                 logger.info(f"Data updated in 'tbl_channel' successfully.")
                 return True

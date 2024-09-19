@@ -1,5 +1,5 @@
 from typing import Optional
-from ..BLL.Singleton import Singleton
+from ..BLL.singleton import Singleton
 from ..DAL.premium_dal import PremiumDAL
 from ..DTO.premium_dto import PremiumDTO
 

@@ -1,4 +1,4 @@
-from ..BLL.Singleton import Singleton
+from ..BLL.singleton import Singleton
 from ..DTO.feed_dto import FeedDTO
 from ..DAL.feed_dal import FeedDAL
 from typing import Optional, List

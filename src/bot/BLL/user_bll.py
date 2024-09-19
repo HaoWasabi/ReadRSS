@@ -1,7 +1,7 @@
 
 from typing import List, Optional
 from ..DTO.user_dto import UserDTO
-from ..BLL.Singleton import Singleton
+from ..BLL.singleton import Singleton
 from ..DAL.user_dal import UserDAL
 
 

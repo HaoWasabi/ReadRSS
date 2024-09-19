@@ -11,7 +11,7 @@ class ServerDAL(BaseDAL):
         self.open_connection()
         try:
             self.cursor.execute('''
-            CREATE TABLE tbl_server(
+            CREATE TABLE IF NOT EXISTS tbl_server(
                 id_server TEXT PRIMARY KEY,
                 name_server TEXT,
                 is_active INTERGER DEFAULT 1
@@ -20,10 +20,7 @@ class ServerDAL(BaseDAL):
             self.connection.commit()
             logger.info(f"Table 'tbl_server' created successfully.")
         except sqlite3.Error as e:
-            if len(e.args) and e.args[0].count('already exists'):
-                logger.error(f"Table 'tbl_server' already exists")
-            else:
-                logger.error(f"Error creating table 'tbl_server': {e}")
+            logger.error(f"Error creating table 'tbl_server': {e}")
         finally:
             self.close_connection()
             
@@ -83,6 +80,7 @@ class ServerDAL(BaseDAL):
             self.close_connection()
         
     def update_server(self, server_dto: ServerDTO) -> bool:
+        self.open_connection()
         try:
             with self.connection:
                 self.cursor.execute('''

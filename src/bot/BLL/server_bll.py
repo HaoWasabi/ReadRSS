@@ -1,4 +1,4 @@
-from ..BLL.Singleton import Singleton
+from ..BLL.singleton import Singleton
 from ..DTO.server_dto import ServerDTO
 from ..DAL.server_dal import ServerDAL
 from typing import Optional, List

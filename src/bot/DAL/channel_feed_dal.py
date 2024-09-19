@@ -13,7 +13,7 @@ class ChannelFeedDAL(BaseDAL):
         self.open_connection()
         try:
             self.cursor.execute('''
-                CREATE TABLE tbl_channel_feed(
+                CREATE TABLE IF NOT EXISTS tbl_channel_feed(
                     link_atom_feed TEXT,
                     link_feed TEXT,
                     id_channel TEXT,
@@ -26,10 +26,7 @@ class ChannelFeedDAL(BaseDAL):
             self.connection.commit()
             logger.info("Create tbl_channel_feed success")
         except sqlite3.Error as e:
-            if len(e.args) and e.args[0].count('already exists'):
-                logger.error("Table 'tbl_channel_feed' already exists")
-            else:
-                logger.error(f"Error creating table `tbl_channel_feed`: {e}")
+            logger.error(f"Error creating table `tbl_channel_feed`: {e}")
         finally:
             self.close_connection()
 

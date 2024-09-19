@@ -13,7 +13,7 @@ class EmtyDAL(BaseDAL):
         self.open_connection()
         try:
             self.cursor.execute('''
-                CREATE TABLE tbl_emty(
+                CREATE TABLE IF NOT EXISTS tbl_emty(
                     link_emty TEXT PRIMARY KEY,
                     link_feed TEXT,
                     link_atom_feed,
@@ -28,10 +28,7 @@ class EmtyDAL(BaseDAL):
             self.connection.commit()
             logger.info(f"Table 'tbl_emty' created successfully.")
         except sqlite3.Error as e:
-            if len(e.args) and e.args[0].count('already exists'):
-                logger.error(f"Table 'tbl_emty' already exists")
-            else:
-                logger.error(f"Error creating table 'tbl_emty': {e}")
+            logger.error(f"Error creating table 'tbl_emty': {e}")
         finally:
             self.close_connection()
 
@@ -106,6 +103,7 @@ class EmtyDAL(BaseDAL):
         self.close_connection()
 
     def get_emty_by_link_emty(self, emty_link: str) -> Optional[EmtyDTO]:
+        self.open_connection()
         try:
             self.cursor.execute('''
             SELECT * FROM tbl_emty WHERE link_emty = ?
@@ -118,8 +116,11 @@ class EmtyDAL(BaseDAL):
         except sqlite3.Error as e:
             logger.error(f"Error fetching data from 'tbl_emty': {e}")
             return None
+        finally:
+            self.close_connection()
 
     def get_all_emty(self) -> List[EmtyDTO]:
+        self.open_connection()
         try:
             self.cursor.execute('''
             SELECT * FROM tbl_emty
@@ -132,5 +133,7 @@ class EmtyDAL(BaseDAL):
         except sqlite3.Error as e:
             logger.error(f"Error fetching all data from 'tbl_emty': {e}")
             return []
+        finally:
+            self.close_connection()
 
     

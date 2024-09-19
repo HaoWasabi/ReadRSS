@@ -1,4 +1,4 @@
-from ..BLL.Singleton import Singleton
+from ..BLL.singleton import Singleton
 from ..DAL.channel_dal import ChannelDAL
 from ..DTO.channel_dto import ChannelDTO
 from typing import Optional, List

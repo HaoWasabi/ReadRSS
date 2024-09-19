@@ -1,5 +1,5 @@
 from typing import List
-from ..BLL.Singleton import Singleton
+from ..BLL.singleton import Singleton
 from ..DAL.user_premium_dal import UserPremiumDAL
 from ..DTO.user_premium_dto import UserPremiumDTO
 

@@ -12,7 +12,7 @@ class UserDAL(BaseDAL):
         self.open_connection()
         try:
             self.cursor.execute('''
-            CREATE TABLE tbl_user(
+            CREATE TABLE IF NOT EXISTS tbl_user(
                 user_id TEXT PRIMARY KEY,
                 user_name TEXT
             )
@@ -20,10 +20,7 @@ class UserDAL(BaseDAL):
             self.connection.commit()
             logger.info(f"Table 'tbl_user' created successfully.")
         except sqlite3.Error as e:
-            if "already exists" in str(e):
-                logger.error(f"Table 'tbl_user' already exists")
-            else:
-                logger.error(f"Error creating table 'tbl_user': {e}")
+            logger.error(f"Error creating table 'tbl_user': {e}")
         finally:
             self.close_connection()
             

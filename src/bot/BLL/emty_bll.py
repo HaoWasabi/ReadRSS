@@ -1,4 +1,4 @@
-from ..BLL.Singleton import Singleton
+from ..BLL.singleton import Singleton
 from ..DTO.emty_dto import EmtyDTO
 from ..DAL.emty_dal import EmtyDAL
 from typing import Optional, List

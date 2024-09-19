@@ -15,7 +15,7 @@ class UserPremiumDAL(BaseDAL):
         self.open_connection()
         try:
             self.cursor.execute('''
-            CREATE TABLE tbl_user_premium(
+            CREATE TABLE IF NOT EXISTS tbl_user_premium(
                 user_id TEXT,
                 premium_id TEXT,
                 date_registered TEXT,
@@ -25,10 +25,7 @@ class UserPremiumDAL(BaseDAL):
             self.connection.commit()
             logger.info(f"Table 'tbl_user_premium' created successfully.")
         except sqlite3.Error as e:
-            if 'already exists' in str(e):
-                logger.error(f"Table 'tbl_user_premium' already exists")
-            else:
-                logger.error(f"Error creating table 'tbl_user_premium': {e}")
+            logger.error(f"Error creating table 'tbl_user_premium': {e}")
         finally:
             self.close_connection()
             
