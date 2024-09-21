@@ -1,6 +1,6 @@
 from nextcord import Interaction
 from nextcord.ui import TextInput, Modal
-from .check_authorization import check_authorization
+from ..utils.check_authorization import check_authorization
 from ..utils.Database import dataBase
 
 class ModalClearTable(Modal):
@@ -13,9 +13,9 @@ class ModalClearTable(Modal):
     async def callback(self, interaction: Interaction):
         if not await check_authorization(interaction, self.author):
             return
-
+        await interaction.response.defer()
         dataBase.delete_table(self.table_name.value)
-        await interaction.response.send_message(
+        await interaction.followup.send(
             f"Table '{self.table_name.value}' cleared successfully.", 
             ephemeral=True
             )

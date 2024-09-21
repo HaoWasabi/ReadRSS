@@ -1,9 +1,10 @@
 from types import NotImplementedType
 
 class ServerDTO:
-    def __init__(self, server_id: str, server_name: str, is_active=True):
+    def __init__(self, server_id: str, server_name: str, hex_color: str="0x3498DB", is_active=True):
         self.__server_id = server_id
         self.__server_name = server_name
+        self.__hex_color = hex_color
         self.__is_active = is_active
         
     def __str__(self) -> str:
@@ -20,6 +21,9 @@ class ServerDTO:
     def set_server_name(self, server_name: str) -> None:
         self.__server_name = server_name
         
+    def set_hex_color(self, hex_color: str) -> None:
+        self.__hex_color = hex_color
+        
     def set_state(self, is_active: bool) -> None:
         self.__is_active = is_active
         
@@ -28,6 +32,9 @@ class ServerDTO:
     
     def get_server_name(self) -> str:
         return self.__server_name
+    
+    def get_hex_color(self) -> str:
+        return self.__hex_color
     
     def get_state(self) -> bool:
         return self.__is_active

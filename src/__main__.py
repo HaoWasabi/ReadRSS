@@ -3,7 +3,6 @@ from nextcord.ext import commands
 from dotenv import load_dotenv
 
 from bot.utils.Database import Database
-from test import * # type: ignore
 
 # Load environment variables
 load_dotenv()
@@ -45,3 +44,4 @@ if __name__ == "__main__":
     ## Run bot and load cogs
     asyncio.run(load_cogs())
     run_bot()
+    # Database().delete_table("tbl_feed")

@@ -13,7 +13,8 @@ class ButtonOfHelpCommnad(View):
 
     @button(label="Infor", style=nextcord.ButtonStyle.primary)
     async def send_message(self, button: Button, interaction: Interaction):
-        await interaction.response.send_message(''' 
+        await interaction.response.defer()
+        await interaction.followup.send(''' 
 ```This is a Discord bot built with Python. ReadRSS bot brings RSS feeds 
 to your Discord server. Receive notifications from news sources 
 including Facebook and much more. 

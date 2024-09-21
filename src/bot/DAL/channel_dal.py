@@ -16,7 +16,6 @@ class ChannelDAL(BaseDAL):
                 channel_id TEXT PRIMARY KEY,
                 server_id TEXT,
                 channel_name TEXT,
-                hex_color TEXT,
                 is_active INTEGER DEFAULT 1,
                 FOREIGN KEY (server_id) REFERENCES tbl_server (server_id)
             )
@@ -33,9 +32,9 @@ class ChannelDAL(BaseDAL):
         try:
             with self.connection:
                 self.cursor.execute('''
-                    INSERT INTO tbl_channel (channel_id, server_id, channel_name, hex_color)
-                    VALUES (?, ?, ?, ?)
-                    ''', (channel_dto.get_channel_id(), channel_dto.get_server_id(), channel_dto.get_channel_name(), channel_dto.get_hex_color()))
+                    INSERT INTO tbl_channel (channel_id, server_id, channel_name)
+                    VALUES (?, ?, ?)
+                    ''', (channel_dto.get_channel_id(), channel_dto.get_server_id(), channel_dto.get_channel_name()))
                 self.connection.commit()
                 logger.info(f"Data inserted into 'tbl_channel' successfully.")
                 return True
@@ -89,9 +88,9 @@ class ChannelDAL(BaseDAL):
             with self.connection:
                 self.cursor.execute('''
                 UPDATE tbl_channel
-                SET channel_name = ? , hex_color = ?, is_active = ?
+                SET channel_name = ?, is_active = ?
                 WHERE channel_id = ?
-                ''', (channel_dto.get_channel_name(), channel_dto.get_hex_color(), channel_dto.get_state(), channel_dto.get_server_id()))
+                ''', (channel_dto.get_channel_name(), channel_dto.get_state(), channel_dto.get_channel_id()))
                 self.connection.commit()
                 logger.info(f"Data updated in 'tbl_channel' successfully.")
                 return True
@@ -109,7 +108,7 @@ class ChannelDAL(BaseDAL):
             ''', (channel_id,))
             row = self.cursor.fetchone()
             if row:
-                return ChannelDTO(row[0], row[1], row[2], row[3], bool(row[4]))
+                return ChannelDTO(row[0], row[1], row[2], bool(row[3]))
             else:
                 return None
         except sqlite3.Error as e:
@@ -133,7 +132,7 @@ class ChannelDAL(BaseDAL):
                 
             rows = self.cursor.fetchall()
             if rows:
-                return [ChannelDTO(row[0], row[1], row[2], row[3], bool(row[4])) for row in rows]
+                return [ChannelDTO(row[0], row[1], row[2], bool(row[3])) for row in rows]
             else:
                 return []
         except sqlite3.Error as e:

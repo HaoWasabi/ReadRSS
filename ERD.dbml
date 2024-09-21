@@ -1,0 +1,103 @@
+Table feed{
+  link_atom_feed string [pk]
+  link_feed string [pk]
+  title_feed string
+  description string
+  logo_feed string
+  pudDate_feed datetime
+}
+
+Table emty{
+  link_emty string [pk]
+  title_emty string
+  description_emty string
+  image_emty string
+  pubDate_emty datetime
+  link_feed string [ref: > feed.link_feed]
+  link_atom_feed string [ref: > feed.link_atom_feed]
+}
+
+// Ref: feed.link_feed < emty.link_emty
+
+Table channel{
+  channel_id string [pk]
+  channel_name string
+  server_id string [ref: > server.server_id]
+}
+
+Table ChannelEmty{
+  channel_id string [ref: > channel.channel_id]
+  link_emty string [ref: - emty.link_emty]
+  link_atom_feed string [ref: - emty.link_atom_feed]
+  link_feed string [ref: - emty.link_feed]
+}
+// Ref: channel.channel_id < feed.link_atom_feed
+// Ref: channel.channel_id < feed.link_feed
+
+Table server{
+  server_id string [pk]
+  server_name string
+  hex_color string
+}
+
+// Ref: server.server_id < channel.channel_id
+
+// Table color{
+//   hex_color string [pk]
+//   name_color string
+// }
+// Ref: color.hex_color - channel.channel_id
+
+Table userchannel{
+  user_id string [pk]
+  channel_id string [pk]
+  date datetime
+}
+
+Ref: userchannel.channel_id - channel.channel_id
+Ref: userchannel.user_id - user.user_id
+
+Table user{
+  user_id string [pk]
+  user_name string
+}
+
+// Ref: user.user_id < channel.channel_id
+
+
+Table user_premium{
+  user_id string [ref: - user.user_id]
+  premium_id string [ref: - premium.premium_id]
+  date_registered datetime
+}
+
+Table premium{
+  premium_id integer [increment, pk]
+  name string
+  description string
+  price float
+  date_created datetime
+  duration string
+  is_active bool
+}
+
+Table QRPaycode{
+  qr_code string [pk]
+  message_id string
+  date_created date
+}
+
+Ref: QRPaycode.qr_code > user.user_id
+
+Table TransactionHistory{
+  id_transaction string [pk]
+  transaction_date datetime
+  content string
+  currency string
+  credit_amount string
+}
+
+Ref: TransactionHistory.id_transaction - QRPaycode.qr_code
+
+
+

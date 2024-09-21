@@ -3,11 +3,10 @@ from types import NotImplementedType
 from ..DTO.color_dto import ColorDTO
 
 class ChannelDTO:
-    def __init__(self, channel_id: str, server_id: str, channel_name: str, hex_color: str, is_active=True):
+    def __init__(self, channel_id: str, server_id: str, channel_name: str, is_active=True):
         self.__channel_id = channel_id
         self.__server_id = server_id
         self.__channel_name = channel_name
-        self.__hex_color = hex_color
         self.__is_active = is_active
         
     def __str__(self) -> str:
@@ -26,9 +25,6 @@ class ChannelDTO:
         
     def set_channel_name(self, channel_name: str) -> None:
         self.__channel_name = channel_name
-    
-    def set_hex_color(self, hex_color: str) -> None:
-        self.__hex_color = hex_color
         
     def set_state(self, is_active: bool) -> None:
         self.__is_active = is_active
@@ -41,9 +37,6 @@ class ChannelDTO:
     
     def get_channel_name(self) -> str:
         return self.__channel_name
-    
-    def get_hex_color(self) -> str:
-        return self.__hex_color
     
     def get_state(self) -> bool:
         return self.__is_active

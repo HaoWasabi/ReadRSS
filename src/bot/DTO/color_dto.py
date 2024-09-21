@@ -8,7 +8,8 @@ class ColorDTO:
             "blue": "0x3498DB",
             "purple": "0x9B59B6",
             "gray": "0x808080",
-            "black": "0x2F3136"
+            "black": "0x2F3136", 
+            "darkkhaki": "0xBDB76B"
         }
         
         # Set the color, or default to white if the color is not in the mapping

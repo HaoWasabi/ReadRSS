@@ -1,28 +1,29 @@
 import logging
 from nextcord.ext import commands
-from nextcord import DMChannel
-from ..GUI.custom_embed import CustomEmbed
+from nextcord import DMChannel, Color
+from ..GUI.embed_custom import EmbedCustom
 from ..GUI.select_clear import SelectClear
 from ..GUI.button_of_ctrl_command import ButtonOfCtrlCommand
-from ..utils.check_cogs import CheckCogs
+from ..DTO.color_dto import ColorDTO
+from ..utils.commands_cog import CommandsCog
 
-logger = logging.getLogger('AdminBotCommands')
+logger = logging.getLogger( "AdminBotCommands")
 
-class AdminBotCommands(commands.Cog):
+class AdminBotCommands(CommandsCog):
     def __init__(self, bot):
-        self.bot = bot
-
+        super().__init__(bot)
+        self.color = int(ColorDTO("darkkhaki").get_hex_color().replace("#", ""), 16)
+        
     @commands.command(name="shutdown")
     @commands.is_owner()
     async def shutdown(self, ctx):
         try:
             channel = ctx.channel
-
-            embed = CustomEmbed(
+            embed = EmbedCustom(
                 id_server=str(ctx.guild.id) if not isinstance(ctx.channel, DMChannel) else "DM",
                 title="Warning",
                 description="The bot is shutting down...",
-                color=0xFFA500
+                color = self.color
             )
             await channel.send(embed=embed)
             await self.bot.close()
@@ -36,11 +37,12 @@ class AdminBotCommands(commands.Cog):
         try:
             channel = ctx.channel
 
-            embed = CustomEmbed(
+            hex_color= int(ColorDTO("darkkhaki").get_hex_color().replace("#", ""), 16)
+            embed = EmbedCustom(
                 id_server=str(ctx.guild.id) if not isinstance(ctx.channel, DMChannel) else "DM",
                 title="Control Panel",
                 description="Choose an option to control the bot.",
-                color=0xFFA500
+                color= self.color
             )
             await channel.send(embed=embed, view=ButtonOfCtrlCommand(ctx.author, self.bot)) 
             await channel.send("Choose an option to clear in the database.", view=SelectClear(user=ctx.author))

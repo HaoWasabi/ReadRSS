@@ -1,21 +1,20 @@
 import nextcord
-from ..BLL.server_color_bll import ServerColorBLL
+from ..BLL.server_bll import ServerBLL
 from ..DTO.server_dto import ServerDTO
+from ..DTO.color_dto import ColorDTO
 
 # Custom Embed class with default color and methods to set/get color
-class CustomEmbed(nextcord.Embed):
+class EmbedCustom(nextcord.Embed):
     def __init__(self, id_server: str, **kwargs):
         # Fetch the default color from the server's settings
-        server_color_bll = ServerColorBLL()
-        server_dto = ServerDTO(id_server, "")
-        server_color_dto = server_color_bll.get_server_color_by_id_server(server_dto.get_id_server())
-
+        server_bll = ServerBLL()
+        server_dto = server_bll.get_server_by_server_id(id_server)
         if 'color' not in kwargs:
             # If no color is provided, use the server's default color
-            if (server_color_dto is None):
-                default_color = "0xFF0000"
+            if (server_dto is None):
+                default_color = ColorDTO("red").get_hex_color()
             else:
-                default_color = server_color_dto.get_color().get_hex_color() # type: ignore
+                default_color = server_dto.get_hex_color()
             kwargs['color'] = nextcord.Color(int(default_color, 16))  # Convert hex to int
 
         # Set a default footer if not already set

@@ -4,145 +4,96 @@ import nextcord, os, logging
 from nextcord.ext import commands
 from nextcord.ext import tasks
 from nextcord.message import Message
-
 import google.generativeai as genai
-
-from ..DTO.channel_emty_dto import ChannelEmtyDTO
-from ..DTO.server_color_dto import ServerColorDTO
 from ..DTO.channel_dto import ChannelDTO
 from ..DTO.server_dto import ServerDTO
 from ..DTO.color_dto import ColorDTO
 
-
-from ..BLL.qr_pay_code_bll import QrPayCodeBLL
-from ..BLL.server_channel_bll import ServerChannelBLL
 from ..BLL.channel_feed_bll import ChannelFeedBLL
-from ..BLL.channel_emty_bll import ChannelEmtyBLL
-from ..BLL.feed_emty_bll import FeedEmtyBLL
-from ..BLL.server_color_bll import ServerColorBLL
 from ..BLL.channel_bll import ChannelBLL
 from ..BLL.server_bll import ServerBLL
+from ..BLL.feed_bll import FeedBLL
+from ..BLL.emty_bll import EmtyBLL
 
 from ..GUI.embed_feed import EmbedFeed
-from ..GUI.custom_embed import CustomEmbed
+from ..GUI.embed_custom import EmbedCustom
+from ..utils.commands_cog import CommandsCog
+from ..utils.handle_rss import read_rss_link
 
-from ..utils.read_rss import ReadRSS
+logger = logging.getLogger("Events")
 
-logger = logging.getLogger('events')
-
-class Events(commands.Cog):
+class Events(CommandsCog):
     def __init__(self, bot: commands.Bot):
-        self.bot = bot
+        super().__init__(bot)
 
     async def load_guilds(self):
         try:
-            server_bll = ServerBLL() 
-            channel_bll = ChannelBLL()
-            channel_feed_bll = ChannelFeedBLL()
-            channel_emty_bll = ChannelEmtyBLL()
-            server_color_bll = ServerColorBLL()
             guilds = self.bot.guilds
+            channel_bll = ChannelBLL()
+            server_bll = ServerBLL()
             list_channel = channel_bll.get_all_channel()
+            list_server = server_bll.get_all_server()
 
-            dm_dto = ServerDTO("DM", "DM")
-            color_dto = ColorDTO("blue")
-            server_bll.insert_server(dm_dto)
-            server_color_bll.insert_server_color(ServerColorDTO(dm_dto, color_dto))
+            default_color = ColorDTO("blue").get_hex_color()
+            channel_dto = ChannelDTO("DM", "DM", "DM")
+            channel_bll.insert_channel(channel_dto)
             
+            server_dto = ServerDTO(
+                server_id="DM", 
+                server_name="DM", 
+                hex_color=default_color)
+            server_bll.insert_server(server_dto)
+    
             for guild in guilds:
-                server_dto = ServerDTO(str(guild.id), str(guild.name))
-                color_dto = ColorDTO("blue")
+                id_server = str(guild.id)
+                name_server = str(guild.name)
+                server_dto = ServerDTO(id_server, name_server)
                 
-                 # check if server exit
-                server_bll.insert_server(server_dto)
-                server_color_bll.insert_server_color(ServerColorDTO(server_dto, color_dto))
-
-                # Update channel names if changed
+                if server_dto not in list_server:
+                    server_bll.insert_server(server_dto)
+                else:
+                    matching_server = next((s for s in list_server if s.get_server_id() == server_dto.get_server_id()), None)
+                    if matching_server and matching_server.get_server_name() != server_dto.get_server_name():
+                        server_bll.update_server(server_dto)
+                    
                 for channel in guild.channels:
-                    channel_dto = ChannelDTO(str(channel.id), channel.name)
-                    matching_channel = next((ch for ch in list_channel if ch.get_id_channel() == channel_dto.get_id_channel()), None)
-                    if matching_channel and matching_channel.get_name_channel() != channel_dto.get_name_channel():
-                        channel_bll.update_channel_by_id_channel(str(channel.id), channel_dto)
+                    id_channel = str(channel.id)
+                    name_channel = channel.name
+                    channel_dto = ChannelDTO(id_channel, name_channel, id_server)
+                    
+                    matching_channel = next((ch for ch in list_channel if ch.get_channel_id() == channel_dto.get_channel_id()), None)
+                    if matching_channel and matching_channel.get_channel_name() != channel_dto.get_channel_name():
+                        channel_bll.update_channel(channel_dto)
 
-            # # Delete servers and related channels not in guilds
-            # for server in server_bll.get_all_server():
-            #     if self.bot.get_guild(int(server.get_id_server())) is None:
-            #         self.delete_server_and_related_channels(server.get_id_server())
-
-            # # Delete channels not found in current guilds
-            # for channel in channel_bll.get_all_channel():
-            #     if self.bot.get_channel(int(channel.get_id_channel())) is None:
-            #         self.delete_channel_and_related_data(channel.get_id_channel())
-            
         except Exception as e:
             logger.error(f"Error loading guilds: {e}")
-
-    def delete_server_and_related_channels(self, server_id):
-        server_bll = ServerBLL()
-        channel_bll = ChannelBLL()
-        channel_feed_bll = ChannelFeedBLL()
-        channel_emty_bll = ChannelEmtyBLL()
-        server_bll.delete_server_by_id_server(server_id)
-        server_channels = ServerChannelBLL().get_all_server_channel_by_id_server(server_id)
-
-        for server_channel in server_channels:
-            channel_id = server_channel.get_channel().get_id_channel()
-            channel_feed_bll.delete_channel_feed_by_id_channel(channel_id)
-            channel_emty_bll.delete_channel_emty_by_id_channel(channel_id)
-            channel_bll.delete_channel_by_id_channel(channel_id)
-
-    def delete_channel_and_related_data(self, channel_id):
-        channel_bll = ChannelBLL()
-        channel_feed_bll = ChannelFeedBLL()
-        channel_emty_bll = ChannelEmtyBLL()
-        channel_feed_bll.delete_channel_feed_by_id_channel(channel_id)
-        channel_emty_bll.delete_channel_emty_by_id_channel(channel_id)
-        channel_bll.delete_channel_by_id_channel(channel_id)
             
     async def load_list_feed(self):
-            channel_feed_bll = ChannelFeedBLL()
-            channel_emty_bll = ChannelEmtyBLL()
-            feed_emty_bll = FeedEmtyBLL()
-
-            list_channel_feed = channel_feed_bll.get_all_channel_feed()
-            list_feed_emty = feed_emty_bll.get_all_feed_emty()
+        try:
+            channel_bll = ChannelBLL()
+            emty_bll = EmtyBLL()
+            feed_bll = FeedBLL()
+            channel_feed = ChannelFeedBLL()
+            
+            list_channel_feed = channel_feed.get_all_channel_feed()
+            list_channel = channel_bll.get_all_channel()
+            list_emty = emty_bll.get_all_emty()
+            list_feed = feed_bll.get_all_feed()
             
             for channel_feed in list_channel_feed:
-                feed_of_channel_feed = channel_feed.get_feed()
-                ReadRSS(feed_of_channel_feed.get_link_atom_feed())
+                link_atom_feed = channel_feed.get_feed().get_link_atom_feed()
+                feed_emty_tuple = read_rss_link(link_atom_feed)
                 
-                channel_of_channel_feed = channel_feed.get_channel()
-                channel_id_of_channel_feed = int(channel_of_channel_feed.get_id_channel())
+                if feed_emty_tuple:
+                    feed_dto = feed_emty_tuple[0]
+                    emty_dto = feed_emty_tuple[1]
+                else:
+                    continue
                 
-                for feed_emty in list_feed_emty:
-                    feed_of_feed_emty = feed_emty.get_feed()
-                    emty_of_feed_emty = feed_emty.get_emty()
-                    
-                    if feed_of_channel_feed == feed_of_feed_emty:
-                        channel_emty = ChannelEmtyDTO(channel_of_channel_feed, emty_of_feed_emty)
-                        link_emty = emty_of_feed_emty.get_link_emty()
-                        
-                        if channel_emty_bll.insert_channel_emty(channel_emty):
-                            channel_of_channel_emty = channel_emty.get_channel()
-                            channel_id_of_channel_emty = int(channel_of_channel_emty.get_id_channel())
                             
-                            channel_to_send = self.bot.get_channel(channel_id_of_channel_emty)
-                            if channel_to_send is None:
-                                return
-                            if channel_to_send and channel_id_of_channel_feed == channel_id_of_channel_emty:
-                                try:
-                                    logger.info(f"Sending message to {channel_to_send}")
-                                    # NOTE: Lỗi chưa tự gửi đươc embed
-                                    # ERROR id server không phải là channel_id
-                                    server_id = str(channel_to_send.guild.id) # type: ignore
-                                    link_atom = feed_of_feed_emty.get_link_atom_feed()
-                                    feed_embed = EmbedFeed(server_id, link_atom, link_emty)
-                                    await channel_to_send.send(embed=feed_embed) # type: ignore
-                                    # await channel_to_send.send(f"{link_emty}") #type: ignore
-                                except TypeError as e:
-                                    logger.error(f"Error loading list feed: {e}")
-
-            
+        except Exception as e:
+            logger.error(f"Error loading list feed: {e}")
+                       
     @tasks.loop(seconds=10)
     async def push_noti(self):
         logger.debug('run background task')
@@ -236,14 +187,14 @@ class Events(commands.Cog):
             command_list_2 = ", ".join(available_slash_commands) # type: ignore
             
             id_server = str(ctx.guild.id) if ctx.guild else "DM"
-            embed = CustomEmbed(
+            embed = EmbedCustom(
                 id_server=id_server,
                 title=f"Command **{ctx.invoked_with}** is invalid",
                 description=f'''
 command prefix: `{ctx.prefix}`
 - The current commands have: {command_list_1}
 - The current slash commands have: {command_list_2}
-                '''
+                ''',
             )
             await ctx.send(embed=embed)
         else:
@@ -258,7 +209,7 @@ command prefix: `{ctx.prefix}`
         
         id_server = str(guild.id)
         if guild.system_channel:
-            embed = CustomEmbed(
+            embed = EmbedCustom(
                 id_server=id_server,
                 title=f"**Aloha {guild.name}!**",
                 description=f'''

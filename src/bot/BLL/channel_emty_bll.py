@@ -1,33 +1,42 @@
+
+from ..BLL.singleton import Singleton
 from ..DTO.channel_emty_dto import ChannelEmtyDTO
 from ..DAL.channel_emty_dal import ChannelEmtyDAL
 from typing import Optional, List
 
-class ChannelEmtyBLL:
+
+class ChannelFeedBLL(Singleton):
     def __init__(self):
-        self.__channelEmtyDAL = ChannelEmtyDAL()
-        
-    def insert_channel_emty(self, channel_emty_dto: ChannelEmtyDTO) -> bool:
+        if not hasattr(self, '_initialized'):
+            self.__channelEmtyDAL = ChannelEmtyDAL()
+            self._initialized = True
+            
+    def insert_channel_emty(self, channel_emty_dto: ChannelEmtyDTO):
         return self.__channelEmtyDAL.insert_channel_emty(channel_emty_dto)
-
     
-    def delete_channel_emty_by_id_channel(self, id_channel: str) -> bool:  
-        return self.__channelEmtyDAL.delete_channel_emty_by_id_channel(id_channel)
-
-            
-    def delete_channel_emty_by_id_channel_and_link_emty(self, id_channel: str, link_emty: str) -> bool:
-        return self.__channelEmtyDAL.delete_channel_emty_by_id_channel_and_link_emty(id_channel, link_emty)
-
-            
-    def delete_all_channel_emty(self) -> bool:
+    def delete_channel_emty_by_channel_id(self, channel_id: str):
+        return self.__channelEmtyDAL.delete_channel_emty_by_channel_id(channel_id)
+    
+    def delete_channel_emty_by_channel_id_and_link_atom_feed(self, channel_id: str, link_atom_feed: str):
+        return self.__channelEmtyDAL.delete_channel_emty_by_channel_id_and_link_atom_feed(channel_id, link_atom_feed)
+    
+    def delete_channel_emty_by_channel_id_and_link_feed(self, channel_id: str, link_feed: str):
+        return self.__channelEmtyDAL.delete_channel_emty_by_channel_id_and_link_feed(channel_id, link_feed)
+    
+    def delete_all_channel_emty(self):
         return self.__channelEmtyDAL.delete_all_channel_emty()
-
     
-    def get_channel_emty_by_id_channel_and_link_emty(self, id_channel: str, link_emty: str) -> Optional[ChannelEmtyDTO]:
-        return self.__channelEmtyDAL.get_channel_emty_by_id_channel_and_link_emty(id_channel, link_emty)
-
-    def get_all_channel_emty(self) -> List[ChannelEmtyDTO]:
+    def get_all_channel_emty(self):
         return self.__channelEmtyDAL.get_all_channel_emty()
-
-        
-    def get_all_channel_emty_by_id_channel(self, id_channel: str) -> List[ChannelEmtyDTO]:
-        return self.__channelEmtyDAL.get_all_channel_emty_by_id_channel(id_channel)
+    
+    def get_all_channel_emty_by_channel_id(self, channel_id: str):
+        return self.__channelEmtyDAL.get_all_channel_emty_by_channel_id(channel_id)
+    
+    def get_all_channel_emty_by_channel_id_and_link_atom_feed(self, channel_id: str, link_atom_feed: str):
+        return self.__channelEmtyDAL.get_all_channel_emty_by_channel_id_and_link_atom_feed(channel_id, link_atom_feed)
+    
+    def get_all_channel_emty_by_channel_id_and_link_feed(self, channel_id: str, link_feed: str):
+        return self.__channelEmtyDAL.get_all_channel_emty_by_channel_id_and_link_feed(channel_id, link_feed)
+    
+    def get_channel_emty_by_channel_id_and_link_emty(self, channel_id: str, link_emty: str):
+        return self.__channelEmtyDAL.get_channel_emty_by_channel_id_and_link_emty(channel_id, link_emty)

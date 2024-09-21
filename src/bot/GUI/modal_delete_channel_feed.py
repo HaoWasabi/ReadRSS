@@ -1,10 +1,10 @@
 from nextcord import Interaction
 from nextcord.ui import TextInput, Modal
-from .check_authorization import check_authorization
+from ..utils.check_authorization import check_authorization
 from ..BLL.channel_bll import ChannelBLL
 from ..BLL.channel_feed_bll import ChannelFeedBLL
 
-class ModalClearChannelFeed(Modal):
+class ModalDeleteChannelFeed(Modal):
     def __init__(self, user):
         super().__init__(title="Clear Channel Feed")
         self.author = user
@@ -19,26 +19,28 @@ class ModalClearChannelFeed(Modal):
         if not await check_authorization(interaction, self.author):
             return
         
+        await interaction.response.defer()
+        
         channel_bll = ChannelBLL()
-        channel_info = channel_bll.get_channel_by_id_channel(str(self.id_channel.value))
+        channel_info = channel_bll.get_channel_by_channel_id(str(self.id_channel.value))
         
         if channel_info is None:
-            await interaction.response.send_message(f"Channel ID '{self.id_channel.value}' not found.", ephemeral=True)
+            await interaction.followup.send(f"Channel ID '{self.id_channel.value}' not found.", ephemeral=True)
             return
 
         name_channel = channel_info.get_name_channel()  
         channel_feed_bll = ChannelFeedBLL()
         
         if not self.link_feed.value and not self.link_atom_feed.value:
-            channel_feed_bll.delete_channel_feed_by_id_channel(str(self.id_channel.value))  
+            channel_feed_bll.delete_channel_feed_by_channel_id(str(self.id_channel.value))
         
         elif self.link_feed.value and not self.link_atom_feed.value:
-            channel_feed_bll.delete_channel_feed_by_id_channel_and_link_feed(str(self.id_channel.value), self.link_feed.value)
+            channel_feed_bll.delete_channel_feed_by_channel_id_and_link_feed(str(self.id_channel.value), self.link_feed.value)
         
         elif not self.link_feed.value and self.link_atom_feed.value:
-            channel_feed_bll.delete_channel_feed_by_id_channel_and_link_atom_feed(str(self.id_channel.value), self.link_atom_feed.value)
-
-        await interaction.response.send_message(
+            channel_feed_bll.delete_channel_feed_by_channel_id_and_link_atom_feed(str(self.id_channel.value), self.link_atom_feed.value)
+        
+        await interaction.followup.send(
             f"Successfully feed setting for channel **{name_channel}** (`{self.id_channel.value}`).",
             ephemeral=True
         )

@@ -55,7 +55,7 @@ class UserChannelDAL(BaseDAL):
             with self.connection:
                 self.cursor.execute('''
                 SELECT u.user_id, u.user_name,
-                    c.channel_id, c.server_id, c.channel_name, c.hex_color, c.is_active,
+                    c.channel_id, c.server_id, c.channel_name, c.is_active,
                     uc.date
                 FROM tbl_user_channel uc
                 JOIN tbl_user u on u.user_id = uc.user_id
@@ -63,7 +63,8 @@ class UserChannelDAL(BaseDAL):
                 ''')
                 rows = self.cursor.fetchall()
                 if rows:
-                    return [UserChannelDTO(UserDTO(row[0], row[1]), ChannelDTO(row[2], row[3], row[4], row[5], bool(row[6])), row[7]) for row in rows]
+                    return [UserChannelDTO(UserDTO(row[0], row[1]), 
+                            ChannelDTO(row[2], row[3], row[4], bool(row[5])), row[6]) for row in rows]
                 else:
                     return []
         except sqlite3.Error as e:
@@ -78,7 +79,7 @@ class UserChannelDAL(BaseDAL):
             with self.connection:
                 self.cursor.execute('''
                 SELECT u.user_id, u.user_name,
-                    c.channel_id, c.server_id, c.channel_name, c.hex_color, c.is_active,
+                    c.channel_id, c.server_id, c.channel_name, c.is_active,
                     uc.date
                 FROM tbl_user_channel uc
                 JOIN tbl_user u on u.user_id = uc.user_id
@@ -87,7 +88,8 @@ class UserChannelDAL(BaseDAL):
                 ''', (user_id,))
                 rows = self.cursor.fetchall()
                 if rows:
-                    return [UserChannelDTO(UserDTO(row[0], row[1]), ChannelDTO(row[2], row[3], row[4], row[5], bool(row[6])), row[7]) for row in rows]
+                    return [UserChannelDTO(UserDTO(row[0], row[1]), 
+                            ChannelDTO(row[2], row[3], row[4], bool(row[5])), row[6]) for row in rows]
                 else:
                     return []
         except sqlite3.Error as e:
@@ -102,7 +104,7 @@ class UserChannelDAL(BaseDAL):
             with self.connection:
                 self.cursor.execute('''
                 SELECT u.user_id, u.user_name,
-                    c.channel_id, c.server_id, c.channel_name, c.hex_color, c.is_active,
+                    c.channel_id, c.server_id, c.channel_name, c.is_active,
                     uc.date
                 FROM tbl_user_channel uc
                 JOIN tbl_user u on u.user_id = uc.user_id
@@ -111,7 +113,8 @@ class UserChannelDAL(BaseDAL):
                 ''', (channel_id,))
                 rows = self.cursor.fetchall()
                 if rows:
-                    return [UserChannelDTO(UserDTO(row[0], row[1]), ChannelDTO(row[2], row[3], row[4], row[5], bool(row[6])), row[7]) for row in rows]
+                    return [UserChannelDTO(UserDTO(row[0], row[1]), 
+                            ChannelDTO(row[2], row[3], row[4], bool(row[5])), row[6]) for row in rows]
                 else:
                     return []
         except sqlite3.Error as e:

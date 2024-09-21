@@ -14,6 +14,7 @@ class ServerDAL(BaseDAL):
             CREATE TABLE IF NOT EXISTS tbl_server(
                 server_id TEXT PRIMARY KEY,
                 server_name TEXT,
+                hex_color TEXT,
                 is_active INTERGER DEFAULT 1
             )
             ''')
@@ -29,9 +30,9 @@ class ServerDAL(BaseDAL):
         try:
             with self.connection:
                 self.cursor.execute('''
-                    INSERT INTO tbl_server (server_id, server_name)
-                    VALUES (?, ?)
-                    ''', (server_dto.get_server_id(), server_dto.get_server_name()))
+                    INSERT INTO tbl_server (server_id, server_name, hex_color)
+                    VALUES (?, ?, ?)
+                    ''', (server_dto.get_server_id(), server_dto.get_server_name(), server_dto.get_hex_color()))
                 self.connection.commit()
                 logger.info(f"Data inserted successfully into 'tbl_server'.")
                 return True
@@ -85,9 +86,9 @@ class ServerDAL(BaseDAL):
             with self.connection:
                 self.cursor.execute('''
                 UPDATE tbl_server
-                SET server_name = ?, is_active = ?
+                SET server_name = ?, hex_color = ?, is_active = ?
                 WHERE server_id = ?
-                ''', (server_dto.get_server_name(), server_dto.get_state(), server_dto.get_server_id()))
+                ''', (server_dto.get_server_name(), server_dto.get_hex_color(), server_dto.get_state(), server_dto.get_server_id()))
                 self.connection.commit()
                 logger.info(f"ALl data updated successfully in 'tbl_server'.")
                 return True
@@ -106,7 +107,7 @@ class ServerDAL(BaseDAL):
             ''', (server_id,))
             row = self.cursor.fetchone()
             if row:
-                return ServerDTO(row[0], row[1], bool(row[2]))
+                return ServerDTO(row[0], row[1], row[2], bool(row[3]))
             else:
                 return None
         except sqlite3.Error as e:
@@ -129,7 +130,7 @@ class ServerDAL(BaseDAL):
                 ''', (is_active,))
             rows = self.cursor.fetchall()
             if rows:
-                return [ServerDTO(row[0], row[1]) for row in rows]
+                return [ServerDTO(row[0], row[1], row[2]) for row in rows]
             else:
                 return []
         except sqlite3.Error as e:
