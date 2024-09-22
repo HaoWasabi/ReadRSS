@@ -21,7 +21,7 @@ class TransactionHistoryDAL(BaseDAL):
                         `channel_id` TEXT,
                         `premium_id` TEXT,
                         `message_id` TEXT,
-                        `date_created` DATETIME,
+                        `date_created` timestamp,
                         `is_success` bool
                 );
             """)

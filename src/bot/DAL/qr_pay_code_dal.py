@@ -23,7 +23,7 @@ class QrPayCodeDAL(BaseDAL):
                     `channel_id` TEXT,
                     `premium_id` TEXT,
                     `message_id` TEXT,
-                    `date_created` DATETIME,
+                    `date_created` timestamp,
                     `is_success` bool
             )
             ''')
@@ -58,15 +58,15 @@ class QrPayCodeDAL(BaseDAL):
     def insert_qr_pay_code(self, qr_pay: QrPayCodeDTO):
         self.open_connection()
         self.cursor.execute(
-            "INSERT OR REPLACE INTO INTO qr_pay_code VALUES (?, ?, ?, ?, ?, ?, ?);", 
+            "INSERT OR REPLACE INTO qr_pay_code VALUES (?, ?, ?, ?, ?, ?, ?);", 
             (
                 qr_pay.qr_code,
                 qr_pay.user_id,
                 qr_pay.channel_id,
                 qr_pay.premium_id,
                 qr_pay.message_id,
-                qr_pay.is_success,
-                qr_pay.date_created
+                qr_pay.date_created,
+                qr_pay.is_success
             )
         )
         self.connection.commit()

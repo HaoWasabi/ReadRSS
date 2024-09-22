@@ -1,3 +1,6 @@
+from email import message
+from tkinter.messagebox import NO
+from discord import ButtonStyle, Emoji, PartialEmoji
 import logging, os , datetime, mbbank, re
 import sys
 from typing import Optional
@@ -5,7 +8,11 @@ from nextcord.ext import commands, tasks
 from nextcord.ext.commands import Context
 import nextcord
 from nextcord import Interaction, SlashOption, TextChannel
-from nextcord.ui import View, Button
+from nextcord.ui import View, Button, button
+
+from ..utils.datetime_format import datetime_from_string
+
+from ..DTO.premium_dto import PremiumDTO
 
 from ..GUI.button_of_premium import ButtonOfPayment
 
@@ -36,7 +43,7 @@ class CommandPaying(CommandsCog):
         qr_pay_code_bll = QrPayCodeBLL()
         all_qr = qr_pay_code_bll.get_all_qr_pay_code()
         for i in all_qr:
-            denta = datetime.datetime.now() - i.date_created
+            denta = datetime.datetime.now() - i.date_created # type: ignore
             # kiểm tra hết hạng của mã qr
             # ở đây tôi để 3p
             if denta > datetime.timedelta(minutes=3) and not i.is_success:
@@ -131,61 +138,71 @@ class CommandPaying(CommandsCog):
               
     @commands.command(name="premium")
     async def pay(self, ctx: Context):
-        if await self.is_dm_channel(ctx): 
-            return
+        # if await self.is_dm_channel(ctx): 
+        #     return
         
-        if not await self.is_server_owner(ctx=ctx):
-            return
+        # if not await self.is_server_owner(ctx=ctx):
+        #     return
         
         embed_text = EmbedCustom(
         id_server=str(ctx.guild.id) if ctx.guild else "DM",
         title="Nạp để mở gói premium",
         description="Gói premium mang đến nhiều tính năng hơn. ở đây là một số gói cơ bản:")
-         
-        embed_text.add_field(name="gói 1", value="----------", inline=False)
-        embed_text.add_field(name="gói 2", value="----------", inline=False)
-        embed_text.add_field(name="gói 3", value="----------", inline=False)
-         
-        await ctx.send(embed=embed_text, view=ButtonOfPayment(self))
         
-        # view.add_item()
+        premium_bll = PremiumBLL()
         
-        # embed_text = EmbedCustom(
-        #     id_server=str(ctx.guild.id) if ctx.guild else "DM",
-        #     title="Nạp để mở gói premium",
-        #     description="Gói premium mang đến nhiều tính năng hơn")
+        
+        
+        buttons = View()
+        
+        cls = self
+        
+        class goiButton(Button):
+            def __init__(self, pre: PremiumDTO):
+                super().__init__(label=pre.get_premium_name())
+                self.pre = pre
+                
+            async def callback(self, interaction: Interaction):
+                
+                embed_text = EmbedCustom(
+                    id_server=str(ctx.guild.id) if ctx.guild else "DM",
+                    title="Nạp để mở gói premium",
+                    description="Gói premium mang đến nhiều tính năng hơn")
 
 
 
-        # embed_text.add_field(name="Ngân hàng MB-Bank", value=os.getenv('BANK_USER_NAME'), inline=False)
-        # embed_text.add_field(name="Số Tiền:", value="10k", inline=False)
+                embed_text.add_field(name="Ngân hàng MB-Bank", value=os.getenv('BANK_USER_NAME'), inline=False)
+                embed_text.add_field(name="Số Tiền:", value=f"{self.pre.get_price()}đ", inline=False)
 
-        # if (ctx.guild is None or ctx.channel is None):
-        #     await ctx.send('có gì đó lạ lắm')
-        #     return
+                if (ctx.guild is None or ctx.channel is None):
+                    await ctx.send('có gì đó lạ lắm')
+                    return
+                
+                qr_id = QRGenerator.generator_id()
+                embed_text.add_field(name="Nội dung:", value=f"T{qr_id}T", inline=False)
+                
+                embed_text.set_image(QRGenerator.generator_qr(qr_id))
+                message = await interaction.edit(content='', embed=embed_text, view=None)
+                
+                if message is None:
+                    await ctx.send('có gì đó lạ lắm')
+                    return
+                qr = QrPayCodeDTO(qr_id, str(ctx.author.id), str(message.channel.id), self.pre.get_premium_id(), str(message.id), datetime.datetime.now(), False)
+                
+                qr_pay_code_bll = QrPayCodeBLL()
+                qr_pay_code_bll.insert_qr_pay_code(qr)
+                if not cls.start_listener_bank_history.is_running():
+                    cls.start_listener_bank_history.start()
+                cls.start_time = datetime.datetime.now()
+                
         
-        # qr_id = QRGenerator.generator_id()
-        # embed_text.add_field(name="Nội dung:", value=f"T{qr_id}T", inline=False)
+        for index, pre in enumerate(premium_bll.get_all_premiums()):
+            embed_text.add_field(name=pre.get_premium_name(), value=f"""{pre.get_description()}\ngiá: {pre.get_price()}\nthời hạn: {pre.get_duration()}""", inline=False)
+                    
+            buttons.add_item(goiButton(pre))
         
-        # embed_text.set_image(QRGenerator.generator_qr(qr_id))
-        # message = await ctx.send(embed=embed_text)
-        # user_id = str(ctx.author.id)
+        await ctx.send(embed=embed_text, view=buttons)
         
-        # qr = QrPayCodeDTO(qr_id, user_id, str(message.channel.id), '1', str(message.id), False, datetime.datetime.now())
-        
-        # qr_pay_code_bll = QrPayCodeBLL()
-        # qr_pay_code_bll.insert_qr_pay_code(qr)
-        # if not self.start_listener_bank_history.is_running():
-        #     self.start_listener_bank_history.start()
-        # self.start_time: datetime.datetime = datetime.datetime.now()
-    
-    
-    
-    
-    async def callback(self, button: Button, interaction: Interaction):
-        
-        await interaction.send(str(interaction.message.id))
-        await interaction.send('ok')
 
 async def setup(bot: commands.Bot):
     # NOTE: add_cog là một funstion bình thường không phải là async funstion

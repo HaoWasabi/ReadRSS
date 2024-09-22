@@ -18,7 +18,7 @@ class BaseDAL:
         pass
     
     def open_connection(self):
-        self.connection = sqlite3.connect(db_path)
+        self.connection = sqlite3.connect(db_path, detect_types=sqlite3.PARSE_DECLTYPES)
         self.cursor = self.connection.cursor()
     
     def close_connection(self):

@@ -9,5 +9,5 @@ class QrPayCodeDTO:
     channel_id: str
     premium_id: str
     message_id: str
-    is_success: bool
     date_created: datetime
+    is_success: bool
