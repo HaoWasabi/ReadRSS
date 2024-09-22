@@ -2,7 +2,7 @@ from nextcord import Interaction
 from nextcord.ui import TextInput, Modal
 from ..utils.check_authorization import check_authorization
 from ..BLL.channel_bll import ChannelBLL
-from ..BLL.channel_feed_bll import ChannelFeedBLL
+from ..BLL.feed_bll import FeedBLL
 
 class ModalDeleteChannelFeed(Modal):
     def __init__(self, user):
@@ -29,16 +29,16 @@ class ModalDeleteChannelFeed(Modal):
             return
 
         name_channel = channel_info.get_name_channel()  
-        channel_feed_bll = ChannelFeedBLL()
+        feed_bll = FeedBLL()
         
         if not self.link_feed.value and not self.link_atom_feed.value:
-            channel_feed_bll.delete_channel_feed_by_channel_id(str(self.id_channel.value))
+            feed_bll.delete_feed_by_channel_id(str(self.id_channel.value))
         
         elif self.link_feed.value and not self.link_atom_feed.value:
-            channel_feed_bll.delete_channel_feed_by_channel_id_and_link_feed(str(self.id_channel.value), self.link_feed.value)
+            feed_bll.delete_feed_by_link_feed_and_channel_id(self.link_feed.value, str(self.id_channel.value))
         
         elif not self.link_feed.value and self.link_atom_feed.value:
-            channel_feed_bll.delete_channel_feed_by_channel_id_and_link_atom_feed(str(self.id_channel.value), self.link_atom_feed.value)
+            feed_bll.delete_feed_by_link_atom_feed_and_channel_id(self.link_atom_feed.value,str(self.id_channel.value))
         
         await interaction.followup.send(
             f"Successfully feed setting for channel **{name_channel}** (`{self.id_channel.value}`).",

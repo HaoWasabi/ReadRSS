@@ -28,9 +28,9 @@ class CommandShowChannel(CommandsCog):
     async def _show_channel(self, ctx, guild=None, user=None):
         try:
             # Kiểm tra xem có phải là DM không
-            if ctx.guild:
-                guild_id = ctx.guild.id  # Lấy ID từ guild
-                guild_name = ctx.guild.name
+            if guild is not None:
+                guild_id = guild.id
+                guild_name = guild.name
             else:
                 guild_id = "DM"
                 guild_name = "Direct Message"

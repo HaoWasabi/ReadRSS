@@ -19,7 +19,7 @@ class ChannelFeedBLL(Singleton):
 
     def delete_channel_feed_by_channel_id_and_link_atom_feed(self, channel_id: str, linkAtom_feed: str) -> bool:
         return self.__channelFeedDAL.delete_channel_feed_by_channel_id_and_link_atom_feed(channel_id, linkAtom_feed)
-
+    
     def delete_channel_feed_by_channel_id_and_link_feed(self, channel_id: str, link_feed: str) -> bool:
         return self.__channelFeedDAL.delete_channel_feed_by_channel_id_and_link_feed(channel_id, link_feed)
 

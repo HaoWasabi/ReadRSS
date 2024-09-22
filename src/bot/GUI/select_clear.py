@@ -16,7 +16,7 @@ class SelectClear(View):
         options=[
             SelectOption(label="all", value="all", description="Clear all database."),
             SelectOption(label="tbl", value="tbl", description="Clear a table in database."),
-            SelectOption(label="channel_feed", value="channel_feed", description="Clear a channel feed in database.")
+            SelectOption(label="feed", value="feed", description="Clear a channel feed in database.")
         ]
     )
     
@@ -32,7 +32,7 @@ class SelectClear(View):
         elif selection == "tbl":
             await interaction.response.send_modal(ModalClearTable(self.author))
             
-        elif selection == "channel_feed":
+        elif selection == "feed":
             await interaction.response.send_modal(ModalDeleteChannelFeed(self.author))
         
     

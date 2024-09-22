@@ -57,7 +57,23 @@ class FeedDAL(BaseDAL):
             with self.connection:
                 self.cursor.execute('''
                 DELETE FROM tbl_feed WHERE link_atom_feed = ? and channel_id = ?
-                ''', (link_atom_feed,))
+                ''', (link_atom_feed,channel_id))
+                self.connection.commit()
+                logger.info(f"Data deleted from 'tbl_feed' successfully.")
+                return True
+        except sqlite3.Error as e:
+            logger.error(f"Error deleting data from 'tbl_feed': {e}")
+            return False
+        finally:
+            self.close_connection()
+            
+    def delete_feed_by_link_feed_and_channel_id(self, link_feed: str, channel_id: str) -> bool:
+        self.open_connection()
+        try:
+            with self.connection:
+                self.cursor.execute('''
+                DELETE FROM tbl_feed WHERE link_feed = ? and channel_id = ?
+                ''', (link_feed,channel_id))
                 self.connection.commit()
                 logger.info(f"Data deleted from 'tbl_feed' successfully.")
                 return True

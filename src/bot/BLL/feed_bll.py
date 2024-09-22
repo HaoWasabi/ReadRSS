@@ -16,6 +16,9 @@ class FeedBLL(Singleton):
     def delete_feed_by_link_atom_feed_and_channel_id(self, linkAtom_feed: str, channel_id: str) -> bool:
         return self.__feedDAL.delete_feed_by_link_atom_feed_and_channel_id(linkAtom_feed, channel_id)
     
+    def delete_feed_by_link_feed_and_channel_id(self, link_feed: str, channel_id: str) -> bool:
+        return self.__feedDAL.delete_feed_by_link_feed_and_channel_id(link_feed, channel_id)
+   
     def delete_feed_by_channel_id(self, channel_id: str) -> bool:
         return self.__feedDAL.delete_feed_by_channel_id(channel_id)
     
