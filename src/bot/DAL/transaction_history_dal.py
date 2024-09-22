@@ -57,3 +57,10 @@ class TransactionHistoryDAL(BaseDAL):
         
         self.connection.commit()
         self.close_connection()
+
+    def get_all_transaction_history(self):
+        self.open_connection()
+        self.cursor.execute('SELECT * FROM transaction_history;')
+        rows = self.cursor.fetchall()
+        self.close_connection()
+        return [TransactionHistoryDTO(*row) for row in rows]

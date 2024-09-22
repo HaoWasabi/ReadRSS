@@ -14,3 +14,6 @@ class TransactionHistoryBLL(Singleton):
     
     def insert_transaction_history(self, transaction: TransactionHistoryDTO):
         return self.__TransactionHistoryDAL.insert_transaction_history(transaction)
+    
+    def get_all_transaction_history(self):
+        return self.__TransactionHistoryDAL.get_all_transaction_history()

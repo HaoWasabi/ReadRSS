@@ -19,6 +19,6 @@ class PremiumBLL(Singleton):
     def get_premium_by_id(self, premium_id: str) -> Optional[PremiumDTO]:
         return self.__premiumDAL.get_premium_by_id(premium_id)
     
-    def get_all_premiums(self):
-        return self.__premiumDAL.get_all_premium()
+    def get_all_premiums(self, ignore_state=False, is_active=True):
+        return self.__premiumDAL.get_all_premium(ignore_state, is_active)
     
