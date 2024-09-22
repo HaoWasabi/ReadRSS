@@ -7,7 +7,7 @@ class QRGenerator:
         return f"https://img.vietqr.io/image/MB-{os.getenv('BANK_ID')}-{os.getenv('QR_TEMPLATE')}.png?accountName=AIKO&amount=10000&addInfo=T{qr_id}T"
     
     @staticmethod
-    def generator_id(user_id: str):
+    def generator_id():
         s = ''
         for i in range(20):
             s += str(random.randint(0, 9))

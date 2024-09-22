@@ -7,6 +7,7 @@ from ..DTO.qr_code_pay_dto import QrPayCodeDTO
 from ..DAL.base_dal import BaseDAL, logger
 
 
+
 class QrPayCodeDAL(BaseDAL):
     def __init__(self):
         super().__init__()
@@ -17,11 +18,13 @@ class QrPayCodeDAL(BaseDAL):
         try:
             self.cursor.execute('''
             CREATE TABLE qr_pay_code (
-                qr_code TEXT PRIMARY KEY,
-                server_id TEXT,
-                channel_id TEXT,
-                message_id TEXT,
-                ngay_tao DATETIME
+                    `qr_code` TEXT PRIMARY KEY,
+                    `user_id` TEXT,
+                    `channel_id` TEXT,
+                    `premium_id` TEXT,
+                    `message_id` TEXT,
+                    `date_created` DATETIME,
+                    `is_success` bool
             )
             ''')
             self.connection.commit()
@@ -36,32 +39,36 @@ class QrPayCodeDAL(BaseDAL):
     
     def get_qr_pay_code_by_qr_code(self, qr_code: str):
         self.open_connection()
-        self.cursor.execute("SELECT qr_code, server_id, channel_id, message_id, ngay_tao FROM qr_pay_code WHERE qr_code=?; ", (qr_code,))
+        self.cursor.execute("SELECT * WHERE qr_code=?; ", (qr_code,))
         rows=self.cursor.fetchone()
         self.close_connection()
         if rows:
-            return QrPayCodeDTO(rows[0], rows[1], rows[2], rows[3], datetime_from_string(rows[4]))
+            rows[-1] = datetime_from_string(rows[-1])
+            return QrPayCodeDTO(*rows)
         
         return None
         
-    
     def get_all_qr_pay_code(self):
         self.open_connection()
-        self.cursor.execute("SELECT qr_code, server_id, channel_id, message_id, ngay_tao FROM qr_pay_code;")
+        self.cursor.execute("SELECT * FROM qr_pay_code;")
         rows = self.cursor.fetchall()
         self.close_connection()
-        return [QrPayCodeDTO(qr_code, server_id, channel_id, message_id, datetime_from_string(ngay_tao)) for qr_code, server_id, channel_id, message_id, ngay_tao in rows]
+        return [QrPayCodeDTO(*a) for a in rows]
     
     def insert_qr_pay_code(self, qr_pay: QrPayCodeDTO):
         self.open_connection()
-        self.cursor.execute("INSERT INTO qr_pay_code(qr_code, server_id, channel_id, message_id, ngay_tao) VALUES (?, ?, ?, ?, ?);", 
-                            [
-                                qr_pay.get_qr_code(),
-                                qr_pay.get_server_id(),
-                                qr_pay.get_channel_id(),
-                                qr_pay.get_message_id(),
-                                datetime_to_string(qr_pay.get_ngay_tao())
-                            ])
+        self.cursor.execute(
+            "INSERT OR REPLACE INTO INTO qr_pay_code VALUES (?, ?, ?, ?, ?, ?, ?);", 
+            (
+                qr_pay.qr_code,
+                qr_pay.user_id,
+                qr_pay.channel_id,
+                qr_pay.premium_id,
+                qr_pay.message_id,
+                qr_pay.is_success,
+                qr_pay.date_created
+            )
+        )
         self.connection.commit()
         self.close_connection()
         return True

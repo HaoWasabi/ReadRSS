@@ -4,7 +4,8 @@ from nextcord import Interaction
 from nextcord.ui import View, Button
 from nextcord.ext.commands import Bot
 from ..DTO.color_dto import ColorDTO
-from ..BLL.channel_feed_bll import ChannelFeedBLL
+from ..BLL.feed_bll import FeedBLL
+
 from ..GUI.embed_custom import EmbedCustom
 from ..utils.check_authorization import check_authorization
 
@@ -21,7 +22,7 @@ class ButtonOfCtrlCommand(View):
             return
 
         try:
-            channel_feed_bll = ChannelFeedBLL()
+            channel_feed_bll = FeedBLL()
             id_server = str(interaction.guild.id) if interaction.guild else "Unknown"
             server_data = {}
             num = 0

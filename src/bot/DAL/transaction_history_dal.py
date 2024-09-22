@@ -15,13 +15,15 @@ class TransactionHistoryDAL(BaseDAL):
         try:
         
             self.cursor.execute("""
-                CREATE TABLE transaction_history (
-                    transaction_id TEXT PRIMARY KEY,
-                    `time` datetime,
-                    `content` TEXT,
-                    credit_amount INT,
-                    `currency` TEXT
-                )
+                CREATE TABLE `transaction_history` (
+                        `qr_code` TEXT PRIMARY KEY,
+                        `user_id` TEXT,
+                        `channel_id` TEXT,
+                        `premium_id` TEXT,
+                        `message_id` TEXT,
+                        `date_created` DATETIME,
+                        `is_success` bool
+                );
             """)
             self.connection.commit()
             logger.info(f"Table 'transaction_history' created successfully.")
@@ -34,24 +36,25 @@ class TransactionHistoryDAL(BaseDAL):
         
     def get_transaction_history_by_id(self, transaction_id: str):
         self.open_connection()
-        self.cursor.execute('SELECT transaction_id , `time`, `content`, credit_amount , `currency` FROM transaction_history WHERE transaction_id=?;', (transaction_id,))
+        self.cursor.execute('SELECT * WHERE transaction_id=?;', (transaction_id,))
         c = self.cursor.fetchone()
         self.close_connection()
         if c:
-            return TransactionHistoryDTO(c[0], datetime_from_string(c[1]), c[2], c[3], c[4])
+            return TransactionHistoryDTO(*c)
     
         return None
     
     def insert_transaction_history(self, transaction: TransactionHistoryDTO):
         self.open_connection()
-        self.cursor.execute('INSERT INTO transaction_history(transaction_id , `time`, `content`, credit_amount , `currency`) VALUES (?, ?, ?, ?, ?)', 
-                            (
-                                transaction.get_transaction_id(),
-                                datetime_to_string(transaction.get_time()),
-                                transaction.get_content(),
-                                transaction.get_credit_amount(),
-                                transaction.get_currency(),
-                            ))
+        self.cursor.execute(
+            'INSERT INTO transaction_history(`id_transaction`, `qr_code`, `transaction_date`, `content`, `currency`, `credit_amount`,) VALUES (?,?,?,?,?,?)',
+            (transaction.id_transaction,
+             transaction.qr_code,
+             datetime_to_string(transaction.transaction_date),
+             transaction.content,
+             transaction.currency,
+             transaction.credit_amount)
+        )  
         
         self.connection.commit()
         self.close_connection()
