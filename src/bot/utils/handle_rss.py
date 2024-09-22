@@ -21,6 +21,7 @@ class GetRSS:
         return self.__rss_link
 
 def handle_url(url: str) -> str:
+    
     return f"https://{url}" if "http://" not in url and "https://" not in url else url
 
 def get_rss_link(url: str) -> Optional[str]:

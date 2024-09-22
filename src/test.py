@@ -10,7 +10,8 @@
 # from bot.DTO.server_channel_dto import ServerChannelDTO
 # from bot.DTO.server_color_dto import ServerColorDTO
 # from bot.BLL.feed_bll import FeedBLL
-# from bot.BLL.emty_bll import EmtyBLL
+from bot.BLL.emty_bll import EmtyBLL
+from bot.DTO.emty_dto import EmtyDTO
 # from bot.BLL.feed_emty_bll import FeedEmtyBLL
 # from bot.BLL.server_bll import ServerBLL
 # from bot.BLL.channel_bll import ChannelBLL
@@ -28,43 +29,44 @@
 # from bot.DTO.transaction_history_dto import TransactionHistoryDTO
 # from bot.DAL.transaction_history_dal import TransactionHistoryDAL
 
-# def test_feed_emty():
-#     print ('''
-#            -- TEST FEED_EMTY --
-#            ''')
-#     feedEmtyBLL = FeedEmtyBLL()
-#     feedBLL = FeedBLL()
-#     emtyBLL = EmtyBLL()
+def test_feed_emty():
+    print ('''
+           -- TEST FEED_EMTY --
+           ''')
+    # feedEmtyBLL = FeedEmtyBLL()
+    # feedBLL = FeedBLL()
+    emtyBLL = EmtyBLL()
+    emtyBLL.delete_all_emty()
     
-#     feedDTO = FeedDTO("a", "a", "a", "a", "a", "a")
-#     feedBLL.insert_feed(feedDTO)
+    # feedDTO = FeedDTO("a", "a", "a", "a", "a", "a". )
+    # feedBLL.insert_feed(feedDTO)
     
-#     emtyDTO = EmtyDTO("a", "a", "a", "a", "a")
-#     emtyBLL.insert_emty(emtyDTO)
+    # emtyDTO = EmtyDTO("a", "a", "a", "a", "a", "a", "a")
+    # emtyBLL.insert_emty(emtyDTO)
     
-#     feedEmtyBLL.insert_feed_emty(FeedEmtyDTO(feedDTO, emtyDTO))
+    # feedEmtyBLL.insert_feed_emty(FeedEmtyDTO(feedDTO, emtyDTO))
     
-#     try:
-#         print(feedEmtyBLL.get_feed_emty_by_link_atom_feed_and_link_emty("a", "a"))
+    # try:
+        # print(feedEmtyBLL.get_feed_emty_by_link_atom_feed_and_link_emty("a", "a"))
            
-#         emtyDTO.set_pubdate_emty("m")
-#         print(emtyDTO)
-#         emtyBLL.update_emty_by_link_emty("a", emtyDTO)
+        # emtyDTO.set_pubdate_emty("m")
+        # print(emtyDTO)
+        # emtyBLL.update_emty_by_link_emty("a", emtyDTO)
     
-#         print("\nLIST FEED_EMTY DTO GET ALL FEED EMTY: BEGIN - - - -")
-#         for i in feedEmtyBLL.get_all_feed_emty(): 
-#             print(i)
-#         print("FINSH - - - - - - - - - - ")
+        # print("\nLIST FEED_EMTY DTO GET ALL FEED EMTY: BEGIN - - - -")
+        # for i in feedEmtyBLL.get_all_feed_emty(): 
+        #     print(i)
+        # print("FINSH - - - - - - - - - - ")
         
-#         print("\nLIST FEED_EMTY DTO GET ALL FEED EMTY BY LINK FEED: BEGIN - - - -")
-#         for i in feedEmtyBLL.get_all_feed_emty_by_link_feed("a"): 
-#             print(i)
-#         print("FINSH - - - - - - - - - - ")
-#         feedEmtyBLL.delete_all_feed_emty()
-#         feedBLL.delete_all_feed()
-#         emtyBLL.delete_all_emty()
-#     except Exception as e:
-#         print(f"Một lỗi đã xảy ra: {e}")
+        # print("\nLIST FEED_EMTY DTO GET ALL FEED EMTY BY LINK FEED: BEGIN - - - -")
+        # for i in feedEmtyBLL.get_all_feed_emty_by_link_feed("a"): 
+        #     print(i)
+        # print("FINSH - - - - - - - - - - ")
+        # feedEmtyBLL.delete_all_feed_emty()
+        # feedBLL.delete_all_feed()
+
+    # except Exception as e:
+    #     print(f"Một lỗi đã xảy ra: {e}")
 
 # def test_channel_emty():
 #     print ('''
@@ -253,3 +255,4 @@
 # test_qr_pay_code()
 # test_server_pay_dal()
 # test_server_color()
+test_feed_emty()

@@ -5,6 +5,7 @@ Table feed{
   description string
   logo_feed string
   pudDate_feed datetime
+  channel_id string [ref: > channel.channel_id]
 }
 
 Table emty{
@@ -15,6 +16,7 @@ Table emty{
   pubDate_emty datetime
   link_feed string [ref: > feed.link_feed]
   link_atom_feed string [ref: > feed.link_atom_feed]
+  channel_id string [ref: > feed.channel_id]
 }
 
 // Ref: feed.link_feed < emty.link_emty
@@ -25,12 +27,6 @@ Table channel{
   server_id string [ref: > server.server_id]
 }
 
-Table ChannelEmty{
-  channel_id string [ref: > channel.channel_id]
-  link_emty string [ref: - emty.link_emty]
-  link_atom_feed string [ref: - emty.link_atom_feed]
-  link_feed string [ref: - emty.link_feed]
-}
 // Ref: channel.channel_id < feed.link_atom_feed
 // Ref: channel.channel_id < feed.link_feed
 
@@ -42,11 +38,11 @@ Table server{
 
 // Ref: server.server_id < channel.channel_id
 
-// Table color{
-//   hex_color string [pk]
-//   name_color string
-// }
-// Ref: color.hex_color - channel.channel_id
+Table color{
+  hex_color string [pk]
+  name_color string
+}
+Ref: color.hex_color - server.server_id
 
 Table userchannel{
   user_id string [pk]
@@ -55,7 +51,7 @@ Table userchannel{
 }
 
 Ref: userchannel.channel_id - channel.channel_id
-Ref: userchannel.user_id - user.user_id
+Ref: userchannel.user_id > user.user_id
 
 Table user{
   user_id string [pk]

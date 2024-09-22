@@ -3,7 +3,9 @@ import nextcord
 from nextcord.ext import commands
 from nextcord import Interaction, SlashOption, TextChannel
 from typing import Optional
-from ..BLL.channel_feed_bll import ChannelFeedBLL
+from ..BLL.channel_bll import ChannelBLL
+from ..BLL.emty_bll import EmtyBLL
+from ..BLL.feed_bll import FeedBLL
 from ..utils.commands_cog import CommandsCog
 from ..utils.handle_rss import get_rss_link
 
@@ -47,19 +49,24 @@ class CommandDeleteFeed(CommandsCog):
 
     async def _delete_feed(self, source, channel: TextChannel, link_rss: Optional[str] = None):
         try:
-            channel_feed_bll = ChannelFeedBLL()
-            if not channel_feed_bll.get_all_channel_feed_by_channel_id(str(channel.id)):
+            feed_bll = FeedBLL()
+            emty_bll = EmtyBLL()
+            channel_id = str(channel.id)
+            
+            if feed_bll.get_all_feed_by_channel_id(channel_id) is []:
                 await source.send("This channel does not have any feeds.")
                 return
             
             if link_rss:
-                if not channel_feed_bll.get_channel_feed_by_channel_id_and_link_atom_feed(str(channel.id), link_rss):
+                if not feed_bll.get_feed_by_link_atom_feed_and_channel_id(link_rss, channel_id):
                     await source.send(f"RSS feed not found in {channel.mention}.")
-                    return
-                channel_feed_bll.delete_channel_feed_by_channel_id_and_link_atom_feed(str(channel.id), link_rss)
+                    return 
+                feed_bll.delete_feed_by_link_atom_feed_and_channel_id(link_rss, channel_id)
+                emty_bll.delete_emty_by_link_atom_feed_and_channel_id(link_rss, channel_id)
             else:
-                channel_feed_bll.delete_channel_feed_by_channel_id(str(channel.id))
-
+                feed_bll.delete_feed_by_channel_id(channel_id)
+                emty_bll.delete_emty_by_channel_id(channel_id)
+        
             await source.send(f"Successfully deleted feed(s) from {channel.mention}.")
         
         except Exception as e:

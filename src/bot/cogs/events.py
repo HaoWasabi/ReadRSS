@@ -9,7 +9,6 @@ from ..DTO.channel_dto import ChannelDTO
 from ..DTO.server_dto import ServerDTO
 from ..DTO.color_dto import ColorDTO
 
-from ..BLL.channel_feed_bll import ChannelFeedBLL
 from ..BLL.channel_bll import ChannelBLL
 from ..BLL.server_bll import ServerBLL
 from ..BLL.feed_bll import FeedBLL
@@ -34,15 +33,15 @@ class Events(CommandsCog):
             list_channel = channel_bll.get_all_channel()
             list_server = server_bll.get_all_server()
 
-            default_color = ColorDTO("blue").get_hex_color()
-            channel_dto = ChannelDTO("DM", "DM", "DM")
-            channel_bll.insert_channel(channel_dto)
+            # default_color = ColorDTO("blue").get_hex_color()
+            # channel_dto = ChannelDTO("DM", "DM", "DM")
+            # channel_bll.insert_channel(channel_dto)
             
-            server_dto = ServerDTO(
-                server_id="DM", 
-                server_name="DM", 
-                hex_color=default_color)
-            server_bll.insert_server(server_dto)
+            # server_dto = ServerDTO(
+            #     server_id="DM", 
+            #     server_name="DM", 
+            #     hex_color=default_color)
+            # server_bll.insert_server(server_dto)
     
             for guild in guilds:
                 id_server = str(guild.id)
@@ -67,33 +66,52 @@ class Events(CommandsCog):
 
         except Exception as e:
             logger.error(f"Error loading guilds: {e}")
-            
+                
     async def load_list_feed(self):
         try:
+            # Khởi tạo các BLL (Business Logic Layer)
             channel_bll = ChannelBLL()
             emty_bll = EmtyBLL()
             feed_bll = FeedBLL()
-            channel_feed = ChannelFeedBLL()
-            
-            list_channel_feed = channel_feed.get_all_channel_feed()
+
+            # Lấy tất cả các channel và feed từ cơ sở dữ liệu
             list_channel = channel_bll.get_all_channel()
             list_emty = emty_bll.get_all_emty()
             list_feed = feed_bll.get_all_feed()
-            
-            for channel_feed in list_channel_feed:
-                link_atom_feed = channel_feed.get_feed().get_link_atom_feed()
-                feed_emty_tuple = read_rss_link(link_atom_feed)
-                
-                if feed_emty_tuple:
-                    feed_dto = feed_emty_tuple[0]
-                    emty_dto = feed_emty_tuple[1]
-                else:
-                    continue
-                
-                            
+
+            # Duyệt qua từng channel
+            for channel in list_channel:
+                channel_id = channel.get_channel_id()
+                channel_send = self.bot.get_channel(int(channel_id))
+
+                # Duyệt qua từng feed
+                for feed in list_feed:
+                    # Đọc RSS từ link của feed
+                    feed_data = read_rss_link(rss_link=feed.get_link_atom_feed())
+                    if not feed_data or not all(feed_data):
+                        raise TypeError("Feed data is incomplete or None")
+                    
+                    if feed.get_channel_id() == channel_id:
+                        feed_dto, emty_dto = feed_data
+                        emty_dto.set_channel_id(channel_id)
+
+                        if emty_dto not in list_emty:
+                        #    # Tạo Embed và gửi tin nhắn đến kênh
+                            emty_bll.insert_emty(emty_dto)
+                            id_server = str(channel_send.guild.id)
+                            embed = EmbedFeed(
+                                        id_server=id_server if id_server else "DM",
+                                        feed_dto=feed_dto, 
+                                        emty_dto=emty_dto)
+                            await channel_send.send(embed=embed)  # Gửi tin nhắn đến kênh
+                            logger.info(f"Sending message to channel {channel_id} with embed {embed}")
+                            # Lưu emty vào cơ sở dữ liệu
+                            logger.info(f"Inserting emty: {emty_dto.__dict__}")
+
         except Exception as e:
-            logger.error(f"Error loading list feed: {e}")
-                       
+            logger.error(f"Lỗi khi load list feed: {e}")
+
+ 
     @tasks.loop(seconds=10)
     async def push_noti(self):
         logger.debug('run background task')

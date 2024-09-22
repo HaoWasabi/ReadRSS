@@ -15,15 +15,17 @@ class CommandTestFeed(CommandsCog):
     def __init__(self, bot):
         super().__init__(bot)
 
-    async def _test(self, ctx, link_rss: Optional[str] = None):
+    async def _test(self, ctx, link_rss: Optional[str] = None, guild=None):
         try:
+            guild = guild or ctx.guild
+            
             feed_data = read_rss_link(rss_link=link_rss)
             if not feed_data or not all(feed_data):
                 raise TypeError("Feed data is incomplete or None")
             
             feed_dto, emty_dto = feed_data
             embed = EmbedFeed(
-                id_server=str(ctx.guild.id) if ctx.guild else "DM", 
+                id_server=guild.id if guild.id else "DM", 
                 feed_dto=feed_dto, 
                 emty_dto=emty_dto
             )
@@ -35,7 +37,7 @@ class CommandTestFeed(CommandsCog):
 
     @commands.command(name="test")
     async def command_test(self, ctx, url: Optional[str] = None):
-        if not link_rss:
+        if not url:
             link_rss = get_rss_link(url="https://fit.sgu.edu.vn/site/")
             if not link_rss:
                 await ctx.send('Link Atom feed is not found.')
@@ -56,8 +58,9 @@ class CommandTestFeed(CommandsCog):
                 await interaction.followup.send('Link Atom feed is not found.')
                 return
         elif not link_rss and url:
-            link_rss = get_rss_link(url) 
-        await self._test(interaction.followup, link_rss)
+            link_rss = get_rss_link(url)
+        
+        await self._test(interaction.followup, link_rss, interaction.guild)
 
 async def setup(bot):
    bot.add_cog(CommandTestFeed(bot))

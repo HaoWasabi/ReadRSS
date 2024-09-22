@@ -4,12 +4,9 @@ from nextcord.ext import commands
 from nextcord import Interaction, SlashOption, TextChannel
 from ..BLL.feed_bll import FeedBLL
 from ..BLL.channel_bll import ChannelBLL
-from ..BLL.emty_bll import EmtyBLL
-from ..BLL.channel_feed_bll import ChannelFeedBLL
 from ..BLL.server_bll import ServerBLL
 from ..DTO.server_dto import ServerDTO
 from ..DTO.channel_dto import ChannelDTO
-from ..DTO.channel_feed_dto import ChannelFeedDTO
 from ..utils.commands_cog import CommandsCog
 from ..utils.handle_rss import get_rss_link, read_rss_link
 
@@ -21,69 +18,72 @@ class CommandSetFeed(CommandsCog):
 
     @commands.command(name="setfeed")
     async def set_feed(self, ctx, channel: TextChannel, link_rss: str):
+        """Lệnh dùng để đăng ký kênh nhận thông báo từ RSS feed."""
         if await self.is_dm_channel(ctx):
+            await ctx.send("Lệnh này chỉ dùng trong server.")
             return
 
         if not link_rss:
-            await ctx.send('This command requires an RSS link.')
+            await ctx.send('Vui lòng cung cấp một đường dẫn RSS hợp lệ.')
             return
 
         await self._handle_feed(ctx, channel, link_rss)
 
     @nextcord.slash_command(name="setfeed", description="Set feed notification channel")
     async def slash_set_feed(self, interaction: Interaction, 
-                             channel: TextChannel = SlashOption(description="The target channel"), 
-                             link_rss: str = SlashOption(description="RSS feed link", required=False), 
-                             url: str = SlashOption(description="Website URL", required=False)):
+                             channel: TextChannel = SlashOption(description="Kênh thông báo RSS"),
+                             link_rss: str = SlashOption(description="Đường dẫn RSS", required=False),
+                             url: str = SlashOption(description="Đường dẫn trang web", required=False)):
+        """Lệnh slash dùng để thiết lập kênh nhận thông báo từ RSS feed."""
         await interaction.response.defer()
 
-        # Check if the command is being executed in a guild (server)
         if not interaction.guild:
-            await interaction.followup.send('This command can only be used in a server.')
+            await interaction.followup.send('Lệnh này chỉ sử dụng trong server.')
             return
 
         if link_rss and url:
-            await interaction.followup.send('Please provide only one: either an RSS link or a URL.')
+            await interaction.followup.send('Vui lòng chỉ cung cấp một: đường dẫn RSS hoặc URL.')
             return
 
         if not link_rss and not url:
-            await interaction.followup.send('This command requires an RSS link or URL.')
+            await interaction.followup.send('Vui lòng cung cấp một đường dẫn RSS hoặc URL.')
             return
 
         if not link_rss and url:
             link_rss = get_rss_link(url)
             if not link_rss:
-                await interaction.followup.send('No RSS link found for the provided URL.')
+                await interaction.followup.send('Không tìm thấy link RSS cho trang web đã cung cấp.')
                 return
 
         await self._handle_feed(interaction.followup, channel, link_rss)
 
     async def _handle_feed(self, source, channel: TextChannel, link_rss: str):
+        """Xử lý cài đặt feed và lưu vào cơ sở dữ liệu."""
         try:
-            feed_dto, emty_dto = read_rss_link(rss_link=link_rss)
-            if not feed_dto or not emty_dto:
-                await source.send(f"No RSS feed or posts found.")
+            feed_data = read_rss_link(rss_link=link_rss)
+            if not feed_data or not feed_data[0]:
+                await source.send("Không tìm thấy dữ liệu RSS từ link cung cấp.")
                 return
 
-            # Ensure guild exists
-            if channel.guild:
-                server_dto = ServerDTO(str(channel.guild.id), channel.guild.name)
-            else:
-                server_dto = ServerDTO(str(source.author.id), source.author.name)
+            feed_dto = feed_data[0]
 
+            # Tạo ServerDTO và ChannelDTO
+            server_dto = ServerDTO(str(channel.guild.id), channel.guild.name)
             channel_dto = ChannelDTO(str(channel.id), channel.name, server_dto.get_server_id())
 
-            ChannelBLL().insert_channel(channel_dto)
-            FeedBLL().insert_feed(feed_dto)
-            ChannelFeedBLL().insert_channel_feed(ChannelFeedDTO(channel_dto, feed_dto))
-            EmtyBLL().insert_emty(emty_dto)
+            # Lưu thông tin vào cơ sở dữ liệu
             ServerBLL().insert_server(server_dto)
+            ChannelBLL().insert_channel(channel_dto)
 
-            await source.send(f"Successfully set feed for {channel.mention}.")
-        
+            feed_dto.set_channel_id(channel_dto.get_channel_id())
+            FeedBLL().insert_feed(feed_dto)
+
+            await source.send(f"Đã đăng ký feed thành công cho kênh {channel.mention}.")
+
         except Exception as e:
-            await source.send(f"Error: {e}")
-            logger.error(f"Error: {e}")
+            await source.send(f"Đã xảy ra lỗi: {e}")
+            logger.error(f"Lỗi khi đăng ký feed: {e}")
 
 async def setup(bot):
-   bot.add_cog(CommandSetFeed(bot))
+    """Hàm khởi tạo để thêm cog vào bot."""
+    bot.add_cog(CommandSetFeed(bot))
