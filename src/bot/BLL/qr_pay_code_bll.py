@@ -1,6 +1,6 @@
 
 
-from ..BLL.singleton import Singleton
+from .singleton import Singleton
 from ..DTO.qr_code_pay_dto import QrPayCodeDTO
 from ..DAL.qr_pay_code_dal import QrPayCodeDAL
 

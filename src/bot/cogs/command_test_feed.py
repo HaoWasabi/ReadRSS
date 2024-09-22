@@ -17,6 +17,7 @@ class CommandTestFeed(CommandsCog):
 
     async def _test(self, ctx, link_rss: Optional[str] = None, guild=None):
         try:
+            # Không cần thiết phải gán lại guild nếu ctx.guild có giá trị
             guild = guild or ctx.guild
             
             feed_data = read_rss_link(rss_link=link_rss)
@@ -25,7 +26,7 @@ class CommandTestFeed(CommandsCog):
             
             feed_dto, emty_dto = feed_data
             embed = EmbedFeed(
-                id_server=guild.id if guild.id else "DM", 
+                id_server=guild.id if guild else "DM",  # Sử dụng "DM" nếu không có guild
                 feed_dto=feed_dto, 
                 emty_dto=emty_dto
             )
@@ -63,4 +64,4 @@ class CommandTestFeed(CommandsCog):
         await self._test(interaction.followup, link_rss, interaction.guild)
 
 async def setup(bot):
-   bot.add_cog(CommandTestFeed(bot))
+    bot.add_cog(CommandTestFeed(bot))

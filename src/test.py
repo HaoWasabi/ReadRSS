@@ -8,12 +8,13 @@
 # from bot.DTO.channel_emty_dto import ChannelEmtyDTO
 # from bot.DTO.channel_feed_dto import ChannelFeedDTO
 # from bot.DTO.server_channel_dto import ServerChannelDTO
+from bot.DTO.server_dto import ServerDTO
 # from bot.DTO.server_color_dto import ServerColorDTO
 # from bot.BLL.feed_bll import FeedBLL
 from bot.BLL.emty_bll import EmtyBLL
 from bot.DTO.emty_dto import EmtyDTO
 # from bot.BLL.feed_emty_bll import FeedEmtyBLL
-# from bot.BLL.server_bll import ServerBLL
+from bot.BLL.server_bll import ServerBLL
 # from bot.BLL.channel_bll import ChannelBLL
 # from bot.BLL.channel_emty_bll import ChannelEmtyBLL
 # from bot.BLL.channel_feed_bll import ChannelFeedBLL
@@ -35,8 +36,8 @@ def test_feed_emty():
            ''')
     # feedEmtyBLL = FeedEmtyBLL()
     # feedBLL = FeedBLL()
-    emtyBLL = EmtyBLL()
-    emtyBLL.delete_all_emty()
+    # emtyBLL = EmtyBLL()
+    # emtyBLL.delete_all_emty()
     
     # feedDTO = FeedDTO("a", "a", "a", "a", "a", "a". )
     # feedBLL.insert_feed(feedDTO)
@@ -175,9 +176,9 @@ def test_feed_emty():
 #     print ('''
 #            -- TEST SERVER_COLOR --
 #            ''')
-#     serverBLL = ServerBLL()
-#     serverDTO = ServerDTO("DM", "DM")
-#     serverBLL.insert_server(serverDTO)
+    serverBLL = ServerBLL()
+    serverDTO = ServerDTO("DM", "DM")
+    serverBLL.insert_server(serverDTO)
     
 #     colorDTO = ColorDTO("blue")
 #     serverColorDTO = ServerColorDTO(serverDTO, colorDTO)
@@ -255,4 +256,4 @@ def test_feed_emty():
 # test_qr_pay_code()
 # test_server_pay_dal()
 # test_server_color()
-test_feed_emty()
+# test_feed_emty()

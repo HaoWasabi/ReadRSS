@@ -37,7 +37,7 @@ class ButtonOfCtrlCommand(View):
                     for server in self.bot.guilds:
                         if channel in server.channels:
                             server_name = f"**Server:** {server.name} ({server.id})"
-                            channel_info = f"- **{channel_dto.get_channel_name()}** (`{channel_id}`) - [{feed_dto.get_title_feed()}]({feed_dto.get_link_feed()})"
+                            channel_info = f"- **{channel_dto.get_channel_name()}** (`{channel_id}`) - [{feed_dto.get_title_feed()}]({feed_dto.get_link_feed()})" # type: ignore
                             server_data.setdefault(server_name, []).append(channel_info)
                             num += 1
             

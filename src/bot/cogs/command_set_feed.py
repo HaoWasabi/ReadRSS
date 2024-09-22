@@ -50,7 +50,7 @@ class CommandSetFeed(CommandsCog):
             return
 
         if not link_rss and url:
-            link_rss = get_rss_link(url)
+            link_rss = get_rss_link(url)  # type: ignore
             if not link_rss:
                 await interaction.followup.send('Không tìm thấy link RSS cho trang web đã cung cấp.')
                 return
