@@ -39,11 +39,10 @@ class QrPayCodeDAL(BaseDAL):
     
     def get_qr_pay_code_by_qr_code(self, qr_code: str):
         self.open_connection()
-        self.cursor.execute("SELECT * WHERE qr_code=?; ", (qr_code,))
+        self.cursor.execute("SELECT * FROM qr_pay_code WHERE qr_code=?; ", (qr_code,))
         rows=self.cursor.fetchone()
         self.close_connection()
         if rows:
-            rows[-1] = datetime_from_string(rows[-1])
             return QrPayCodeDTO(*rows)
         
         return None

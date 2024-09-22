@@ -88,7 +88,7 @@ class CommandPaying(CommandsCog):
                 
                 # NOTE lưu những dao dịnh đã được sử lý
                 transaction = transaction_history_bll.get_transaction_history_by_id(transaction_id)
-                if transaction is not None:
+                if not (transaction is None):
                     break
                 
                     
@@ -117,7 +117,7 @@ class CommandPaying(CommandsCog):
         
         if isinstance(channel, TextChannel):
             message = await channel.fetch_message(int(qr.message_id))
-            await message.edit(content = 'Thanh toán thành công', embed=None)
+            await message.edit(content = 'Thanh toán thành công', embed=None, view=None)
                          
     @tasks.loop(seconds=30)
     async def start_listener_bank_history(self):
@@ -181,7 +181,7 @@ class CommandPaying(CommandsCog):
                 qr_id = QRGenerator.generator_id()
                 embed_text.add_field(name="Nội dung:", value=f"T{qr_id}T", inline=False)
                 
-                embed_text.set_image(QRGenerator.generator_qr(qr_id))
+                embed_text.set_image(QRGenerator.generator_qr(qr_id, int(self.pre.get_price())))
                 message = await interaction.edit(content='', embed=embed_text, view=None)
                 
                 if message is None:

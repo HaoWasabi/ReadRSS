@@ -16,13 +16,12 @@ class TransactionHistoryDAL(BaseDAL):
         
             self.cursor.execute("""
                 CREATE TABLE `transaction_history` (
-                        `qr_code` TEXT PRIMARY KEY,
-                        `user_id` TEXT,
-                        `channel_id` TEXT,
-                        `premium_id` TEXT,
-                        `message_id` TEXT,
-                        `date_created` timestamp,
-                        `is_success` bool
+                    `id_transaction` TEXT PRIMARY KEY,
+                    `qr_code` TEXT,
+                    `transaction_date` timestamp ,
+                    `content` TEXT,
+                    `currency` INT,
+                    `credit_amount` TEXT      
                 );
             """)
             self.connection.commit()
@@ -36,7 +35,7 @@ class TransactionHistoryDAL(BaseDAL):
         
     def get_transaction_history_by_id(self, transaction_id: str):
         self.open_connection()
-        self.cursor.execute('SELECT * WHERE transaction_id=?;', (transaction_id,))
+        self.cursor.execute('SELECT * FROM transaction_history WHERE id_transaction=?;', (transaction_id,))
         c = self.cursor.fetchone()
         self.close_connection()
         if c:
@@ -47,10 +46,10 @@ class TransactionHistoryDAL(BaseDAL):
     def insert_transaction_history(self, transaction: TransactionHistoryDTO):
         self.open_connection()
         self.cursor.execute(
-            'INSERT INTO transaction_history(`id_transaction`, `qr_code`, `transaction_date`, `content`, `currency`, `credit_amount`,) VALUES (?,?,?,?,?,?)',
+            'INSERT INTO transaction_history VALUES (?,?,?,?,?,?)',
             (transaction.id_transaction,
              transaction.qr_code,
-             datetime_to_string(transaction.transaction_date),
+             transaction.transaction_date,
              transaction.content,
              transaction.currency,
              transaction.credit_amount)
