@@ -15,7 +15,7 @@ class GetRSS:
         response = scraper.get(url)
         soup = BeautifulSoup(response.text, 'html.parser')
         rss_link = soup.find('link', attrs={'type': 'application/rss+xml'})
-        return rss_link['href'] if rss_link else None
+        return rss_link['href'] if rss_link else None # type: ignore
 
     def get_rss_link(self) -> Optional[str]:
         return self.__rss_link

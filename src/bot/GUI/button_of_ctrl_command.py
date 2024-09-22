@@ -5,7 +5,7 @@ from nextcord.ui import View, Button
 from nextcord.ext.commands import Bot
 from ..DTO.color_dto import ColorDTO
 from ..BLL.feed_bll import FeedBLL
-
+from ..BLL.channel_bll import ChannelBLL
 from ..GUI.embed_custom import EmbedCustom
 from ..utils.check_authorization import check_authorization
 
@@ -22,22 +22,22 @@ class ButtonOfCtrlCommand(View):
             return
 
         try:
-            channel_feed_bll = FeedBLL()
+            feed_bll = FeedBLL()
+            channel_bll = ChannelBLL()
             id_server = str(interaction.guild.id) if interaction.guild else "Unknown"
             server_data = {}
             num = 0
             
-            for channel_feed_dto in channel_feed_bll.get_all_channel_feed():
-                channel_dto = channel_feed_dto.get_channel()
-                feed_dto = channel_feed_dto.get_feed()
-                channel_id = int(channel_dto.get_id_channel())
+            for feed_dto in feed_bll.get_all_feed():
+                channel_id = int(feed_dto.get_channel_id())
                 channel = self.bot.get_channel(channel_id)
+                channel_dto = channel_bll.get_channel_by_channel_id(str(channel_id))
                 
                 if channel:  # Kiểm tra xem kênh có tồn tại không
                     for server in self.bot.guilds:
                         if channel in server.channels:
                             server_name = f"**Server:** {server.name} ({server.id})"
-                            channel_info = f"- **{channel_dto.get_name_channel()}** (`{channel_id}`) - [{feed_dto.get_title_feed()}]({feed_dto.get_link_feed()})"
+                            channel_info = f"- **{channel_dto.get_channel_name()}** (`{channel_id}`) - [{feed_dto.get_title_feed()}]({feed_dto.get_link_feed()})" # type: ignore
                             server_data.setdefault(server_name, []).append(channel_info)
                             num += 1
             

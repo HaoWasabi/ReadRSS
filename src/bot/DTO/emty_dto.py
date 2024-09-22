@@ -14,7 +14,7 @@ class EmtyDTO:
         self.__channel_id = channel_id
         
     def __str__(self) -> str:
-        return f"EmtyDTO(link_emty={self.__link_emty}, link_feed={self.__link_feed}, link_atom_feed={self.__link_atom_feed}, title_emty={self.__title_emty}, description_emty={self.__description_emty}, image_emty={self.__image_emty}, pubdate_emty={self.__pubdate_emty}, channel_id={self.__channel_id}, is_send={self.__is_send})"
+        return f"EmtyDTO(link_emty={self.__link_emty}, link_feed={self.__link_feed}, link_atom_feed={self.__link_atom_feed}, title_emty={self.__title_emty}, description_emty={self.__description_emty}, image_emty={self.__image_emty}, pubdate_emty={self.__pubdate_emty}, channel_id={self.__channel_id})"
         
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, EmtyDTO):

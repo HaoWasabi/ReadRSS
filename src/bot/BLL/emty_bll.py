@@ -14,7 +14,7 @@ class EmtyBLL(Singleton):
         return self.__emtyDAL.insert_emty(emty_dto)
 
     def delete_emty_by_link_emty_and_channel_id(self, emty_link: str, channel_id: str) -> bool:
-        return self.__emtyDAL.delete_emty_by_link_emty_and_channel_id(self, emty_link, channel_id)
+        return self.__emtyDAL.delete_emty_by_link_emty_and_channel_id(emty_link, channel_id)
 
     def delete_emty_by_link_atom_feed_and_channel_id(self, link_atom_feed: str, channel_id: str) -> bool:
         return self.__emtyDAL.delete_emty_by_link_atom_and_channel_id(link_atom_feed, channel_id)
