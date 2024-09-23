@@ -9,10 +9,10 @@ class EmbedFeed(EmbedCustom):
         self.__feed = feed_dto
         self.__emty = emty_dto
         
-        self.__link = self.__feed.get_link_feed()
-        self.__logo = self.__feed.get_logo_feed()
-        self.__footer_text = self.__feed.get_description_feed()
-        self.__title = self.__feed.get_title_feed()
+        self.__link = self.__feed.link_feed
+        self.__logo = self.__feed.logo_feed
+        self.__footer_text = self.__feed.description_feed
+        self.__title = self.__feed.title_feed
         self.__image = ""  # Khởi tạo mặc định cho __image nếu không có ảnh
 
         # Gọi super để kế thừa khởi tạo từ lớp cha CustomEmbed
@@ -20,14 +20,14 @@ class EmbedFeed(EmbedCustom):
 
         # Xử lý mô tả và link bài viết
         self.description = f'''
-            [**Xem bài viết**]({self.__emty.get_link_emty()})
-            {self.__emty.get_description_emty()}
+            [**Xem bài viết**]({self.__emty.link_emty})
+            {self.__emty.description_emty}
         '''
         self.description = TextProcessor.clean_feed_text(self.description)
 
         # Kiểm tra nếu có image từ entry (emty)
-        if self.__emty is not None and self.__emty.get_image_emty() != "":
-            self.__image = self.__emty.get_image_emty()
+        if self.__emty is not None and self.__emty.image_emty != "":
+            self.__image = self.__emty.image_emty
             self.set_image(url=self.__image)  # Cài đặt ảnh cho embed nếu có
 
         # Cài đặt các thông tin của Embed như author và footer

@@ -2,15 +2,15 @@ import logging
 import nextcord
 from nextcord.ext import commands
 from nextcord import Interaction, SlashOption, TextChannel
-from ..BLL.feed_bll import FeedBLL
-from ..BLL.channel_bll import ChannelBLL
-from ..BLL.server_bll import ServerBLL
-from ..DTO.server_dto import ServerDTO
-from ..DTO.channel_dto import ChannelDTO
+
+from ..BLL import FeedBLL, ChannelBLL, ServerBLL
+from ..DTO import ServerDTO, ChannelDTO
+
 from ..utils.commands_cog import CommandsCog
 from ..utils.handle_rss import get_rss_link, read_rss_link
 
 logger = logging.getLogger("CommandSetFeed")
+
 
 class CommandSetFeed(CommandsCog):
     def __init__(self, bot):
@@ -30,9 +30,11 @@ class CommandSetFeed(CommandsCog):
         await self._handle_feed(ctx, channel, link_rss)
 
     @nextcord.slash_command(name="setfeed", description="Set feed notification channel")
-    async def slash_set_feed(self, interaction: Interaction, 
-                             channel: TextChannel = SlashOption(description="Kênh thông báo RSS"),
-                             link_rss: str = SlashOption(description="Đường dẫn RSS", required=False),
+    async def slash_set_feed(self, interaction: Interaction,
+                             channel: TextChannel = SlashOption(
+                                 description="Kênh thông báo RSS"),
+                             link_rss: str = SlashOption(
+                                 description="Đường dẫn RSS", required=False),
                              url: str = SlashOption(description="Đường dẫn trang web", required=False)):
         """Lệnh slash dùng để thiết lập kênh nhận thông báo từ RSS feed."""
         await interaction.response.defer()
@@ -69,13 +71,14 @@ class CommandSetFeed(CommandsCog):
 
             # Tạo ServerDTO và ChannelDTO
             server_dto = ServerDTO(str(channel.guild.id), channel.guild.name)
-            channel_dto = ChannelDTO(str(channel.id), channel.name, server_dto.get_server_id())
+            channel_dto = ChannelDTO(
+                str(channel.id), channel.name, server_dto.server_id)
 
             # Lưu thông tin vào cơ sở dữ liệu
             ServerBLL().insert_server(server_dto)
             ChannelBLL().insert_channel(channel_dto)
 
-            feed_dto.set_channel_id(channel_dto.get_channel_id())
+            feed_dto.channel_id = channel_dto.channel_id
             FeedBLL().insert_feed(feed_dto)
 
             await source.send(f"Đã đăng ký feed thành công cho kênh {channel.mention}.")
@@ -83,6 +86,7 @@ class CommandSetFeed(CommandsCog):
         except Exception as e:
             await source.send(f"Đã xảy ra lỗi: {e}")
             logger.error(f"Lỗi khi đăng ký feed: {e}")
+
 
 async def setup(bot):
     """Hàm khởi tạo để thêm cog vào bot."""

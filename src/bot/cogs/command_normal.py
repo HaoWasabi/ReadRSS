@@ -1,17 +1,18 @@
 import logging
 import nextcord
 from nextcord.ext import commands
+
+from ..GUI import EmbedCustom, ButtonOfHelpCommnad
 from ..utils.handle_rss import get_rss_link
-from ..GUI.embed_custom import EmbedCustom
-from ..GUI.button_of_help_command import ButtonOfHelpCommnad
 from ..utils.commands_cog import CommandsCog
 
 logger = logging.getLogger("CommandNormal")
 
+
 class CommandNormal(CommandsCog):  # Đảm bảo kế thừa từ CommandsCog
     def __init__(self, bot):
         super().__init__(bot)  # Gọi lớp cha để khởi tạo bot và logger
-        
+
     def ping(self):
         return f'Pong! {round(self.bot.latency * 1000)}ms'
 
@@ -25,11 +26,11 @@ class CommandNormal(CommandsCog):  # Đảm bảo kế thừa từ CommandsCog
     async def slash_command_ping(self, interaction):
         await interaction.response.defer()
         await interaction.followup.send(self.ping())
-        
+
     def get_rss(self, url: str) -> str:
         link_rss = get_rss_link(url)
         return f'''RSS link:```{link_rss}```''' if link_rss else "No RSS link found."
-    
+
     @commands.command(name="getrss")
     async def command_get_rss(self, ctx, url: str):
         if await self.is_dm_channel(ctx):
@@ -53,11 +54,14 @@ class CommandNormal(CommandsCog):  # Đảm bảo kế thừa từ CommandsCog
     async def help(self, interaction):
         await interaction.response.defer()
         try:
-            available_commands = [command.name for command in self.bot.commands]
-            available_slash_commands = [command.name for command in self.bot.get_application_commands()]
+            available_commands = [
+                command.name for command in self.bot.commands]
+            available_slash_commands = [
+                command.name for command in self.bot.get_application_commands()]
 
             embed = EmbedCustom(
-                id_server=str(interaction.guild.id) if interaction.guild else "DM",
+                id_server=str(
+                    interaction.guild.id) if interaction.guild else "DM",
                 title="List of commands",
                 description=f'''
 command prefix `{self.bot.command_prefix}`
@@ -69,6 +73,7 @@ command prefix `{self.bot.command_prefix}`
         except Exception as e:
             await interaction.followup.send(f"Error: {e}", ephemeral=True)
             logger.error(f"Error: {e}")
+
 
 async def setup(bot):
     bot.add_cog(CommandNormal(bot))

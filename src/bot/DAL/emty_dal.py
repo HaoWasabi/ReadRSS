@@ -1,6 +1,6 @@
 import sqlite3
 from typing import Optional, List
-from ..DTO.emty_dto import EmtyDTO
+from ..DTO import EmtyDTO
 
 from .base_dal import BaseDAL, logger
 
@@ -35,7 +35,6 @@ class EmtyDAL(BaseDAL):
         finally:
             self.close_connection()
 
-
     def insert_emty(self, emty_dto: EmtyDTO) -> bool:
         self.open_connection()
         try:
@@ -43,21 +42,21 @@ class EmtyDAL(BaseDAL):
                 self.cursor.execute('''
                 INSERT INTO tbl_emty (link_emty, link_feed, link_atom_feed, title_emty, description_emty, image_emty, pubdate_emty, channel_id)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                ''', (emty_dto.get_link_emty(), emty_dto.get_link_feed(), emty_dto.get_link_atom_feed(),
-                    emty_dto.get_title_emty(), emty_dto.get_description_emty(), emty_dto.get_image_emty(),
-                    emty_dto.get_pubdate_emty(), emty_dto.get_channel_id()))
+                ''', (emty_dto.link_emty, emty_dto.link_feed, emty_dto.link_atom_feed,
+                      emty_dto.title_emty, emty_dto.description_emty, emty_dto.image_emty,
+                      emty_dto.pubdate_emty, emty_dto.channel_id))
                 self.connection.commit()
                 logger.info(f"Data inserted into 'tbl_emty' successfully.")
                 return True
         except sqlite3.IntegrityError as e:
-            logger.error(f"Emty with link_emty={emty_dto.get_link_emty()} and channel_id={emty_dto.get_channel_id()} already exists.")
+            logger.error(f"Emty with link_emty={emty_dto.link_emty} and channel_id={
+                         emty_dto.channel_id} already exists.")
             return False
         except sqlite3.Error as e:
             logger.error(f"Error inserting data into 'tbl_emty': {e}")
             return False
         finally:
             self.close_connection()
-
 
     def delete_emty_by_link_emty_and_channel_id(self, emty_link: str, channel_id: str) -> bool:
         self.open_connection()
@@ -74,7 +73,7 @@ class EmtyDAL(BaseDAL):
             return False
         finally:
             self.close_connection()
-            
+
     def delete_emty_by_link_atom_and_channel_id(self, link_atom_feed: str, channel_id: str) -> bool:
         self.open_connection()
         try:
@@ -90,7 +89,7 @@ class EmtyDAL(BaseDAL):
             return False
         finally:
             self.close_connection()
-            
+
     def delete_emty_by_channel_id(self, channel_id: str) -> bool:
         self.open_connection()
         try:
@@ -106,7 +105,7 @@ class EmtyDAL(BaseDAL):
             return False
         finally:
             self.close_connection()
-            
+
     def delete_all_emty(self) -> bool:
         self.open_connection()
         try:
@@ -139,7 +138,6 @@ class EmtyDAL(BaseDAL):
         finally:
             self.close_connection()
 
-
     def get_all_emty(self) -> List[EmtyDTO]:
         self.open_connection()
         try:
@@ -156,5 +154,3 @@ class EmtyDAL(BaseDAL):
             return []
         finally:
             self.close_connection()
-
-    

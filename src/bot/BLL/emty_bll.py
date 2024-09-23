@@ -1,6 +1,6 @@
-from ..BLL.singleton import Singleton
-from ..DTO.emty_dto import EmtyDTO
-from ..DAL.emty_dal import EmtyDAL
+from .singleton import Singleton
+from ..DTO import EmtyDTO
+from ..DAL import EmtyDAL
 from typing import Optional, List
 
 
@@ -18,10 +18,10 @@ class EmtyBLL(Singleton):
 
     def delete_emty_by_link_atom_feed_and_channel_id(self, link_atom_feed: str, channel_id: str) -> bool:
         return self.__emtyDAL.delete_emty_by_link_atom_and_channel_id(link_atom_feed, channel_id)
-    
+
     def delete_emty_by_channel_id(self, channel_id: str) -> bool:
         return self.__emtyDAL.delete_emty_by_channel_id(channel_id)
-    
+
     def delete_all_emty(self) -> bool:
         return self.__emtyDAL.delete_all_emty()
 

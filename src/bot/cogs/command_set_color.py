@@ -2,11 +2,11 @@ import logging
 import nextcord
 from nextcord.ext import commands
 from nextcord import Interaction, SlashOption
+
 from ..utils.commands_cog import CommandsCog
-from ..DTO.color_dto import ColorDTO
-from ..DTO.server_dto import ServerDTO
-from ..BLL.server_bll import ServerBLL
-from ..GUI.embed_custom import EmbedCustom
+from ..DTO import ColorDTO, ServerDTO
+from ..BLL import ServerBLL
+from ..GUI import EmbedCustom
 
 logger = logging.getLogger("CommandSetColor")
 
@@ -50,19 +50,19 @@ class CommandSetColor(CommandsCog):
             server_bll = ServerBLL()
             color_dto = ColorDTO(color)
             server_dto = ServerDTO(
-                str(guild.id), guild.name, color_dto.get_hex_color())
+                str(guild.id), guild.name, color_dto.hex_color)
 
-            if not server_bll.get_server_by_server_id(server_dto.get_server_id()):
+            if not server_bll.get_server_by_server_id(server_dto.server_id):
                 server_bll.insert_server(server_dto)
             else:
                 server_bll.update_server(server_dto)
 
-            hex_color = color_dto.get_hex_color()
+            hex_color = color_dto.hex_color
             embed = EmbedCustom(
-                id_server=server_dto.get_server_id(),
+                id_server=server_dto.server_id,
                 title="Set color",
-                description=f"Set color **{color_dto.get_name_color()
-                                           }** successfully.",
+                description=f"Set color **{
+                    color_dto.name_color}** successfully.",
                 color=int(hex_color, 16)
             )
             await ctx.send(embed=embed)

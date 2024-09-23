@@ -1,18 +1,13 @@
 
-from operator import truediv
 import sqlite3
-
-from ..utils.datetime_format import datetime_from_string, datetime_to_string
-from ..DTO.qr_code_pay_dto import QrPayCodeDTO
+from ..DTO import QrPayCodeDTO
 from ..DAL.base_dal import BaseDAL, logger
-
 
 
 class QrPayCodeDAL(BaseDAL):
     def __init__(self):
         super().__init__()
-        
-    
+
     def create_table(self):
         self.open_connection()
         try:
@@ -35,29 +30,29 @@ class QrPayCodeDAL(BaseDAL):
             logger.error(f"Error creating table 'tbl_server': {e}")
         finally:
             self.close_connection()
-            
-    
+
     def get_qr_pay_code_by_qr_code(self, qr_code: str):
         self.open_connection()
-        self.cursor.execute("SELECT * FROM qr_pay_code WHERE qr_code=?; ", (qr_code,))
-        rows=self.cursor.fetchone()
+        self.cursor.execute(
+            "SELECT * FROM qr_pay_code WHERE qr_code=?; ", (qr_code,))
+        rows = self.cursor.fetchone()
         self.close_connection()
         if rows:
             return QrPayCodeDTO(*rows)
-        
+
         return None
-        
+
     def get_all_qr_pay_code(self):
         self.open_connection()
         self.cursor.execute("SELECT * FROM qr_pay_code;")
         rows = self.cursor.fetchall()
         self.close_connection()
         return [QrPayCodeDTO(*a) for a in rows]
-    
+
     def insert_qr_pay_code(self, qr_pay: QrPayCodeDTO):
         self.open_connection()
         self.cursor.execute(
-            "INSERT OR REPLACE INTO qr_pay_code VALUES (?, ?, ?, ?, ?, ?, ?);", 
+            "INSERT OR REPLACE INTO qr_pay_code VALUES (?, ?, ?, ?, ?, ?, ?);",
             (
                 qr_pay.qr_code,
                 qr_pay.user_id,
@@ -71,11 +66,11 @@ class QrPayCodeDAL(BaseDAL):
         self.connection.commit()
         self.close_connection()
         return True
-    
+
     def delete_qr_pay_by_id(self, qr_code: str):
         self.open_connection()
-        self.cursor.execute('DELETE FROM qr_pay_code WHERE qr_code=?;', (qr_code,))
+        self.cursor.execute(
+            'DELETE FROM qr_pay_code WHERE qr_code=?;', (qr_code,))
         self.connection.commit()
         self.close_connection()
         return True
-    

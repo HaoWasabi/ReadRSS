@@ -1,36 +1,19 @@
-from email import message
-from tkinter.messagebox import NO
-from discord import ButtonStyle, Embed, Emoji, PartialEmoji
+
 import logging
 import os
 import datetime
-import discord
 import mbbank
 import re
 import sys
-from typing import Optional
 from nextcord.ext import commands, tasks
-from nextcord.ext.commands import Context
 import nextcord
-from nextcord import Interaction, SlashOption, TextChannel
-from nextcord.ui import View, Button, button
+from nextcord import Interaction, TextChannel
+from nextcord.ui import View
 
-from ..utils.datetime_format import datetime_from_string
-
-from ..DTO.premium_dto import PremiumDTO
-
-from ..GUI.button_of_premium import ButtonOfPayment
-
-from ..DTO.user_premium_dto import UserPremiumDTO
-from ..DTO.transaction_history_dto import TransactionHistoryDTO
-from ..DTO.qr_code_pay_dto import QrPayCodeDTO
-
-from ..BLL.premium_bll import PremiumBLL
-from ..BLL.user_premium_bll import UserPremiumBLL
-from ..BLL.transaction_history_bll import TransactionHistoryBLL
-from ..BLL.qr_pay_code_bll import QrPayCodeBLL
-
-from ..GUI.embed_custom import EmbedCustom
+from ..GUI import ButtonOfPremium
+from ..DTO import TransactionHistoryDTO, QrPayCodeDTO
+from ..BLL import PremiumBLL, UserPremiumBLL, TransactionHistoryBLL, QrPayCodeBLL
+from ..GUI import EmbedCustom
 
 from ..utils.commands_cog import CommandsCog
 from ..utils.create_qr_payment import QRGenerator
@@ -171,58 +154,12 @@ class CommandPaying(CommandsCog):
         cls = self
 
         for index, pre in enumerate(premium_bll.get_all_premiums()):
-            embed_text.add_field(name=pre.get_premium_name(), value=f"""{pre.get_description()}\ngiá: {
-                                 pre.get_price()}\nthời hạn: {pre.get_duration()}""", inline=False)
+            embed_text.add_field(name=pre.premium_name, value=f"""{pre.description}\ngiá: {
+                                 pre.price}\nthời hạn: {pre.duration}""", inline=False)
 
-            buttons.add_item(goiButton(pre, self))
+            buttons.add_item(ButtonOfPremium(pre, self))
 
         await interaction.followup.send(embed=embed_text, view=buttons)
-
-
-class goiButton(Button):
-    def __init__(self, pre: PremiumDTO, cls: CommandPaying):
-        super().__init__(label=pre.get_premium_name())
-        self.pre = pre
-        self.cls = cls
-
-    async def callback(self, interaction: Interaction):
-        await interaction.response.defer()
-
-        embed_text = EmbedCustom(
-            id_server=str(interaction.guild.id) if interaction.guild else "DM",
-            title="Nạp để mở gói premium",
-            description="Gói premium mang đến nhiều tính năng hơn")
-
-        embed_text.add_field(
-            name="Ngân hàng MB-Bank", value=os.getenv('BANK_USER_NAME'), inline=False)
-        embed_text.add_field(name="Số Tiền:", value=f"{
-                             self.pre.get_price()}đ", inline=False)
-
-        if (interaction.guild is None or interaction.channel is None):
-            await interaction.send('có gì đó lạ lắm')
-            return
-
-        qr_id = QRGenerator.generator_id()
-        embed_text.add_field(name="Nội dung:", value=f"T{
-                             qr_id}T", inline=False)
-
-        embed_text.set_image(QRGenerator.generator_qr(
-            qr_id, int(self.pre.get_price())))
-
-        message = await interaction.edit_original_message(content='', embed=embed_text, view=None)
-
-        if message is None:
-            await interaction.send('có gì đó lạ lắm')
-            return
-
-        qr = QrPayCodeDTO(qr_id, str(interaction.user.id), str(  # type: ignore
-            message.channel.id), self.pre.get_premium_id(), str(message.id), datetime.datetime.now(), False)
-
-        qr_pay_code_bll = QrPayCodeBLL()
-        qr_pay_code_bll.insert_qr_pay_code(qr)
-        if not self.cls.start_listener_bank_history.is_running():
-            self.cls.start_listener_bank_history.start()
-        self.cls.start_time = datetime.datetime.now()
 
 
 async def setup(bot: commands.Bot):

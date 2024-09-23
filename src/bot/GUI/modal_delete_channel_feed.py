@@ -28,7 +28,7 @@ class ModalDeleteChannelFeed(Modal):
             await interaction.followup.send(f"Channel ID '{self.id_channel.value}' not found.", ephemeral=True)
             return
 
-        name_channel = channel_info.get_channel_name()
+        name_channel = channel_info.channel_name
         feed_bll = FeedBLL()
         
         if not self.link_feed.value and not self.link_atom_feed.value:

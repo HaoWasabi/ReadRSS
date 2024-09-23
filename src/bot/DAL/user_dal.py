@@ -1,13 +1,15 @@
 import sqlite3
 from typing import List, Optional
-from ..DAL.base_dal import BaseDAL
-from ..DTO.user_dto import UserDTO
+
+from .base_dal import BaseDAL
+from ..DTO import UserDTO
 from .base_dal import BaseDAL, logger
+
 
 class UserDAL(BaseDAL):
     def __init__(self):
         super().__init__()
-        
+
     def create_table(self):
         self.open_connection()
         try:
@@ -23,7 +25,7 @@ class UserDAL(BaseDAL):
             logger.error(f"Error creating table 'tbl_user': {e}")
         finally:
             self.close_connection()
-            
+
     def insert_user(self, user_dto: UserDTO) -> bool:
         self.open_connection()
         try:
@@ -31,19 +33,20 @@ class UserDAL(BaseDAL):
                 self.cursor.execute('''
                     INSERT INTO tbl_user (user_id, user_name)
                     VALUES (?, ?)
-                    ''', (user_dto.get_user_id(), user_dto.get_user_name()))
+                    ''', (user_dto.user_id, user_dto.user_name))
                 self.connection.commit()
                 logger.info(f"Data inserted into 'tbl_channel' successfully.")
                 return True
         except sqlite3.IntegrityError as e:
-            logger.error(f"User with user_id={user_dto.get_user_id()} already exists in 'tbl_user'")
+            logger.error(f"User with user_id={
+                         user_dto.user_id} already exists in 'tbl_user'")
             return False
         except sqlite3.Error as e:
             logger.error(f"Error inserting data into 'tbl_user': {e}")
             return False
         finally:
             self.close_connection()
-            
+
     def update_user(self, user_dto: UserDTO) -> bool:
         self.open_connection()
         try:
@@ -52,7 +55,7 @@ class UserDAL(BaseDAL):
                     UPDATE tbl_user
                     SET user_name = ?
                     WHERE user_id = ?
-                    ''', (user_dto.get_user_name(), user_dto.get_user_id()))
+                    ''', (user_dto.user_name, user_dto.user_id))
                 self.connection.commit()
                 logger.info(f"Data updated in 'tbl_user' successfully.")
                 return True
@@ -61,7 +64,7 @@ class UserDAL(BaseDAL):
             return False
         finally:
             self.close_connection()
-            
+
     def get_all_user(self) -> List[UserDTO]:
         self.open_connection()
         try:
@@ -76,7 +79,7 @@ class UserDAL(BaseDAL):
             return []
         finally:
             self.close_connection()
-            
+
     def get_user_by_user_id(self, user_id: str) -> Optional[UserDTO]:
         self.open_connection()
         try:

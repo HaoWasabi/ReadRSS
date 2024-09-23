@@ -1,19 +1,18 @@
 
 
 import sqlite3
-from ..DTO.transaction_history_dto import TransactionHistoryDTO
-from ..utils.datetime_format import datetime_from_string, datetime_to_string
+from ..DTO import TransactionHistoryDTO
 from .base_dal import BaseDAL, logger
 
 
 class TransactionHistoryDAL(BaseDAL):
     def __init__(self):
         super().__init__()
-        
+
     def create_table(self):
         self.open_connection()
         try:
-        
+
             self.cursor.execute("""
                 CREATE TABLE `transaction_history` (
                     `id_transaction` TEXT PRIMARY KEY,
@@ -32,17 +31,18 @@ class TransactionHistoryDAL(BaseDAL):
             logger.error(f"Error creating table 'tbl_server': {e}")
         finally:
             self.close_connection()
-        
+
     def get_transaction_history_by_id(self, transaction_id: str):
         self.open_connection()
-        self.cursor.execute('SELECT * FROM transaction_history WHERE id_transaction=?;', (transaction_id,))
+        self.cursor.execute(
+            'SELECT * FROM transaction_history WHERE id_transaction=?;', (transaction_id,))
         c = self.cursor.fetchone()
         self.close_connection()
         if c:
             return TransactionHistoryDTO(*c)
-    
+
         return None
-    
+
     def insert_transaction_history(self, transaction: TransactionHistoryDTO):
         self.open_connection()
         self.cursor.execute(
@@ -53,8 +53,8 @@ class TransactionHistoryDAL(BaseDAL):
              transaction.content,
              transaction.currency,
              transaction.credit_amount)
-        )  
-        
+        )
+
         self.connection.commit()
         self.close_connection()
 

@@ -37,12 +37,12 @@ def read_rss_link(url: Optional[str] = None, rss_link: Optional[str] = None) -> 
     logo_url = feed.feed.image.href if 'image' in feed.feed else ''
     description = feed.feed.description if hasattr(feed.feed, 'description') else ''
     feed_dto = FeedDTO(
-        link_feed=feed.feed.link,
-        link_atom_feed=feed.feed.title_detail.base,
-        title_feed=feed.feed.title,
-        description_feed=description,
-        logo_feed=logo_url,
-        pubDate_feed=feed.feed.updated
+        feed.feed.link,
+        feed.feed.title_detail.base,
+        feed.feed.title,
+        description,
+        logo_url,
+        feed.feed.updated
     )
     
     if feed.entries:
@@ -60,8 +60,8 @@ def read_rss_link(url: Optional[str] = None, rss_link: Optional[str] = None) -> 
                 
         emty_dto = EmtyDTO(
             link_emty=entry.link,
-            link_feed=feed_dto.get_link_feed(),
-            link_atom_feed=feed_dto.get_link_atom_feed(),
+            link_feed=feed_dto.link_feed,
+            link_atom_feed=feed_dto.link_atom_feed,
             title_emty=entry.title,
             description_emty=str(TextProcessor.parse_html(entry.description)),
             image_emty=media_content,

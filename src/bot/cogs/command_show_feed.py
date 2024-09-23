@@ -1,23 +1,25 @@
 import logging
-from ..utils.commands_cog import CommandsCog
 import nextcord
 from nextcord.ext import commands
 from nextcord import Interaction
-from ..BLL.feed_bll import FeedBLL
-from ..GUI.embed_custom import EmbedCustom
+
+from ..utils.commands_cog import CommandsCog
+from ..BLL import FeedBLL
+from ..GUI import EmbedCustom
 
 logger = logging.getLogger("CommandShowChannel")
+
 
 class CommandShowChannel(CommandsCog):
     def __init__(self, bot):
         super().__init__(bot)
-        
+
     @commands.command(name="show")
     async def command_show(self, ctx):
         if await self.is_dm_channel(ctx):
             return
         await self._show_channel(ctx=ctx, guild=ctx.guild, user=ctx.author)
-        
+
     @nextcord.slash_command(name="show", description="Show the feed notification channel")
     async def slash_command_show(self, interaction: Interaction):
         await interaction.response.defer()
@@ -40,15 +42,17 @@ class CommandShowChannel(CommandsCog):
             num_feeds = 0
 
             for feed_dto in feed_bll.get_all_feed():
-                channel_id = int(feed_dto.get_channel_id())
+                channel_id = int(feed_dto.channel_id)  # type: ignore
                 channel = self.bot.get_channel(channel_id)
 
                 # Kiểm tra nếu channel tồn tại và là một phần của guild
                 if channel and channel.guild.id == guild_id:
                     server_name = f"**Server:** {guild_name} ({guild_id})"
-                    channel_info = f"- **Channel:** {channel.mention} - [{feed_dto.get_title_feed()}]({feed_dto.get_link_feed()})"
-                    
-                    server_data.setdefault(server_name, []).append(channel_info)
+                    channel_info = f"- **Channel:** {channel.mention} - [{
+                        feed_dto.title_feed}]({feed_dto.link_feed})"
+
+                    server_data.setdefault(
+                        server_name, []).append(channel_info)
                     num_feeds += 1
 
             embed = EmbedCustom(
@@ -58,13 +62,15 @@ class CommandShowChannel(CommandsCog):
             )
 
             for server_name, channels in server_data.items():
-                embed.add_field(name=server_name, value="\n".join(channels), inline=False)
+                embed.add_field(name=server_name, value="\n".join(
+                    channels), inline=False)
 
             await ctx.send(embed=embed)  # Gửi embed
 
         except Exception as e:
             await ctx.send(f"Error: {e}")
             logger.error(f"Error: {e}")
+
 
 async def setup(bot):
     bot.add_cog(CommandShowChannel(bot))

@@ -1,16 +1,15 @@
 from datetime import datetime
 import sqlite3
 from typing import List
+
 from ..DAL.base_dal import BaseDAL, logger
-from ..DTO.premium_dto import PremiumDTO
-from ..DTO.user_dto import UserDTO
-from ..DTO.user_premium_dto import UserPremiumDTO
+from ..DTO import PremiumDTO, UserDTO, UserPremiumDTO
 
 
 class UserPremiumDAL(BaseDAL):
     def __init__(self):
         super().__init__()
-        
+
     def create_table(self):
         self.open_connection()
         try:
@@ -28,7 +27,7 @@ class UserPremiumDAL(BaseDAL):
             logger.error(f"Error creating table 'tbl_user_premium': {e}")
         finally:
             self.close_connection()
-            
+
     def insert_user_premium(self, userpremium: UserPremiumDTO) -> bool:
         self.open_connection()
         try:
@@ -36,17 +35,18 @@ class UserPremiumDAL(BaseDAL):
                 self.cursor.execute('''
                     INSERT INTO tbl_user_premium (user_id, premium_id, date_registered)
                     VALUES (?, ?, ?)
-                    ''', (userpremium.get_user().get_user_id(), userpremium.get_premium().get_premium_id(),
-                            userpremium.get_date_registered()))
+                    ''', (userpremium.user.user_id, userpremium.premium.premium_id,
+                          userpremium.date_registered))
                 self.connection.commit()
-                logger.info(f"Data inserted into 'tbl_user_premium' successfully.")
+                logger.info(
+                    f"Data inserted into 'tbl_user_premium' successfully.")
                 return True
         except sqlite3.Error as e:
             logger.error(f"Error inserting data into 'tbl_user_premium': {e}")
             return False
         finally:
             self.close_connection()
-            
+
     def get_all_userpremium(self) -> List[UserPremiumDTO]:
         self.open_connection()
         try:
@@ -62,16 +62,18 @@ class UserPremiumDAL(BaseDAL):
                 rows = self.cursor.fetchall()
                 if rows:
                     return [UserPremiumDTO(UserDTO(row[0], row[1]),
-                            PremiumDTO(row[2], row[3], row[4], row[5], row[6], row[7], row[8]),
-                                row[7]) for row in rows]
+                            PremiumDTO(row[2], row[3], row[4],
+                                       row[5], row[6], row[7], row[8]),
+                        row[7]) for row in rows]
                 else:
                     return []
         except sqlite3.Error as e:
-            logger.error(f"Error fetching all data from 'tbl_user_premium': {e}")
+            logger.error(
+                f"Error fetching all data from 'tbl_user_premium': {e}")
             return []
         finally:
             self.close_connection()
-            
+
     def get_all_userpremium_by_user_id(self, user_id: str) -> List[UserPremiumDTO]:
         self.open_connection()
         try:
@@ -88,13 +90,14 @@ class UserPremiumDAL(BaseDAL):
                 rows = self.cursor.fetchall()
                 if rows:
                     return [UserPremiumDTO(UserDTO(row[0], row[1]),
-                            PremiumDTO(row[2], row[3], row[4], row[5], row[6], row[7], row[8]),
-                                row[7]) for row in rows]
+                            PremiumDTO(row[2], row[3], row[4],
+                                       row[5], row[6], row[7], row[8]),
+                        row[7]) for row in rows]
                 else:
                     return []
         except sqlite3.Error as e:
-            logger.error(f"Error fetching all data from 'tbl_user_premium': {e}")
+            logger.error(
+                f"Error fetching all data from 'tbl_user_premium': {e}")
             return []
         finally:
             self.close_connection()
-            

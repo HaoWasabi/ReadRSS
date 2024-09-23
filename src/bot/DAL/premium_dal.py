@@ -1,14 +1,14 @@
 from typing import List, Optional
 import sqlite3
 
-from ..DTO.premium_dto import PremiumDTO
+from ..DTO import PremiumDTO
 from ..DAL.base_dal import BaseDAL, logger
 
 
 class PremiumDAL(BaseDAL):
     def __init__(self):
         super().__init__()
-        
+
     def create_table(self):
         self.open_connection()
         try:
@@ -29,7 +29,7 @@ class PremiumDAL(BaseDAL):
             logger.error(f"Error creating table 'tbl_premium': {e}")
         finally:
             self.close_connection()
-            
+
     def insert_premium(self, premium: PremiumDTO) -> bool:
         self.open_connection()
         try:
@@ -37,7 +37,7 @@ class PremiumDAL(BaseDAL):
                 self.cursor.execute('''
                     INSERT INTO tbl_premium (name, description, price, date_created, duration)
                     VALUES (?, ?, ?, ?, ?)
-                    ''', (premium.get_premium_name(), premium.get_description(),premium.get_price(), premium.get_date_created(), premium.get_duration()))
+                    ''', (premium.premium_name, premium.description, premium.price, premium.date_created, premium.duration))
                 self.connection.commit()
                 logger.info(f"Data inserted into 'tbl_premium' successfully.")
                 return True
@@ -46,7 +46,7 @@ class PremiumDAL(BaseDAL):
             return False
         finally:
             self.close_connection()
-        
+
     def delete_premium_by_id(self, premium_id: str) -> bool:
         self.open_connection()
         try:
@@ -64,7 +64,7 @@ class PremiumDAL(BaseDAL):
             return False
         finally:
             self.close_connection()
-            
+
     def get_premium_by_id(self, premium_id: str) -> Optional[PremiumDTO]:
         self.open_connection()
         try:
@@ -73,7 +73,7 @@ class PremiumDAL(BaseDAL):
             ''', (premium_id,))
             row = self.cursor.fetchone()
             if row:
-                return PremiumDTO(row[0], row[1], row[2], row[3], row[4] ,row[5], bool(row[6]))
+                return PremiumDTO(*row)
             else:
                 return None
         except sqlite3.Error as e:
@@ -81,7 +81,7 @@ class PremiumDAL(BaseDAL):
             return None
         finally:
             self.close_connection
-            
+
     def get_all_premium(self, ignore_state=False, is_active=True) -> List[PremiumDTO]:
         self.open_connection()
         try:
@@ -95,7 +95,7 @@ class PremiumDAL(BaseDAL):
                 ''', (is_active,))
             rows = self.cursor.fetchall()
             if rows:
-                return [PremiumDTO(row[0], row[1], row[2], row[3], row[4] ,row[5], bool(row[6])) for row in rows]
+                return [PremiumDTO(*row) for row in rows]
             else:
                 return []
         except sqlite3.Error as e:
@@ -103,4 +103,3 @@ class PremiumDAL(BaseDAL):
             return []
         finally:
             self.close_connection()
-        
