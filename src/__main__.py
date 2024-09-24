@@ -1,8 +1,6 @@
 import os, sys, logging, tracemalloc, asyncio, nextcord
 from nextcord.ext import commands
 from dotenv import load_dotenv
-
-from bot.utils.Database import Database
 from bot.DAL.channel_dal import ChannelDAL
 from bot.DAL.emty_dal import EmtyDAL
 from bot.DAL.feed_dal import FeedDAL
