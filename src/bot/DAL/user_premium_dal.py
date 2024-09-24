@@ -10,6 +10,7 @@ from ..DTO.user_premium_dto import UserPremiumDTO
 class UserPremiumDAL(BaseDAL):
     def __init__(self):
         super().__init__()
+        self.create_table()
         
     def create_table(self):
         self.open_connection()

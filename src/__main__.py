@@ -3,6 +3,15 @@ from nextcord.ext import commands
 from dotenv import load_dotenv
 
 from bot.utils.Database import Database
+from bot.DAL.channel_dal import ChannelDAL
+from bot.DAL.emty_dal import EmtyDAL
+from bot.DAL.feed_dal import FeedDAL
+from bot.DAL.qr_pay_code_dal import QrPayCodeDAL
+from bot.DAL.transaction_history_dal import TransactionHistoryDAL
+from bot.DAL.premium_dal import PremiumDAL
+from bot.DAL.server_dal import ServerDAL
+from bot.DAL.user_dal import UserDAL
+from bot.DAL.user_premium_dal import UserPremiumDAL
 
 # Load environment variables
 load_dotenv()
@@ -40,7 +49,21 @@ def run_bot():
     else:
         logger.error("DISCORD_TOKEN not found in .env file.")
 
+def create_database_tables():
+    ChannelDAL().create_table()
+    EmtyDAL().create_table()
+    FeedDAL().create_table()
+    QrPayCodeDAL().create_table()
+    TransactionHistoryDAL().create_table()
+    PremiumDAL().create_table()
+    ServerDAL().create_table()
+    UserDAL().create_table()
+    UserPremiumDAL().create_table()
+    
 if __name__ == "__main__":
+    # Create database tables
+    create_database_tables()
+    
     ## Run bot and load cogs
     asyncio.run(load_cogs())
     run_bot()

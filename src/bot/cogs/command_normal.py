@@ -17,8 +17,7 @@ class CommandNormal(CommandsCog):  # Đảm bảo kế thừa từ CommandsCog
 
     @commands.command(name="ping")
     async def commmand_ping(self, ctx):
-        if await self.is_dm_channel(ctx):
-            return
+        '''Check bot latency'''
         await ctx.send(self.ping())
 
     @nextcord.slash_command(name="ping", description="Check bot latency")
@@ -32,6 +31,7 @@ class CommandNormal(CommandsCog):  # Đảm bảo kế thừa từ CommandsCog
     
     @commands.command(name="getrss")
     async def command_get_rss(self, ctx, url: str):
+        '''Get the RSS link of a website'''
         if await self.is_dm_channel(ctx):
             return
         try:
@@ -51,6 +51,7 @@ class CommandNormal(CommandsCog):  # Đảm bảo kế thừa từ CommandsCog
 
     @nextcord.slash_command(name="help", description="List of commands")
     async def help(self, interaction):
+        '''List of commands'''
         await interaction.response.defer()
         try:
             available_commands = [command.name for command in self.bot.commands]

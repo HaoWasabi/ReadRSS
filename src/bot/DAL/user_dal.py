@@ -7,6 +7,7 @@ from .base_dal import BaseDAL, logger
 class UserDAL(BaseDAL):
     def __init__(self):
         super().__init__()
+        self.create_table()
         
     def create_table(self):
         self.open_connection()

@@ -3,6 +3,7 @@ from nextcord.ext import commands
 from nextcord import DMChannel, Color
 from ..GUI.embed_custom import EmbedCustom
 from ..GUI.select_clear import SelectClear
+from ..GUI.select_insert import SelectInsert
 from ..GUI.button_of_ctrl_command import ButtonOfCtrlCommand
 from ..DTO.color_dto import ColorDTO
 from ..utils.commands_cog import CommandsCog
@@ -46,7 +47,8 @@ class AdminBotCommands(CommandsCog):
             )
             await channel.send(embed=embed, view=ButtonOfCtrlCommand(ctx.author, self.bot)) 
             await channel.send("Choose an option to clear in the database.", view=SelectClear(user=ctx.author))
-            
+            await channel.send("Choose an option to insert in the database.", view=SelectInsert(user=ctx.author, bot=self.bot))
+
         except Exception as e:
             await ctx.send(f"Error: {e}")
             logger.error(f"Error: {e}")

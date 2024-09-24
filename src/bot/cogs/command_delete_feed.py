@@ -1,13 +1,15 @@
+from calendar import c
 import logging
 import nextcord
 from nextcord.ext import commands
-from nextcord import Interaction, SlashOption, TextChannel
-from typing import Optional
+from nextcord import DMChannel, Interaction, SlashOption, TextChannel
+from typing import Optional, Union
 from ..BLL.channel_bll import ChannelBLL
 from ..BLL.emty_bll import EmtyBLL
 from ..BLL.feed_bll import FeedBLL
 from ..utils.commands_cog import CommandsCog
 from ..utils.handle_rss import get_rss_link
+from ..utils.check_have_premium import check_have_premium
 
 logger = logging.getLogger("CommandDeleteFeed")
 
@@ -16,25 +18,18 @@ class CommandDeleteFeed(CommandsCog):
         super().__init__(bot)
         
     @commands.command(name="deletefeed")
-    async def command_delete_feed(self, ctx, channel: TextChannel, link_rss: Optional[str] = None):
-        if await self.is_dm_channel(ctx):
-            return
+    async def command_delete_feed(self, ctx, channel, link_rss: Optional[str] = None):
         if not link_rss:
             await ctx.send('Please provide an RSS link.')
             return
-        await self._delete_feed(ctx, channel, link_rss)
+        await self._delete_feed(ctx, channel, ctx.author,link_rss)
 
     @nextcord.slash_command(name="deletefeed", description="Delete feed notification channel")
     async def slash_delete_feed(self, interaction: Interaction, 
-                                channel: TextChannel = SlashOption(description="Target channel"), 
+                                channel: Union[TextChannel, DMChannel] = SlashOption(description="Target channel"), 
                                 link_rss: Optional[str] = SlashOption(description="The RSS feed link", required=False), 
                                 url: Optional[str] = SlashOption(description="Website URL", required=False)):
         await interaction.response.defer()
-
-        # Ensure the command is executed in a server (guild)
-        if not interaction.guild:
-            await interaction.followup.send('This command can only be used in a server.')
-            return
         
         if link_rss and url:
             await interaction.followup.send('Please provide either an RSS link or a URL, not both.')
@@ -45,16 +40,17 @@ class CommandDeleteFeed(CommandsCog):
             if not link_rss:
                 await interaction.followup.send('RSS link not found for the provided URL.')
                 return
-        await self._delete_feed(interaction.followup, channel, link_rss)
+        await self._delete_feed(interaction.followup, channel, interaction.user, link_rss)
 
-    async def _delete_feed(self, source, channel: TextChannel, link_rss: Optional[str] = None):
+    async def _delete_feed(self, source, channel, user, link_rss: Optional[str] = None):
         try:
+            
             feed_bll = FeedBLL()
             emty_bll = EmtyBLL()
-            channel_id = str(channel.id)
+            channel_id = str(channel.id) if channel else str(user.id)
             
-            if feed_bll.get_all_feed_by_channel_id(channel_id) is []:
-                await source.send("This channel does not have any feeds.")
+            if not check_have_premium(str(user.id)):
+                await source.send("This command is only available for premium servers.")
                 return
             
             if link_rss:
@@ -67,7 +63,7 @@ class CommandDeleteFeed(CommandsCog):
                 feed_bll.delete_feed_by_channel_id(channel_id)
                 emty_bll.delete_emty_by_channel_id(channel_id)
         
-            await source.send(f"Successfully deleted feed(s) from {channel.mention}.")
+            await source.send(f"Successfully deleted feed(s) from channel.")
         
         except Exception as e:
             await source.send(f"An error occurred: {e}")

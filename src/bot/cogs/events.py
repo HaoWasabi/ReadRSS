@@ -82,7 +82,13 @@ class Events(CommandsCog):
             # Duyệt qua từng channel
             for channel in list_channel:
                 channel_id = channel.get_channel_id()
-                channel_send = self.bot.get_channel(int(channel_id))
+                channel_send_id = int(channel_id)
+                channel_send = self.bot.get_channel(channel_send_id)
+
+                # Nếu không tìm thấy kênh (có thể là DMChannel)
+                if not channel_send:
+                    # Lấy user từ ID cho DMChannel
+                    channel_send = await self.bot.fetch_user(channel_send_id)
 
                 # Duyệt qua từng feed
                 for feed in list_feed:
@@ -91,21 +97,29 @@ class Events(CommandsCog):
                     if not feed_data or not all(feed_data):
                         raise TypeError("Feed data is incomplete or None")
                     
+                    # Kiểm tra xem feed có thuộc về kênh hiện tại không
                     if feed.get_channel_id() == channel_id:
                         feed_dto, emty_dto = feed_data
                         emty_dto.set_channel_id(channel_id)
 
                         if emty_dto not in list_emty:
-                        #    # Tạo Embed và gửi tin nhắn đến kênh
-                            emty_bll.insert_emty(emty_dto)
-                            id_server = str(channel_send.guild.id)
-                            embed = EmbedFeed(
-                                        id_server=id_server if id_server else "DM",
-                                        feed_dto=feed_dto, 
-                                        emty_dto=emty_dto)
-                            await channel_send.send(embed=embed)  # Gửi tin nhắn đến kênh
-                            logger.info(f"Sending message to channel {channel_id} with embed {embed}")
                             # Lưu emty vào cơ sở dữ liệu
+                            emty_bll.insert_emty(emty_dto)
+
+                            # Tạo Embed và gửi tin nhắn đến kênh
+                            if isinstance(channel_send, nextcord.User):  # Nếu là DMChannel
+                                id_server = str(channel_send.id)
+                            else:  # Nếu là channel trong server
+                                id_server = str(channel_send.guild.id)
+
+                            embed = EmbedFeed(
+                                id_server=id_server if id_server else "DM",
+                                feed_dto=feed_dto, 
+                                emty_dto=emty_dto
+                            )
+
+                            await channel_send.send(embed=embed)  # Gửi tin nhắn đến kênh
+                            logger.info(f"Sending message to {'DM' if isinstance(channel_send, nextcord.User) else 'channel'} {channel_send_id} with embed {embed}")
                             logger.info(f"Inserting emty: {emty_dto.__dict__}")
 
         except Exception as e:

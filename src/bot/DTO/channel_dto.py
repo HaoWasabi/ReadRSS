@@ -10,7 +10,7 @@ class ChannelDTO:
         self.__is_active = is_active
         
     def __str__(self) -> str:
-        return f"ChannelDTO(channel_id={self.__channel_id}, server_id={self.__server_id}, channel_name={self.__channel_name}, hex_color={self.__hex_color}, is_active={self.__is_active})"
+        return f"ChannelDTO(channel_id={self.__channel_id}, server_id={self.__server_id}, channel_name={self.__channel_name}, is_active={self.__is_active})"
     
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, ChannelDTO):

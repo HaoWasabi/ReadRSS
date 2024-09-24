@@ -1,6 +1,8 @@
 import nextcord
 from nextcord.ui import View
 from nextcord import SelectOption
+
+from ..GUI.modal_delete_premium import ModalDeletePremium
 from ..utils.check_authorization import check_authorization
 from ..GUI.modal_clear_table_of_db import ModalClearTable
 from .modal_delete_channel_feed import ModalDeleteChannelFeed
@@ -16,7 +18,8 @@ class SelectClear(View):
         options=[
             SelectOption(label="all", value="all", description="Clear all database."),
             SelectOption(label="tbl", value="tbl", description="Clear a table in database."),
-            SelectOption(label="feed", value="feed", description="Clear a channel feed in database.")
+            SelectOption(label="feed", value="feed", description="Clear a feed in database."), 
+            SelectOption(label="premium", value="premium", description="Hide a premium in database.")
         ]
     )
     
@@ -35,4 +38,5 @@ class SelectClear(View):
         elif selection == "feed":
             await interaction.response.send_modal(ModalDeleteChannelFeed(self.author))
         
-    
+        elif selection == "premium":
+            await interaction.response.send_modal(ModalDeletePremium(self.author))

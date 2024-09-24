@@ -11,7 +11,7 @@ class BaseDAL:
     cursor: sqlite3.Cursor
     def __init__(self):
         # Sử dụng đường dẫn tuyệt đối đến tệp cơ sở dữ liệu
-        # self.create_table()
+        self.create_table()
         pass
         
     def create_table(self):

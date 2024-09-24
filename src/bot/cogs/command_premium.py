@@ -1,6 +1,6 @@
 from email import message
 from tkinter.messagebox import NO
-from discord import ButtonStyle, Emoji, PartialEmoji
+from nextcord import ButtonStyle, Emoji, PartialEmoji
 import logging, os , datetime, mbbank, re
 import sys
 from typing import Optional
@@ -138,6 +138,7 @@ class CommandPaying(CommandsCog):
               
     @commands.command(name="premium")
     async def pay(self, ctx: Context):
+        '''Nạp để mở gói premium'''
         # if await self.is_dm_channel(ctx): 
         #     return
         
@@ -150,9 +151,6 @@ class CommandPaying(CommandsCog):
         description="Gói premium mang đến nhiều tính năng hơn. ở đây là một số gói cơ bản:")
         
         premium_bll = PremiumBLL()
-        
-        
-        
         buttons = View()
         
         cls = self
@@ -187,7 +185,7 @@ class CommandPaying(CommandsCog):
                 if message is None:
                     await ctx.send('có gì đó lạ lắm')
                     return
-                qr = QrPayCodeDTO(qr_id, str(ctx.author.id), str(message.channel.id), self.pre.get_premium_id(), str(message.id), datetime.datetime.now(), False)
+                qr = QrPayCodeDTO(qr_id, str(ctx.author.id), str(message.channel.id), self.pre.get_premium_id(), str(message.id), datetime.datetime.now(), False) # type: ignore
                 
                 qr_pay_code_bll = QrPayCodeBLL()
                 qr_pay_code_bll.insert_qr_pay_code(qr)

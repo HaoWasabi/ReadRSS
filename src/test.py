@@ -8,6 +8,9 @@
 # from bot.DTO.channel_emty_dto import ChannelEmtyDTO
 # from bot.DTO.channel_feed_dto import ChannelFeedDTO
 # from bot.DTO.server_channel_dto import ServerChannelDTO
+from datetime import datetime
+from bot.DAL.premium_dal import PremiumDAL
+from bot.DTO.premium_dto import PremiumDTO
 from bot.DTO.server_dto import ServerDTO
 # from bot.DTO.server_color_dto import ServerColorDTO
 # from bot.BLL.feed_bll import FeedBLL
@@ -257,3 +260,4 @@ def test_feed_emty():
 # test_server_pay_dal()
 # test_server_color()
 # test_feed_emty()
+# PremiumDAL().insert_premium(PremiumDTO('1', 'gói 1', 'gói cơ bản', 10000, datetime.now(), 2, True))
