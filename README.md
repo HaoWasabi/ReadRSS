@@ -44,7 +44,7 @@ Cách sử dụng các lệnh cơ bản:
 + `/deletefeed channel:<channel> rss:<link rss>` hoặc `_deletefeed <channel> <link rss>`: Hủy thiết lập thbot báo của trang web có link rss đó đã đăng ký ở kênh chỉ định.
 + `/setcolor <chọn màu>` hoặc `_setcolor <tên màu ghi thường>`: thiết lập màu mặc định cho các embed mà bot sẽ gửi. Chỉ dùng được các màu đã lưu sẵn trong csdl như: yellow, red, blue, green, gray, black, puple
 + `_premium`: đăng kí gói vip, mở khóa tin năng có thể thiết lập các lệnh khi nhắn riêng cho bot(DMChannel). Người dùng không đăng kí gói vip chỉ được dùng các lệnh ở channel của server, không thể thiết lập khi nhắn riêng. Lưu ý: mở khóa premium sau khi chuyển khoản thành công tiền thật, sau 1p dữ liệu chuyển khoản sẽ được bot nhận được và lưu vào database rồi mở khóa. Sau 3p, tin nhắn tự thu hồi. Người dùng chọn button chứa tên các gói để bot tạo mã QR mang mệnh giá tương ứng. Chức năng giao dịch của bot làm ra với mục đích chuyển khoản tiền thật.
-
++ `checkpremium`: kiểm tra bản thân người dùng đã đăng kí gói premium chưa
 + `@<tên bot> <câu hỏi>`: hỏi để bot giao tiếp trả lời như chatgpt
 
 **Lưu ý**: 
