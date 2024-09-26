@@ -22,7 +22,7 @@ intents.message_content = True
 intents.guilds = True
 
 # Set up logging
-logging.basicConfig(level=logging.NOTSET, format="%(filename)s:%(lineno)d [%(levelname)-8s] %(message)s")
+logging.basicConfig(level=logging.NOTSET, format="%(filename)s:%(lineno)d [%(levelname)-s] %(message)s")
 logger = logging.getLogger(__name__)
 
 # Set up bot instance
@@ -59,10 +59,9 @@ def create_database_tables():
     UserPremiumDAL().create_table()
     
 if __name__ == "__main__":
-    # Create database tables
+    ## Create database tables
     create_database_tables()
     
     ## Run bot and load cogs
     asyncio.run(load_cogs())
     run_bot()
-    # Database().delete_table("tbl_feed")

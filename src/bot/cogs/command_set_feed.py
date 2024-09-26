@@ -1,6 +1,5 @@
 import logging
 from typing import Optional, Union
-from matplotlib import use
 import nextcord
 from nextcord.ext import commands
 from nextcord import Interaction, SlashOption, TextChannel, DMChannel, User
@@ -14,7 +13,6 @@ from ..DTO.user_dto import UserDTO
 from ..utils.commands_cog import CommandsCog
 from ..utils.handle_rss import get_rss_link, read_rss_link
 from ..utils.check_have_premium import check_have_premium
-
 
 logger = logging.getLogger("CommandSetFeed")
 
@@ -67,8 +65,8 @@ class CommandSetFeed(CommandsCog):
     async def _handle_feed(self, source, channel, user, link_rss: str):
         """Xử lý cài đặt feed và lưu vào cơ sở dữ liệu."""
         try:
-            if not check_have_premium(str(user.id)):
-                await source.send("This command is only available for premium servers.")
+            if isinstance(channel, DMChannel) and not check_have_premium(str(user.id)):
+                await source.send("This command is only available for premium users in DM.")
                 return
             
             feed_data = read_rss_link(rss_link=link_rss)
@@ -102,8 +100,12 @@ class CommandSetFeed(CommandsCog):
 
             feed_dto.set_channel_id(channel_dto.get_channel_id())
             FeedBLL().insert_feed(feed_dto)
-
-            await source.send(f"Đã đăng ký feed thành công cho kênh {channel_name}.")
+            
+            if isinstance(channel, TextChannel):
+                await source.send(f"RSS feed has been set up for {channel.mention}.")
+            elif  isinstance(channel, TextChannel):
+                await source.send(f"RSS feed has been set up for **{user.name}** channel.")
+            return 
 
         except Exception as e:
             await source.send(f"Đã xảy ra lỗi: {e}")

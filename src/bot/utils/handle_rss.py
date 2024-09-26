@@ -21,8 +21,15 @@ class GetRSS:
         return self.__rss_link
 
 def handle_url(url: str) -> str:
+    # Xử lý để đảm bảo URL đúng định dạng và không chứa dấu gạch chéo thừa
+    url = url.strip()  # Xóa khoảng trắng đầu và cuối chuỗi
+    if not url.startswith("http://") and not url.startswith("https://"):
+        url = f"https://{url}"
     
-    return f"https://{url}" if "http://" not in url and "https://" not in url else url
+    # Đảm bảo rằng chỉ có một cặp dấu gạch chéo sau https:
+    url = url.replace("https://", "https://").replace("http://", "http://").replace(":///", "://").replace("///", "//")
+
+    return url
 
 def get_rss_link(url: str) -> Optional[str]:
     return GetRSS(handle_url(url)).get_rss_link()

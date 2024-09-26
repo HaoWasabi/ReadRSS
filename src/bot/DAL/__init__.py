@@ -2,7 +2,6 @@ from datetime import datetime
 from .base_dal import BaseDAL
 
 from .channel_dal import *
-from .channel_feed_dal import *
 from .emty_dal import *
 from .feed_dal import *
 from .qr_pay_code_dal import *

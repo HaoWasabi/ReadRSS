@@ -13,7 +13,7 @@ from ..BLL.premium_bll import PremiumBLL
 class ModalInserUserPremium(Modal):
     def __init__(self, user, bot):
         self.bot = bot
-        super().__init__(title="Insert Premium")
+        super().__init__(title="Insert User To Have Premium")
         self.author = user
         self.id_user = TextInput(label="User ID", placeholder="Enter the user ID", required=True)
         self.id_premium = TextInput(label="Premium ID", placeholder="Enter the premium ID", required=True)

@@ -49,19 +49,23 @@ class CommandDeleteFeed(CommandsCog):
             emty_bll = EmtyBLL()
             channel_id = str(channel.id) if channel else str(user.id)
             
-            if not check_have_premium(str(user.id)):
+            # Chi dung duoc o kenh DMChannel khi co premium
+            if isinstance(channel, DMChannel) and not check_have_premium(str(user.id)) :
                 await source.send("This command is only available for premium servers.")
                 return
             
             if link_rss:
                 if not feed_bll.get_feed_by_link_atom_feed_and_channel_id(link_rss, channel_id):
-                    await source.send(f"RSS feed not found in {channel.mention}.")
+                    if isinstance(channel, TextChannel):
+                        await source.send(f"RSS feed not found in {channel.mention}.")
+                    else:
+                        await source.send(f"RSS feed not found in the **{user.name}** channel.")
                     return 
                 feed_bll.delete_feed_by_link_atom_feed_and_channel_id(link_rss, channel_id)
                 emty_bll.delete_emty_by_link_atom_feed_and_channel_id(link_rss, channel_id)
             else:
-                feed_bll.delete_feed_by_channel_id(channel_id)
-                emty_bll.delete_emty_by_channel_id(channel_id)
+                feed_bll.delete_feed_by_channel_id(channel_id or str(user.id))
+                emty_bll.delete_emty_by_channel_id(channel_id or str(user.id))
         
             await source.send(f"Successfully deleted feed(s) from channel.")
         

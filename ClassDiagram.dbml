@@ -19,7 +19,6 @@ Table emty{
   channel_id string [ref: > feed.channel_id]
 }
 
-// Ref: feed.link_feed < emty.link_emty
 
 Table channel{
   channel_id string [pk]
@@ -27,16 +26,11 @@ Table channel{
   server_id string [ref: > server.server_id]
 }
 
-// Ref: channel.channel_id < feed.link_atom_feed
-// Ref: channel.channel_id < feed.link_feed
-
 Table server{
   server_id string [pk]
   server_name string
   hex_color string
 }
-
-// Ref: server.server_id < channel.channel_id
 
 Table color{
   hex_color string [pk]
@@ -57,9 +51,6 @@ Table user{
   user_id string [pk]
   user_name string
 }
-
-// Ref: user.user_id < channel.channel_id
-
 
 Table user_premium{
   user_id string [ref: - user.user_id]

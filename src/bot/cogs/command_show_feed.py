@@ -2,11 +2,10 @@ import logging
 from ..utils.commands_cog import CommandsCog
 import nextcord
 from nextcord.ext import commands
-from nextcord import Interaction
+from nextcord import Interaction, DMChannel
 from ..BLL.feed_bll import FeedBLL
 from ..GUI.embed_custom import EmbedCustom
 from ..utils.check_have_premium import check_have_premium
-
 
 logger = logging.getLogger("CommandShowChannel")
 
@@ -16,29 +15,30 @@ class CommandShowChannel(CommandsCog):
         
     @commands.command(name="show")
     async def command_show(self, ctx):
-        '''Show the feed notification channel'''
-        await self._show_channel(ctx, ctx.guild, ctx.author)
+        await self._show_channel(ctx=ctx, guild=ctx.guild, user=ctx.author)
         
     @nextcord.slash_command(name="show", description="Show the feed notification channel")
     async def slash_command_show(self, interaction: Interaction):
-        # Trì hoãn phản hồi để xử lý lệnh
         await interaction.response.defer()
-        
-        # Kiểm tra xem lệnh được gọi trong DM hay Guild
-        if isinstance(interaction.channel, nextcord.DMChannel):
-            await self._show_channel(interaction.followup, None, interaction.user)
-        else:
-            await self._show_channel(interaction.followup, interaction.guild, interaction.user)
+        await self._show_channel(ctx=interaction.followup, guild=interaction.guild, user=interaction.user)
 
-    async def _show_channel(self, ctx, guild, user):
-        server_id = str(guild.id if guild else user.id )
-        server_name = guild.name if guild else user.name 
-        
+    async def _show_channel(self, ctx, guild=None, user=None):
         try:
-            if not check_have_premium(str(user.id)):
+            # Kiểm tra xem có phải là DM không
+            if not guild and not check_have_premium(str(user.id)): # type: ignore
                 await ctx.send("This command is only available for premium servers.")
                 return
             
+            if not guild:
+                guild_id = str(user.id)  # type: ignore # Sử dụng user ID cho DM
+                guild_name = "Direct Message"
+            else:
+                if guild is None:
+                    await ctx.send("Lỗi: Không xác định được server.")
+                    return
+                guild_id = str(guild.id)  # Guild ID for servers
+                guild_name = guild.name
+
             feed_bll = FeedBLL()
             server_data = {}
             num_feeds = 0
@@ -46,28 +46,23 @@ class CommandShowChannel(CommandsCog):
             for feed_dto in feed_bll.get_all_feed():
                 channel_id = int(feed_dto.get_channel_id())
                 
-                # Kiểm tra nếu lệnh được gọi trong DMChannel hoặc trong guild
-                if isinstance(ctx.channel, nextcord.DMChannel):
-                    # Với kênh DM, kiểm tra nếu channel_id trùng với user.id
-                    if channel_id == user.id:
-                        server_name = f"**User:** {user.name} (DM)"
-                        channel_info = f"- **Notification:** [{feed_dto.get_title_feed()}]({feed_dto.get_link_feed()})"
-                        
-                        server_data.setdefault(server_name, []).append(channel_info)
+                if not guild:
+                    # So sánh ID kênh với user ID trong DM
+                    if str(user.id) == str(channel_id): # type: ignore
+                        channel_info = f"- **DM Channel** - [{feed_dto.get_title_feed()}]({feed_dto.get_link_feed()})"
+                        server_data.setdefault("Direct Message", []).append(channel_info)
                         num_feeds += 1
                 else:
+                    # Xử lý cho TextChannel trong guild
                     channel = self.bot.get_channel(channel_id)
-
-                    # Kiểm tra nếu channel tồn tại và là một phần của guild
-                    if channel and channel.guild.id == server_id:
-                        server_name = f"**Server:** {server_name} ({server_id})"
+                    if channel is not None and channel.guild.id == int(guild_id):
+                        server_name = f"**Server:** {guild_name} ({guild_id})"
                         channel_info = f"- **Channel:** {channel.mention} - [{feed_dto.get_title_feed()}]({feed_dto.get_link_feed()})"
-                        
                         server_data.setdefault(server_name, []).append(channel_info)
                         num_feeds += 1
 
             embed = EmbedCustom(
-                id_server=server_id,
+                id_server=guild_id,
                 title="List of Feeds in Channels",
                 description=f"You have {num_feeds} feeds in channels:"
             )
@@ -75,13 +70,11 @@ class CommandShowChannel(CommandsCog):
             for server_name, channels in server_data.items():
                 embed.add_field(name=server_name, value="\n".join(channels), inline=False)
 
-            # Gửi embed trả về từ slash command (ctx trong trường hợp này là followup)
             await ctx.send(embed=embed)
 
         except Exception as e:
             await ctx.send(f"Error: {e}")
             logger.error(f"Error: {e}")
-
 
 async def setup(bot):
     bot.add_cog(CommandShowChannel(bot))

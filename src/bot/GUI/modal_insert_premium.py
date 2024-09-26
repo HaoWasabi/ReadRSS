@@ -8,7 +8,7 @@ from ..BLL.premium_bll import PremiumBLL
 # PremiumDAL().insert_premium(PremiumDTO('1', 'gói 1', 'gói cơ bản', 10000, datetime.now(), 2, True))
 class ModalInserPremium(Modal):
     def __init__(self, user):
-        super().__init__(title="Insert User To Have Premium")
+        super().__init__(title="Insert Premium")
         self.author = user
         self.id_premium = TextInput(label="Premium ID", placeholder="Enter the premium ID", required=True)
         self.name_premium = TextInput(label="Premium name", placeholder="Enter the premium name", required=True)

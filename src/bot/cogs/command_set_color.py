@@ -42,7 +42,8 @@ class CommandSetColor(CommandsCog):
         server_name = guild.name if guild else user.name 
         
         try:
-            if not check_have_premium(str(user.id)):
+            # Chi dung duoc o kenh DMChannel khi co premium
+            if not guild and not check_have_premium(str(user.id)):
                 await ctx.send("This command is only available for premium servers.")
                 return
             
