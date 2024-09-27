@@ -144,13 +144,12 @@ class Events(CommandsCog):
             feed_bll = FeedBLL()
 
             list_channel = channel_bll.get_all_channel()
-            list_feed = feed_bll.get_all_feed()
-
             # Process each channel
             for channel in list_channel:
                 channel_id = channel.get_channel_id()
                 channel_send_id = int(channel_id) 
                 channel_send = self.bot.get_channel(channel_send_id)
+                list_feed = feed_bll.get_all_feed_by_channel_id(channel_id)
 
                 # If it's a DM channel, load and send to DM
                 if not channel_send:
@@ -172,7 +171,7 @@ class Events(CommandsCog):
         """Run load_list_feed in a separate thread to avoid blocking the main event loop."""
         await asyncio.to_thread(self.load_list_feed)
 
-    @tasks.loop(seconds=10)
+    @tasks.loop(minutes=1)
     async def push_noti(self):
         logger.debug('Running background task push_noti...')
         await self.load_guilds()

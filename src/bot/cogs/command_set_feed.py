@@ -103,7 +103,7 @@ class CommandSetFeed(CommandsCog):
             
             if isinstance(channel, TextChannel):
                 await source.send(f"RSS feed has been set up for {channel.mention}.")
-            elif  isinstance(channel, TextChannel):
+            elif  isinstance(channel, DMChannel):
                 await source.send(f"RSS feed has been set up for **{user.name}** channel.")
             return 
 
