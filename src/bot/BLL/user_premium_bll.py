@@ -13,6 +13,9 @@ class UserPremiumBLL(Singleton):
     def insert_user_premium(self, userpremium: UserPremiumDTO) -> bool:
         return self.__userpremiumDAL.insert_user_premium(userpremium)
     
+    def delete_user_premium_by_user_id_and_premium_id(self, user_id: str, premium_id: int) -> bool:
+        return self.__userpremiumDAL.delete_user_premium_by_user_id_and_premium_id(user_id, premium_id)
+    
     def get_all_userpremiums(self) -> List[UserPremiumDTO]:
         return self.__userpremiumDAL.get_all_userpremium()
     

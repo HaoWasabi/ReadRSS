@@ -15,7 +15,6 @@ from ..utils.datetime_format import datetime_from_string
 
 from ..DTO.user_dto import UserDTO
 from ..DTO.premium_dto import PremiumDTO
-from ..GUI.button_of_premium import ButtonOfPayment
 from ..DTO.user_premium_dto import UserPremiumDTO
 from ..DTO.transaction_history_dto import TransactionHistoryDTO
 from ..DTO.qr_code_pay_dto import QrPayCodeDTO
@@ -101,7 +100,7 @@ class CommandPaying(CommandsCog):
                 qr.is_success = True
                 qr_pay_code_bll.insert_qr_pay_code(qr)
                 user_dto = user_bll.get_user_by_user_id(qr.user_id)
-                premium_dto = premium_bll.get_premium_by_id(qr.premium_id)
+                premium_dto = premium_bll.get_premium_by_id(int(qr.premium_id))
                 if premium_dto is None:
                     logger.error(f'PremiumDTO không tìm thấy cho premium_id: {qr.premium_id}')
                     continue

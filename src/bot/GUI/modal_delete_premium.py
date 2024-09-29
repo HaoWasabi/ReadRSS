@@ -1,3 +1,4 @@
+import nextcord
 from nextcord import Interaction
 from nextcord.ui import TextInput, Modal
 from ..utils.check_authorization import check_authorization

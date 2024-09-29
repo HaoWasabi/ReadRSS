@@ -3,6 +3,8 @@ import nextcord, os, logging
 from nextcord.ext import commands, tasks
 from nextcord.message import Message
 import google.generativeai as genai
+
+from ..BLL.user_premium_bll import UserPremiumBLL
 from ..DTO.channel_dto import ChannelDTO
 from ..DTO.server_dto import ServerDTO
 from ..DTO.color_dto import ColorDTO
@@ -16,6 +18,7 @@ from ..GUI.embed_feed import EmbedFeed
 from ..GUI.embed_custom import EmbedCustom
 from ..utils.commands_cog import CommandsCog
 from ..utils.handle_rss import read_rss_link
+from ..utils.datetime_format import *
 
 logger = logging.getLogger("Events")
 
@@ -171,11 +174,42 @@ class Events(CommandsCog):
         """Run load_list_feed in a separate thread to avoid blocking the main event loop."""
         await asyncio.to_thread(self.load_list_feed)
 
+    async def load_user_premium(self):
+        try:
+            user_premium_bll = UserPremiumBLL()
+            list_user_premium = user_premium_bll.get_all_userpremiums()
+            for user_premium in list_user_premium:
+                time_registered = user_premium.get_date_registered()
+                duration = user_premium.get_premium().get_duration()  # Giả sử đây là số phút hoặc số giây
+
+                # Tính số giây đã trôi qua từ thời gian đăng ký
+                if isinstance(time_registered, datetime):
+                    elapsed_time_seconds = (datetime.now() - time_registered).total_seconds()
+                elif isinstance(time_registered, int):
+                    # Nếu time_registered là int, chuyển nó thành datetime
+                    time_registered = datetime.fromtimestamp(time_registered / 1000)  # Chuyển đổi từ timestamp nếu cần
+                    elapsed_time_seconds = (datetime.now() - time_registered).total_seconds()
+                else:
+                    logger.error(f"Invalid time_registered type: {type(time_registered)} for user {user_premium.get_user().get_user_id()}")
+                    continue
+
+                # So sánh thời gian đã trôi qua với duration
+                if elapsed_time_seconds >= duration:
+                    user_id = user_premium.get_user().get_user_id()
+                    premium_id = user_premium.get_premium().get_premium_id()
+                    if user_id and premium_id:
+                        user_premium_bll.delete_user_premium_by_user_id_and_premium_id(user_id=user_id, premium_id=premium_id)
+                        logger.info(f"Deleting premium for User ID: {user_id}, Premium ID: {premium_id}, Resistered at: {time_registered}")
+        except Exception as e:
+            logger.error(f"Error loading userpremium list: {e}")
+
+
     @tasks.loop(minutes=1)
     async def push_noti(self):
         logger.debug('Running background task push_noti...')
         await self.load_guilds()
         await self.load_list_feed()
+        await self.load_user_premium()
 
     @push_noti.before_loop
     async def await_bot_ready(self):

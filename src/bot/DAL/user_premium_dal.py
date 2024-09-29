@@ -18,7 +18,7 @@ class UserPremiumDAL(BaseDAL):
             self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS tbl_user_premium(
                 user_id TEXT,
-                premium_id TEXT,
+                premium_id INTEGER,
                 date_registered DATETIME,
                 PRIMARY KEY (user_id, premium_id, date_registered)
             )
@@ -47,7 +47,23 @@ class UserPremiumDAL(BaseDAL):
             return False
         finally:
             self.close_connection()
-            
+
+    def delete_user_premium_by_user_id_and_premium_id(self, user_id: str, premium_id: int) -> bool:
+        self.open_connection()
+        try:
+            with self.connection:
+                self.cursor.execute('''
+                    DELETE FROM tbl_user_premium WHERE user_id = ? AND premium_id = ?
+                ''', (user_id, premium_id))
+                self.connection.commit()
+                logger.info(f"Successfully deleted premium for User ID: {user_id}, Premium ID: {premium_id}")
+                return True
+        except sqlite3.Error as e:
+            logger.error(f"Error deleting data from 'tbl_user_premium': {e}")
+            return False
+        finally:
+            self.close_connection()
+
     def get_all_userpremium(self) -> List[UserPremiumDTO]:
         self.open_connection()
         try:
@@ -64,7 +80,7 @@ class UserPremiumDAL(BaseDAL):
                 if rows:
                     return [UserPremiumDTO(UserDTO(row[0], row[1]),
                             PremiumDTO(row[2], row[3], row[4], row[5], row[6], row[7], row[8]),
-                                row[7]) for row in rows]
+                                row[9]) for row in rows]
                 else:
                     return []
         except sqlite3.Error as e:
@@ -90,7 +106,7 @@ class UserPremiumDAL(BaseDAL):
                 if rows:
                     return [UserPremiumDTO(UserDTO(row[0], row[1]),
                             PremiumDTO(row[2], row[3], row[4], row[5], row[6], row[7], row[8]),
-                                row[7]) for row in rows]
+                                row[9]) for row in rows]
                 else:
                     return []
         except sqlite3.Error as e:

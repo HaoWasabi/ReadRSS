@@ -4,7 +4,7 @@ from typing import Optional
 
 
 class PremiumDTO:
-    def __init__(self, premium_id: Optional[str], premium_name: str,description: str, price: float, date_created: datetime, duration: int, is_active=True):
+    def __init__(self, premium_id: Optional[int], premium_name: str,description: str, price: float, date_created: datetime, duration: int, is_active=True):
         self.__premium_id = premium_id
         self.__premium_name = premium_name
         self.__price = price
@@ -25,13 +25,19 @@ class PremiumDTO:
     def set_premium_name(self, premium_name: str) -> None:
         self.__premium_name = premium_name
         
+    def set_date_created(self, date_created: datetime) -> None:
+        self.__date_created = date_created
+        
+    def set_premium_id(self, premium_id: Optional[int]) -> None:
+        self.__premium_id = premium_id
+        
     def set_description(self, description: str) -> None:
         self.__description = description
         
     def set_state(self, is_active: bool) -> None:
         self.__is_active = is_active
         
-    def get_premium_id(self) -> Optional[str]:
+    def get_premium_id(self) -> Optional[int]:
         return self.__premium_id
     
     def get_duration(self) -> int:

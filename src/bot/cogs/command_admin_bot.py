@@ -1,9 +1,7 @@
 import logging
 from nextcord.ext import commands
-from nextcord import DMChannel, Color
+from nextcord import DMChannel
 from ..GUI.embed_custom import EmbedCustom
-from ..GUI.select_clear import SelectClear
-from ..GUI.select_insert import SelectInsert
 from ..GUI.button_of_ctrl_command import ButtonOfCtrlCommand
 from ..DTO.color_dto import ColorDTO
 from ..utils.commands_cog import CommandsCog
@@ -21,7 +19,7 @@ class AdminBotCommands(CommandsCog):
         try:
             channel = ctx.channel
             embed = EmbedCustom(
-                id_server=str(ctx.guild.id) if not isinstance(ctx.channel, DMChannel) else "DM",
+                id_server=str(ctx.guild.id) if not isinstance(channel, DMChannel) else "DM",
                 title="Warning",
                 description="The bot is shutting down...",
                 color = self.color
@@ -38,17 +36,13 @@ class AdminBotCommands(CommandsCog):
         try:
             channel = ctx.channel
 
-            hex_color= int(ColorDTO("darkkhaki").get_hex_color().replace("#", ""), 16)
             embed = EmbedCustom(
-                id_server=str(ctx.guild.id) if not isinstance(ctx.channel, DMChannel) else "DM",
+                id_server=str(ctx.guild.id) if not isinstance(channel, DMChannel) else "DM",
                 title="Control Panel",
                 description="Choose an option to control the bot.",
                 color= self.color
             )
             await channel.send(embed=embed, view=ButtonOfCtrlCommand(ctx.author, self.bot)) 
-            await channel.send("Choose an option to clear in the database.", view=SelectClear(user=ctx.author))
-            await channel.send("Choose an option to insert in the database.", view=SelectInsert(user=ctx.author, bot=self.bot))
-
         except Exception as e:
             await ctx.send(f"Error: {e}")
             logger.error(f"Error: {e}")

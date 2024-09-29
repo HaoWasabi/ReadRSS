@@ -11,7 +11,7 @@ class CheckPremium(CommandsCog):
         super().__init__(bot)
         
     def check_have_premium(self, user_id: str) -> str:
-        return f"User <@{user_id}> has premium." if check_have_premium(user_id) else f"User <@{user_id}> does not have premium."
+        return f"User <@{user_id}> (`{user_id}`) has premium." if check_have_premium(user_id) else f"User <@{user_id}> (`{user_id}`) does not have premium."
 
     @commands.command(name="checkpremium")
     async def command_check_premium(self, ctx):

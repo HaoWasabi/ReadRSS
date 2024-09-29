@@ -1,3 +1,6 @@
+from code import interact
+from re import S
+from urllib import response
 import nextcord
 from nextcord.ext import commands
 from nextcord import Interaction
@@ -7,6 +10,10 @@ from ..DTO.color_dto import ColorDTO
 from ..BLL.feed_bll import FeedBLL
 from ..BLL.channel_bll import ChannelBLL
 from ..GUI.embed_custom import EmbedCustom
+# from ..GUI.select_clear import SelectClear
+from ..GUI.select_feed import SelectFeed
+from ..GUI.select_premium import SelectPremium
+from ..GUI.select_insert_user_premium import SelectInsertUserPremium
 from ..utils.check_authorization import check_authorization
 
 class ButtonOfCtrlCommand(View):
@@ -22,45 +29,15 @@ class ButtonOfCtrlCommand(View):
             return
 
         try:
-            feed_bll = FeedBLL()
-            channel_bll = ChannelBLL()
-            id_server = str(interaction.guild.id) if interaction.guild else "Unknown"
-            server_data = {}
-            num = 0
+            # Gửi tin nhắn đầu tiên bằng response
+            await interaction.response.send_message("Choose an option to change feed.", view=SelectFeed(user=self.author, bot=self.bot), ephemeral=True)
+            await interaction.followup.send("Choose an option to change premium.", view=SelectPremium(user=self.author, bot=self.bot), ephemeral=True)
+            await interaction.followup.send("Choose a premium to insert userpremium.", view=SelectInsertUserPremium(user=self.author, bot=self.bot), ephemeral=True)
             
-            for feed_dto in feed_bll.get_all_feed():
-                channel_id = int(feed_dto.get_channel_id())
-                channel = self.bot.get_channel(channel_id)
-                channel_dto = channel_bll.get_channel_by_channel_id(str(channel_id))
-                
-                if channel:  # Kiểm tra xem kênh có tồn tại không
-                    for server in self.bot.guilds:
-                        if channel in server.channels:
-                            server_name = f"**Server:** {server.name} ({server.id})"
-                            channel_info = f"- **{channel_dto.get_channel_name()}** (`{channel_id}`) - [{feed_dto.get_title_feed()}]({feed_dto.get_link_feed()})" # type: ignore
-                            server_data.setdefault(server_name, []).append(channel_info)
-                            num += 1
-            
-            # Tạo nội dung cho embed
-            embed = EmbedCustom(
-                id_server=id_server,
-                title="List of Feeds in Channels",
-                description=f"You have {num} feeds in channels:",
-                color=self.color
-            )
-            
-            for server_name, channels in server_data.items():
-                embed.add_field(
-                    name=server_name,
-                    value="\n".join(channels) if channels else "No channels found.",
-                    inline=False
-                )
-            
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-    
         except Exception as e:
-            await interaction.response.send_message(f"Error: {e}", ephemeral=True)
+            await interaction.followup.send(f"Error: {e}", ephemeral=True)
             print(f"Error in show_settings_button: {e}")
+
     
     @nextcord.ui.button(label="show servers", style=nextcord.ButtonStyle.blurple)
     async def show_servers_button(self, button: Button, interaction: Interaction):

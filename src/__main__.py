@@ -10,6 +10,8 @@ from bot.DAL.premium_dal import PremiumDAL
 from bot.DAL.server_dal import ServerDAL
 from bot.DAL.user_dal import UserDAL
 from bot.DAL.user_premium_dal import UserPremiumDAL
+from bot.utils.Database import dataBase
+
 
 # Load environment variables
 load_dotenv()
@@ -62,6 +64,8 @@ if __name__ == "__main__":
     ## Create database tables
     create_database_tables()
     
-    ## Run bot and load cogs
+    # ## Run bot and load cogs
     asyncio.run(load_cogs())
     run_bot()
+    
+    # dataBase.delete_table("tbl_user_premium")

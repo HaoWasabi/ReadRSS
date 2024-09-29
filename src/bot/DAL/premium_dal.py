@@ -47,7 +47,7 @@ class PremiumDAL(BaseDAL):
         finally:
             self.close_connection()
         
-    def delete_premium_by_id(self, premium_id: str) -> bool:
+    def delete_premium_by_id(self, premium_id: int) -> bool:
         self.open_connection()
         try:
             with self.connection:
@@ -65,7 +65,7 @@ class PremiumDAL(BaseDAL):
         finally:
             self.close_connection()
             
-    def get_premium_by_id(self, premium_id: str) -> Optional[PremiumDTO]:
+    def get_premium_by_id(self, premium_id: int) -> Optional[PremiumDTO]:
         self.open_connection()
         try:
             self.cursor.execute('''

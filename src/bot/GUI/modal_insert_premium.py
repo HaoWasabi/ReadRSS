@@ -10,12 +10,10 @@ class ModalInserPremium(Modal):
     def __init__(self, user):
         super().__init__(title="Insert Premium")
         self.author = user
-        self.id_premium = TextInput(label="Premium ID", placeholder="Enter the premium ID", required=True)
         self.name_premium = TextInput(label="Premium name", placeholder="Enter the premium name", required=True)
         self.description_premixum = TextInput(label="Premium description", placeholder="Enter the premium description", required=True)
         self.price = TextInput(label="Price", placeholder="Enter the price", required=True)
-        self.duration = TextInput(label="Duration", placeholder="Enter the duration", required=True)
-        self.add_item(self.id_premium)
+        self.duration = TextInput(label="Duration (minutes)", placeholder="Enter the duration", required=True)
         self.add_item(self.name_premium)
         self.add_item(self.description_premixum)
         self.add_item(self.price)
@@ -29,15 +27,8 @@ class ModalInserPremium(Modal):
         try:
             premium_bll = PremiumBLL()
             
-            if premium_bll.get_premium_by_id(self.id_premium.value): # type: ignore
-                await interaction.followup.send(
-                    f"Premium ID '{self.id_premium.value}' already exists.",
-                    ephemeral=True
-                )
-                return
-            
             premium_dto = PremiumDTO(
-                premium_id=self.id_premium.value,  # type: ignore
+                premium_id=None,  # type: ignore
                 premium_name=self.name_premium.value, # type: ignore
                 description=self.description_premixum.value, # type: ignore
                 price=self.price.value, # type: ignore
@@ -46,7 +37,7 @@ class ModalInserPremium(Modal):
                 is_active=True)
             if premium_bll.insert_premium(premium_dto):
                 await interaction.followup.send(
-                    f"Successfully insert premium **{self.name_premium.value}** (`{self.id_premium.value}`).",
+                    f"Successfully insert premium **{self.name_premium.value}**.",
                     ephemeral=True
                 )
         except Exception as e:
