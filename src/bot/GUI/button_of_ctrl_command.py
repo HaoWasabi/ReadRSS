@@ -23,23 +23,40 @@ class ButtonOfCtrlCommand(View):
         self.author = user  # Người dùng khởi tạo tương tác
         self.color = int(ColorDTO("darkkhaki").get_hex_color().replace("#", ""), 16)       
 
-    @nextcord.ui.button(label="show settings", style=nextcord.ButtonStyle.success)
-    async def show_settings_button(self, button: Button, interaction: Interaction):
+    @nextcord.ui.button(label="feed", style=nextcord.ButtonStyle.gray)
+    async def feed_button(self, button: Button, interaction: Interaction):
         if not await check_authorization(interaction, self.author):
             return
 
         try:
-            # Gửi tin nhắn đầu tiên bằng response
             await interaction.response.send_message("Choose an option to change feed.", view=SelectFeed(user=self.author, bot=self.bot), ephemeral=True)
-            await interaction.followup.send("Choose an option to change premium.", view=SelectPremium(user=self.author, bot=self.bot), ephemeral=True)
-            await interaction.followup.send("Choose a premium to insert userpremium.", view=SelectInsertUserPremium(user=self.author, bot=self.bot), ephemeral=True)
-            
         except Exception as e:
             await interaction.followup.send(f"Error: {e}", ephemeral=True)
             print(f"Error in show_settings_button: {e}")
 
+    @nextcord.ui.button(label="premium", style=nextcord.ButtonStyle.gray)
+    async def premium_button(self, button: Button, interaction: Interaction):
+        if not await check_authorization(interaction, self.author):
+            return
+
+        try:
+            await interaction.response.send_message("Choose an option to change premium.", view=SelectPremium(user=self.author, bot=self.bot), ephemeral=True)
+        except Exception as e:
+            await interaction.followup.send(f"Error: {e}", ephemeral=True)
+            print(f"Error in show_settings_button: {e}")
+
+    @nextcord.ui.button(label="userpremium", style=nextcord.ButtonStyle.gray)
+    async def userpremium_button(self, button: Button, interaction: Interaction):
+        if not await check_authorization(interaction, self.author):
+            return
+
+        try:
+            await interaction.response.send_message("Choose a premium to insert userpremium.", view=SelectInsertUserPremium(user=self.author, bot=self.bot), ephemeral=True)
+        except Exception as e:
+            await interaction.followup.send(f"Error: {e}", ephemeral=True)
+            print(f"Error in show_settings_button: {e}")
     
-    @nextcord.ui.button(label="show servers", style=nextcord.ButtonStyle.blurple)
+    @nextcord.ui.button(label="servers", style=nextcord.ButtonStyle.success)
     async def show_servers_button(self, button: Button, interaction: Interaction):
         if not await check_authorization(interaction, self.author):
             return
