@@ -42,14 +42,14 @@ Table server{
   // user_id string [ref: > user.user_id]
 }
 
-Table userchannel{
-  user_id string [pk]
-  channel_id string [pk]
-  date datetime
-}
+// Table userchannel{
+//   user_id string [pk]
+//   channel_id string [pk]
+//   date datetime
+// }
 
-Ref: userchannel.channel_id - channel.channel_id
-Ref: userchannel.user_id > user.user_id
+// Ref: userchannel.channel_id - channel.channel_id
+// Ref: userchannel.user_id > user.user_id
 
 
 Table color{
@@ -64,7 +64,7 @@ Table user{
 }
 
 Table user_premium{
-  user_id string [ref: - user.user_id]
+  user_id string [ref: - TransactionHistory.id_transaction]
   premium_id string [ref: - premium.premium_id]
   date_registered datetime
 }

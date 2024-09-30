@@ -170,9 +170,9 @@ class Events(CommandsCog):
         except Exception as e:
             logger.error(f"Error loading feed list: {e}")
 
-    async def load_list_feed_in_thread(self):
-        """Run load_list_feed in a separate thread to avoid blocking the main event loop."""
-        await asyncio.to_thread(self.load_list_feed)
+    # async def load_list_feed_in_thread(self):
+    #     """Run load_list_feed in a separate thread to avoid blocking the main event loop."""
+    #     await asyncio.to_thread(self.load_list_feed)
 
     async def load_user_premium(self):
         try:
@@ -189,6 +189,10 @@ class Events(CommandsCog):
                     # Nếu time_registered là int, chuyển nó thành datetime
                     time_registered = datetime.fromtimestamp(time_registered / 1000)  # Chuyển đổi từ timestamp nếu cần
                     elapsed_time_seconds = (datetime.now() - time_registered).total_seconds()
+                elif isinstance(time_registered, str):
+                    # Nếu time_registered là str, chuyển nó thành datetime
+                    time_registered = datetime.strptime(time_registered, "%Y-%m-%d %H:%M:%S.%f")
+                    elapsed_time_seconds = (datetime.now() - time_registered).total_seconds()
                 else:
                     logger.error(f"Invalid time_registered type: {type(time_registered)} for user {user_premium.get_user().get_user_id()}")
                     continue
@@ -204,7 +208,7 @@ class Events(CommandsCog):
             logger.error(f"Error loading userpremium list: {e}")
 
 
-    @tasks.loop(minutes=1)
+    @tasks.loop(seconds=25)
     async def push_noti(self):
         logger.debug('Running background task push_noti...')
         await self.load_guilds()
